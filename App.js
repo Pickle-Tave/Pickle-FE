@@ -20,7 +20,7 @@ const Tab = createBottomTabNavigator();
 
 
 const CustomHeader = ({ navigation, title, canGoBack }) => {
-    const [alram, setAlram] = useState(false);
+    const [alram, setAlram] = useState(true);
     
     return (
         <View style={styles.headerContainer}>
@@ -124,7 +124,7 @@ const MainScreen = () => {
 };
 
 function App() {
-    const [isLogged, setIsLogged] = useState(false);
+    const [isLogged, setIsLogged] = useState(true);
 
     return (
         isLogged ? 
