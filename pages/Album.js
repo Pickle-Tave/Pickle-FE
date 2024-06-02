@@ -5,24 +5,19 @@
  * @format
  */
 
-import "react-native-gesture-handler";
+import 'react-native-gesture-handler';
 
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-
+import {View, Text, StyleSheet, Button} from 'react-native';
 
 const AlbumList = () => {
-    return (
-        <View style={styles.AlbumItem}>
-            <Text>
-                album1
-            </Text>
-        </View>
-    )
-}
+  return (
+    <View style={styles.AlbumItem}>
+      <Text>album1</Text>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 
 export default AlbumList;
