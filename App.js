@@ -1,5 +1,4 @@
 import 'react-native-gesture-handler';
-
 import React, {useState} from 'react';
 import {
   View,
@@ -28,7 +27,6 @@ const Tab = createBottomTabNavigator();
 
 const CustomHeader = ({navigation, title, canGoBack}) => {
   const [alram, setAlram] = useState(false);
-
   return (
     <View style={styles.headerContainer}>
       {canGoBack && (
@@ -144,7 +142,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+    const [isLogged, setIsLogged] = useState(true);
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
