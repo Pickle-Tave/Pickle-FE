@@ -1,54 +1,19 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import "react-native-gesture-handler";
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
+import HashtagMake from "../components/Modal/HashtagMake";
+import HashtagList from "../components/Modal/HashtagList";
 
-//해시태그 만들기 모달
-const HashtagMake = ({ visible, onClose }) => {
-    return (
-        <Modal visible={visible} animationType="slide">
-            <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>#해시태그 만들기</Text>
-                <Text style={styles.modalSubtitle}>#해시태그를 입력하세요</Text>
-                <View style={styles.Modal_input_section}>
-                    <TextInput style={styles.modalInput} placeholder="#해시태그" />
-                    <TouchableOpacity style={styles.Modal_plus}>
-                        <Text style={styles.plusText}>추가</Text>
-                    </TouchableOpacity>
-                </View>
-                <ScrollView contentContainerStyle={styles.HashtagList}>
-                    <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                    <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                    <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                    <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                    <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                </ScrollView>
-                <View style={styles.modalButtons}>
-                    <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
-                        <Text style={styles.modalButton}>취소</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer2}>
-                        <Text style={styles.modalButton}>완료</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
-    );
-};
 
 const MyPage = () => {
-    const [modalVisible, setModalVisible] = useState(false);
+    const [MakeHashVisible, setMakeHashVisible] = useState(false);
+    const [HashListVisible, setHashListVisible] = useState(false);
 
     return (
         <View style={styles.container}>
-            <HashtagMake visible={modalVisible} onClose={() => setModalVisible(false)} />
+            <HashtagMake visible={MakeHashVisible} onClose={() => setMakeHashVisible(false)} />
+            <HashtagList visible={HashListVisible} onClose={() => setHashListVisible(false)} />
             <View style={styles.upper_section}>
                 <View style={styles.profile_section}>
                     <Image
@@ -60,14 +25,14 @@ const MyPage = () => {
                         <Text style={styles.text2}>@태입희</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer} onPress={() => setModalVisible(true)}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => setMakeHashVisible(true)}>
                     <Text style={styles.hashtag_btn}>
                         #해시태그 만들기
                     </Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.middle_section}>
-                <TouchableOpacity style={styles.hashtag}>
+                <TouchableOpacity style={styles.hashtag} onPress={() => setHashListVisible(true)}>
                     <Image style={{ width: 40, height: 40, marginLeft: 16, }}
                         source={require('../assets/icon/hashtag.png')}
                     />
@@ -209,104 +174,6 @@ const styles = StyleSheet.create({
         marginTop: 5,
         height: 55,
         alignItems: 'center', // 세로축 중앙 정렬 추가
-    },
-    modalContainer: {
-        display: 'flex',
-        backgroundColor: 'white',
-        margin: 20,
-        padding: 20,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: '#F7F8CB',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 5,
-        justifyContent: 'space-between', // 공간을 적절히 배치하도록 설정
-    },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        alignItems: 'center',
-    },
-    modalSubtitle: {
-        fontSize: 14,
-        marginBottom: 10,
-    },
-    Modal_input_section: {
-        marginTop: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 5,
-        alignItems: 'center', // 수직 중앙 정렬
-        justifyContent: 'center',
-    },
-    modalInput: {
-        height: 35,
-        borderColor: 'gray',
-        borderWidth: 2,
-        width: '85%',
-        marginBottom: 20,
-        paddingLeft: 10,
-        borderRadius: 30,
-        marginLeft: 20,
-    },
-    Modal_plus: {
-        backgroundColor: 'black',
-        justifyContent: 'center', // 추가: 세로축 중앙 정렬
-        alignItems: 'center', // 추가: 세로축 중앙 정렬
-        color: 'white',
-        borderRadius: 20,
-        paddingLeft: 15,
-        paddingRight: 15,
-        height: 35,
-        marginBottom: 20,
-    },
-    plusText: {
-        color: 'white',
-    },
-    HashtagList: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: 4,
-    },
-    hashtagItem: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        borderColor: 'black',
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        margin: 5,
-    },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginTop: 20,
-        borderTopColor: '#CCCCCC',
-        borderTopWidth: 1,
-    },
-    modalButtonContainer1: {
-        width: '50%', // 너비를 50%로 설정
-        alignItems: 'center', // 중앙 정렬
-        marginTop: 15,
-        borderRightColor: '#CCCCCC',
-        borderRightWidth: 1,
-    },
-    modalButtonContainer2: {
-        width: '50%', // 너비를 50%로 설정
-        alignItems: 'center', // 중앙 정렬
-        marginTop: 15,
-        
-    },
-    modalButton: {
-        fontSize: 16,
-        color: 'black',
     },
 });
 
