@@ -1,37 +1,7 @@
 import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    Modal,
-    TouchableWithoutFeedback,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
-const hashtag = [
-    {
-        id: 1,
-        content: '동물'
-    },
-    {
-        id: 2,
-        content: '여행'
-    },
-    {
-        id: 3,
-        content: '일상'
-    },
-    {
-        id: 4,
-        content: '청춘'
-    },
-    {
-        id: 5,
-        content: '행복'
-    },
-];
-
-const HashtagList = ({ visible, onClose }) => {
+const AlbumPlus = ({ visible, onClose }) => {
     return (
         <Modal
             visible={visible}
@@ -42,17 +12,15 @@ const HashtagList = ({ visible, onClose }) => {
                 <View style={styles.modalBackground}>
                     <TouchableWithoutFeedback>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>해시태그 목록</Text>
-                            <View style={styles.hashList}>
-                                {hashtag.map((item) => (
-                                    <View key={item.id} style={styles.hashItem}>
-                                        <Text style={styles.hashText}>#{item.content}</Text>
-                                    </View>
-                                ))}
-                            </View>
+                            <Text style={styles.modalTitle}>새로운 앨범</Text>
+                            <Text style={styles.modalSubTitle}>앨범의 이름을 입력하세요.</Text>
+                            <TextInput style={styles.text_input} placeholder='제목'/>
                             <View style={styles.modalButtons}>
                                 <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
                                     <Text style={styles.modalButton}>취소</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer2}>
+                                    <Text style={styles.modalButton}>완료</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -74,7 +42,7 @@ const styles = StyleSheet.create({
         width: '85%', // 모달 너비 설정
         backgroundColor: 'white',
         borderRadius: 10,
-        padding: 20,
+        paddingVertical: 20,
         alignItems: 'center',
         borderColor: '#F7F8CB',
         borderWidth: 5,
@@ -91,32 +59,44 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: 'black'
     },
-    hashList: {
-        width: '95%',
+    modalSubTitle: {
+        fontSize: 16,
+        marginBottom: 10,
+        alignItems: 'center',
+        color: 'black',
+        
+    },
+    text_input:{
+        height: 38,
         borderWidth: 1,
-        borderRadius: 10,
-        flexDirection: 'row',
-        flexWrap: 'wrap', // 아이템이 너비를 넘으면 다음 줄로 넘어가도록 설정
-        paddingVertical: 15,
-        justifyContent: 'center', // 가로축 기준 중앙 정렬
-        alignItems: 'center', // 세로축 기준 중앙 정렬
-        marginTop: 15,
-    },
-    hashItem: {
-        marginHorizontal: 8, // 해시태그 간 간격 추가
-        marginVertical: 4, // 세로 간격 추가
-    },
-    hashText: {
-        fontSize: 14,
+        width: '90%',
+        borderRadius: 30,
+        paddingLeft: 15,
+        marginTop: 6,
+        fontSize: 13,
+        marginBottom: 10,
     },
     modalButtons: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         width: '100%',
-        marginTop: 20,
+        marginTop: 15,
+        borderTopColor: '#CCCCCC',
+        borderTopWidth: 1,
     },
     modalButtonContainer1: {
+        width: '50%', // 너비를 50%로 설정
+        height: '100%',
         alignItems: 'center', // 중앙 정렬
+        marginTop: 10,
+        paddingTop: 5,
+        borderRightColor: '#CCCCCC',
+        borderRightWidth: 1,
+    },
+    modalButtonContainer2: {
+        width: '50%', // 너비를 50%로 설정
+        alignItems: 'center', // 중앙 정렬
+        paddingTop: 15,
     },
     modalButton: {
         fontSize: 16,
@@ -124,4 +104,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HashtagList;
+export default AlbumPlus;

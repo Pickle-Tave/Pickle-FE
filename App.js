@@ -21,12 +21,14 @@ import Onboarding_2 from './pages/onboarding/onboarding_2';
 import Onboarding_3 from './pages/onboarding/onboarding_3';
 import Onboarding_4 from './pages/onboarding/onboarding_4';
 import Onboarding_5 from './pages/onboarding/onboarding_5';
+import AlbumInquiry from './pages/AlbumInquiry';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const CustomHeader = ({navigation, title, canGoBack}) => {
   const [alram, setAlram] = useState(false);
+
   return (
     <View style={styles.headerContainer}>
       {canGoBack && (
@@ -165,6 +167,20 @@ function App() {
               <CustomHeader
                 navigation={navigation}
                 title="MyPage"
+                canGoBack={true}
+              />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+         <Stack.Screen
+          name="AlbumInquiry"
+          component={AlbumInquiry}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader
+                navigation={navigation}
+                title="앨범조회"
                 canGoBack={true}
               />
             ),
