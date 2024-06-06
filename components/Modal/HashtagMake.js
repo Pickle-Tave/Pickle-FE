@@ -1,5 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    Modal,
+    TextInput,
+    ScrollView,
+    TouchableWithoutFeedback,
+    FlatList
+} from 'react-native';
+
+const hashtag = [
+    {
+        id: 1,
+        content: '동물'
+    },
+    {
+        id: 2,
+        content: '여행'
+    },
+    {
+        id: 3,
+        content: '일상'
+    },
+    {
+        id: 4,
+        content: '청춘'
+    },
+    {
+        id: 5,
+        content: '행복'
+    },
+];
 
 const HashtagMake = ({ visible, onClose }) => {
     return (
@@ -20,13 +54,18 @@ const HashtagMake = ({ visible, onClose }) => {
                                     <Text style={styles.plusText}>추가</Text>
                                 </TouchableOpacity>
                             </View>
-                            <ScrollView contentContainerStyle={styles.HashtagList}>
-                                <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                                <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                                <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                                <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                                <View style={styles.hashtagItem}><Text>#해시태그 X</Text></View>
-                            </ScrollView>
+                            <View style={styles.HashtagList}>
+                                {hashtag.map((item) => (
+                                    <View key={item.id} style={styles.hashtagItem}>
+                                        <Text style={styles.text}>
+                                            {`#${item.content}`}
+                                        </Text>
+                                        <TouchableOpacity>
+                                            <Text style={{ marginLeft: 5, alignItems: 'center' }}>X</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                ))}
+                            </View>
                             <View style={styles.modalButtons}>
                                 <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
                                     <Text style={styles.modalButton}>취소</Text>
@@ -51,10 +90,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
     },
     modalContainer: {
-        width: '90%', // 모달 너비 설정
+        width: '85%', // 모달 너비 설정
         backgroundColor: 'white',
         borderRadius: 10,
-        padding: 20,
+        paddingVertical: 20,
         alignItems: 'center',
         borderColor: '#F7F8CB',
         borderWidth: 5,
@@ -65,17 +104,19 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
         alignItems: 'center',
+        color: 'black'
     },
     modalSubtitle: {
         fontSize: 14,
         marginBottom: 10,
     },
     Modal_input_section: {
-        marginTop: 10,
+        marginTop: 7,
+        width: '90%',
         display: 'flex',
         flexDirection: 'row',
         gap: 5,
@@ -90,6 +131,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingLeft: 10,
         borderRadius: 30,
+        fontSize: 12,
     },
     Modal_plus: {
         backgroundColor: 'black',
@@ -109,41 +151,49 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 4,
+        gap: 7,
     },
     hashtagItem: {
+        flexDirection: 'row',
         backgroundColor: 'white',
         borderRadius: 20,
         borderColor: 'black',
         borderWidth: 1,
-        paddingHorizontal: 9,
+        paddingHorizontal: 11,
         paddingVertical: 5,
         margin: 5,
+        width: 'auto'
     },
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        marginTop: 20,
+        marginTop: 15,
         borderTopColor: '#CCCCCC',
         borderTopWidth: 1,
     },
     modalButtonContainer1: {
         width: '50%', // 너비를 50%로 설정
+        height: '100%',
         alignItems: 'center', // 중앙 정렬
-        marginTop: 15,
+        marginTop: 10,
+        paddingTop: 5,
         borderRightColor: '#CCCCCC',
         borderRightWidth: 1,
     },
     modalButtonContainer2: {
         width: '50%', // 너비를 50%로 설정
         alignItems: 'center', // 중앙 정렬
-        marginTop: 15,
+        paddingTop: 15,
     },
     modalButton: {
         fontSize: 16,
         color: 'black',
     },
+    text: {
+        fontSize: 13,
+        color: 'black'
+    }
 });
 
 export default HashtagMake;
