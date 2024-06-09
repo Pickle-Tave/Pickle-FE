@@ -1,9 +1,43 @@
 import 'react-native-gesture-handler';
-
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const Filter = () => {
+  const onSelectImage = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        maxWidth: 512,
+        maxHeight: 512,
+        includeBase64: Platform.OS === 'android' || Platform.OS === 'ios',
+        quality: 1,
+        selectionLimit: 0,
+      },
+      res => {
+        if (res.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (res.errorCode) {
+          console.log('ImagePicker Error: ', res.errorMessage);
+        } else {
+          console.log('Selected images: ', res.assets);
+          // 선택된 이미지들에 대한 추가 처리 로직
+          res.assets.forEach(asset => {
+            console.log('Image URI: ', asset.uri);
+            // 이미지 표시, 업로드
+          });
+        }
+      },
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -17,11 +51,13 @@ const Filter = () => {
         source={require('../../assets/icon/tip.png')}
         resizeMode="contain"
       />
-      <Image
-        style={styles.gallery}
-        source={require('../../assets/icon/go_gallery.png')}
-        resizeMode="contain"
-      />
+      <TouchableOpacity onPress={onSelectImage}>
+        <Image
+          style={styles.gallery}
+          source={require('../../assets/icon/go_gallery.png')}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
       <Text style={styles.text_tip}>나만의 추억이 담긴 사진을 정리해요</Text>
     </View>
   );

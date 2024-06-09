@@ -22,6 +22,7 @@ import Onboarding_3 from './pages/onboarding/onboarding_3';
 import Onboarding_4 from './pages/onboarding/onboarding_4';
 import Onboarding_5 from './pages/onboarding/onboarding_5';
 import AlbumInquiry from './pages/AlbumInquiry';
+import ImagePicker from 'react-native-image-picker';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -144,7 +145,7 @@ const MainScreen = () => {
 };
 
 function App() {
-    const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(true);
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
@@ -173,7 +174,7 @@ function App() {
             headerBackVisible: true,
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="AlbumInquiry"
           component={AlbumInquiry}
           options={({navigation}) => ({
