@@ -9,8 +9,11 @@ import {
   Platform,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {useNavigation} from '@react-navigation/native';
 
 const Filter = () => {
+  const navigation = useNavigation();
+
   const onSelectImage = () => {
     launchImageLibrary(
       {
@@ -33,6 +36,7 @@ const Filter = () => {
             console.log('Image URI: ', asset.uri);
             // 이미지 표시, 업로드
           });
+          navigation.navigate('Filter1', {images: res.assets});
         }
       },
     );
