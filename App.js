@@ -23,6 +23,8 @@ import Onboarding_4 from './pages/onboarding/onboarding_4';
 import Onboarding_5 from './pages/onboarding/onboarding_5';
 import AlbumInquiry from './pages/AlbumInquiry';
 import Filter1 from './pages/filter/Filter1';
+import Filter2 from './pages/filter/Filter2';
+import Filter3 from './pages/filter/Filter3';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -193,11 +195,27 @@ function App() {
           component={Filter1}
           options={({navigation}) => ({
             header: () => (
-              <CustomHeader
-                navigation={navigation}
-                title="옵션 설정"
-                canGoBack={true}
-              />
+              <CustomHeader navigation={navigation} title="옵션 설정" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter2"
+          component={Filter2}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="로딩 중" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter3"
+          component={Filter3}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="사진 선택" />
             ),
             headerBackVisible: true,
           })}

@@ -1,13 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
@@ -25,7 +18,7 @@ const Filter1 = () => {
   };
 
   const handleNavigation = () => {
-    //navigation.navigate();
+    navigation.navigate('Filter2');
   };
 
   return (
