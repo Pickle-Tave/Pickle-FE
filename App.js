@@ -87,6 +87,7 @@ const MainScreen = () => {
         tabBarItemStyle: {
           flex: 1,
         },
+        tabBarHideOnKeyboard: true,
       }}>
       <Tab.Screen
         name="Filter"

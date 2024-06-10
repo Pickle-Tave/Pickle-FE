@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 const images = [
@@ -32,7 +32,10 @@ const AlbumAccess = ({ check, setCheck }) => {
     );
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
             <View style={styles.upper_section}>
                 <Text style={styles.title}>앨범명</Text>
                 <TouchableOpacity onPress={() => {
@@ -62,7 +65,7 @@ const AlbumAccess = ({ check, setCheck }) => {
                     <Image style={{ width: 45, height: 45 }} source={require('../assets/icon/pic_plus.png')} />
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -108,14 +111,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginHorizontal: 20,
         marginTop: 20,
-
     },
     lower_section2: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginHorizontal: 20,
         marginTop: 20,
-
     },
     picture_container: {
         flex: 1,
