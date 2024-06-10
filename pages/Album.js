@@ -9,7 +9,6 @@ import {
   StyleSheet,
   FlatList,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 10,
-    width: '90%',
+    width: '91%',
     marginTop: 20,
     height: 38,
   },
@@ -181,8 +180,8 @@ const styles = StyleSheet.create({
     right: 30,
   },
   album_plus_image: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
   },
   search_bar: {
     width: 20,
