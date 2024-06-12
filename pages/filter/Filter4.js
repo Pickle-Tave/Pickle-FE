@@ -14,33 +14,41 @@ import {useNavigation} from '@react-navigation/native';
 const Filter4 = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentImage, setCurrentImage] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [images, setImages] = useState([
+    {id: 1, src: require('../../assets/icon/photo1.png'), selectedOptions: []},
+    {id: 2, src: require('../../assets/icon/photo2.png'), selectedOptions: []},
+    {id: 3, src: require('../../assets/icon/photo3.png'), selectedOptions: []},
+    {id: 4, src: require('../../assets/icon/photo4.png'), selectedOptions: []},
+    {id: 5, src: require('../../assets/icon/photo5.png'), selectedOptions: []},
+  ]);
+
+  const [currentImageId, setCurrentImageId] = useState(null);
 
   const handleNavigation = () => {
     navigation.navigate('Filter5');
   };
 
-  const images = [
-    {id: 1, src: require('../../assets/icon/photo1.png')},
-    {id: 2, src: require('../../assets/icon/photo2.png')},
-    {id: 3, src: require('../../assets/icon/photo3.png')},
-    {id: 4, src: require('../../assets/icon/photo4.png')},
-    {id: 5, src: require('../../assets/icon/photo5.png')},
-  ];
-
-  const handleImagePress = image => {
-    setCurrentImage(image);
+  const handleImagePress = imageId => {
+    setCurrentImageId(imageId);
     setModalVisible(true);
   };
 
   const handleOptionPress = option => {
-    setSelectedOptions(prevState =>
-      prevState.includes(option)
-        ? prevState.filter(item => item !== option)
-        : [...prevState, option],
+    setImages(prevImages =>
+      prevImages.map(img =>
+        img.id === currentImageId
+          ? {
+              ...img,
+              selectedOptions: img.selectedOptions.includes(option)
+                ? img.selectedOptions.filter(item => item !== option)
+                : [...img.selectedOptions, option],
+            }
+          : img,
+      ),
     );
   };
+
+  const currentImage = images.find(img => img.id === currentImageId);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -62,7 +70,7 @@ const Filter4 = () => {
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 style={styles.imageWrapper}
-                onPress={() => handleImagePress(image.src)}>
+                onPress={() => handleImagePress(image.id)}>
                 <Image source={image.src} style={styles.image} />
               </TouchableOpacity>
             </View>
@@ -70,28 +78,20 @@ const Filter4 = () => {
         ))}
       </View>
       {currentImage && (
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-          animationType="fade">
+        <Modal visible={modalVisible} transparent={true} animationType="fade">
           <TouchableOpacity
             style={styles.modalBackground}
             activeOpacity={1}
             onPressOut={() => setModalVisible(false)}>
             <View style={styles.modalContainer}>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButtonText}>X</Text>
-              </TouchableOpacity>
               <View style={styles.optionContainer}>
-                {['동물', '여행', '힐링', '임시'].map(option => (
+                {['동물', '여행', '일상', '청춘', '행복'].map(option => (
                   <TouchableOpacity
                     key={option}
                     style={[
                       styles.option,
-                      selectedOptions.includes(option) && styles.selectedOption,
+                      currentImage.selectedOptions.includes(option) &&
+                        styles.selectedOption,
                     ]}
                     onPress={() => handleOptionPress(option)}>
                     <Text style={styles.optionText}>#{option}</Text>
@@ -167,19 +167,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 15,
-    padding: 5,
-    zIndex: 1,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 18,
+    borderWidth: 8,
+    borderColor: '#F7F8CB',
   },
   optionContainer: {
     width: '100%',
@@ -191,16 +180,18 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     width: '80%',
     alignItems: 'center',
+    borderRadius: 10,
     borderWidth: 1,
-    borderRadius: 4,
-    borderColor: 'gray',
-    backgroundColor: '#f0f0f0', // 옵션 배경 색상
+    borderColor: '#F7F8CB',
+    backgroundColor: 'white',
   },
   selectedOption: {
-    backgroundColor: '#d3d3d3',
+    backgroundColor: '#F7F8CB',
   },
   optionText: {
     fontSize: 18,
+    textAlign: 'center',
+    color: 'black',
   },
   next: {
     width: 120,
