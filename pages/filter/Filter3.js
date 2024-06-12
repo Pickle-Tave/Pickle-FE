@@ -74,9 +74,10 @@ const Filter3 = () => {
       <View style={styles.gridContainer}>
         {images.map((image, index) => (
           <React.Fragment key={image.id}>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
+            {index % 2 === 0 &&
+              index !== 0 && ( // 사진 그룹별로 나누는 기준 수정 필요
+                <View style={styles.separator} />
+              )}
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 style={styles.imageWrapper}
@@ -101,6 +102,11 @@ const Filter3 = () => {
           <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
             <View style={styles.modalBackground}>
               <View style={styles.modalContainer}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}>
+                  <Text style={styles.closeButtonText}>X</Text>
+                </TouchableOpacity>
                 <Image
                   source={currentImage}
                   style={styles.fullImage}
@@ -175,6 +181,44 @@ const styles = StyleSheet.create({
   next: {
     width: 120,
     top: -10,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '90%',
+    height: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#769370',
+    borderRadius: 45,
+    padding: 5,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  separator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 10,
   },
 });
 
