@@ -81,33 +81,30 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
+    alignItems: 'center',
   },
   step_1: {
     width: 300,
     margin: 10,
-    left: 40,
   },
   option1: {
     width: 200,
-    left: 100,
   },
   weak: {
     width: 130,
-    left: 60,
+    left: 80,
   },
   strong: {
     width: 130,
     top: -175,
-    left: 220,
+    left: -80,
   },
   option2: {
     width: 184,
-    left: 100,
     top: -160,
   },
   checkboxes: {
     top: -170,
-    left: 90,
   },
   checkboxContainer: {
     flexDirection: 'row',

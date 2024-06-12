@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
+    alignItems: 'center',
   },
   step_2: {
     width: 300,
     margin: 10,
-    left: 40,
   },
   text: {
     fontSize: 25,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     top: -130,
-    left: 30,
+    left: -140,
   },
   text1: {
     fontSize: 18,
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
   },
   next: {
     width: 120,
-    left: 135,
     top: -100,
   },
 });

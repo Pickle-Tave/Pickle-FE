@@ -7,11 +7,10 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Modal,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {useNavigation} from '@react-navigation/native';
+import Modal from 'react-native-modal';
 
 const images = [
   {id: 1, src: require('../../assets/icon/pic1.png')},
@@ -96,25 +95,22 @@ const Filter3 = () => {
       </View>
       {currentImage && (
         <Modal
-          visible={modalVisible}
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}>
-          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContainer}>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setModalVisible(false)}>
-                  <Text style={styles.closeButtonText}>X</Text>
-                </TouchableOpacity>
-                <Image
-                  source={currentImage}
-                  style={styles.fullImage}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
+          isVisible={modalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          useNativeDriver={true}
+          hideModalContentWhileAnimating={true}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+            <Image
+              source={currentImage}
+              style={styles.fullImage}
+              resizeMode="contain"
+            />
+          </View>
         </Modal>
       )}
       <TouchableOpacity onPress={handleNavigation}>
@@ -196,6 +192,7 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    left: 20,
   },
   fullImage: {
     width: '100%',
