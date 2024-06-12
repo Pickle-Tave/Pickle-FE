@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
+    alignItems: 'center',
   },
   step_0: {
     width: 300,
     margin: 10,
-    left: 40,
   },
   text: {
     fontSize: 15,
@@ -85,14 +85,13 @@ const styles = StyleSheet.create({
   tip: {
     width: 40,
     height: 40,
-    left: 50,
+    left: -120,
     top: 430,
   },
   gallery: {
     width: 370,
     height: 370,
     top: -15,
-    left: 15,
   },
   text_tip: {
     fontSize: 15,

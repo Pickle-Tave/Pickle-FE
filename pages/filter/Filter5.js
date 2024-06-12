@@ -8,7 +8,7 @@ const Filter5 = () => {
   const navigation = useNavigation();
 
   const handleNavigation = () => {
-    // navigation.navigate('Filter');
+    navigation.navigate('Filter');
   };
 
   return (
@@ -18,6 +18,14 @@ const Filter5 = () => {
         source={require('../../assets/icon/step_4.png')}
         resizeMode="contain"
       />
+
+      <TouchableOpacity onPress={handleNavigation}>
+        <Image
+          style={styles.done}
+          source={require('../../assets/icon/done2.png')}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -31,6 +39,10 @@ const styles = StyleSheet.create({
     width: 300,
     margin: 10,
     left: 40,
+  },
+  done: {
+    width: 120,
+    top: -10,
   },
 });
 
