@@ -21,23 +21,12 @@ const Home = ({navigation}) => {
           source={require('../assets/icon/logo_big.png')}
         />
       </View>
-      <View style={styles.Recommend}>
-        <Image
-          style={styles.recommendImage}
-          source={require('../assets/icon/place_rcmd.png')}
-          resizeMode="contain"
-        />
-        <Image
-          style={styles.recommendImage}
-          source={require('../assets/icon/pose_rcmd.png')}
-          resizeMode="contain"
-        />
-      </View>
+
       <View style={styles.hashtagContainer}>
         <TouchableOpacity
           style={styles.hashtagButton}
           onPress={() => navigation.navigate('MyPage')}>
-          <Text style={styles.hashtagButtonText}>#해시태그 설정하기</Text>
+          <Text style={styles.hashtagButtonText}>#해시태그 설정하러 가기</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -48,7 +37,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 0, // 컨테이너 패딩 제거
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   logoContainer: {
     display: 'flex',
@@ -57,6 +46,7 @@ const styles = StyleSheet.create({
     height: 450, // 필요한 경우 조정
     marginBottom: 0, // 아래 간격 제거
     paddingBottom: 0, // 패딩 제거
+    top: 30,
   },
   Logostyle: {
     height: 320,
@@ -81,11 +71,13 @@ const styles = StyleSheet.create({
   },
   hashtagButton: {
     width: '95%',
+    height: '32.5%',
     backgroundColor: '#FFFDDB',
     paddingVertical: 15,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    top: 100,
   },
   hashtagButtonText: {
     color: 'black',
