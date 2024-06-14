@@ -22,6 +22,11 @@ import Onboarding_3 from './pages/onboarding/onboarding_3';
 import Onboarding_4 from './pages/onboarding/onboarding_4';
 import Onboarding_5 from './pages/onboarding/onboarding_5';
 import AlbumInquiry from './pages/AlbumInquiry';
+import Filter1 from './pages/filter/Filter1';
+import Filter2 from './pages/filter/Filter2';
+import Filter3 from './pages/filter/Filter3';
+import Filter4 from './pages/filter/Filter4';
+import Filter5 from './pages/filter/Filter5';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -145,7 +150,7 @@ const MainScreen = () => {
 };
 
 function App() {
-    const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(true);
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
@@ -174,7 +179,7 @@ function App() {
             headerBackVisible: true,
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="AlbumInquiry"
           component={AlbumInquiry}
           options={({navigation}) => ({
@@ -184,6 +189,56 @@ function App() {
                 title="앨범조회"
                 canGoBack={true}
               />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter1"
+          component={Filter1}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="옵션 설정" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter2"
+          component={Filter2}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="로딩 중" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter3"
+          component={Filter3}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="사진 선택" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter4"
+          component={Filter4}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="해시태그 설정" />
+            ),
+            headerBackVisible: true,
+          })}
+        />
+        <Stack.Screen
+          name="Filter5"
+          component={Filter5}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader navigation={navigation} title="앨범에 추가" />
             ),
             headerBackVisible: true,
           })}

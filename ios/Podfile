@@ -1,3 +1,12 @@
+permissions_path = '../node_modules/react-native-permissions/ios'
+  
+pod 'Permission-Calendars', :path => "#{permissions_path}/Calendars"
+pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
+pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone"
+pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary
+
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
