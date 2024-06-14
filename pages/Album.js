@@ -1,5 +1,4 @@
 import 'react-native-gesture-handler';
-
 import React, { useState } from 'react';
 import {
   View,
@@ -8,8 +7,9 @@ import {
   Image,
   StyleSheet,
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -87,7 +87,10 @@ const Album = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <AlbumPlus visible={plusvisible} onClose={() => setPlusVisible(false)} />
       <KebabModal visible={kebabvisible} onClose={() => setKebabVisible(false)} EditModal={EditModal} ShareModal={ShareModal}/>
       <AlbumEditModal visible={editvisible} onClose={() => setEditVisible(false)} />
@@ -139,7 +142,7 @@ const Album = ({ navigation }) => {
           source={require('../assets/icon/album_plus.png')}
         />
       </TouchableOpacity>
-    </View >
+    </KeyboardAvoidingView>
   );
 };
 
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: 10,
-    width: '90%',
+    width: '91%',
     marginTop: 20,
     height: 38,
   },
@@ -181,8 +184,8 @@ const styles = StyleSheet.create({
     right: 30,
   },
   album_plus_image: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
   },
   search_bar: {
     width: 20,
@@ -191,7 +194,7 @@ const styles = StyleSheet.create({
   dropdownpicker: {
     borderRadius: 20,
     maxHeight: 40,
-    minHeight: 35,  
+    minHeight: 32,  
   },
   dropdownContainer: {
     width: 105, // 필요에 따라 조정
