@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import ImgDeleteModal from './Modal/ImgDeleteModal';
 
 const images = [
     { id: '1', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
@@ -14,6 +15,8 @@ const images = [
 // check가 true일때는 취소버튼,체크박스, 휴지통 생성하기
 
 const AlbumAccess = ({ check, setCheck }) => {
+    const [deletevisible, setDeleteVisible] = useState(false);
+
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
             <Text style={styles.hash_text}>#{item.hashtag}</Text>
@@ -36,6 +39,7 @@ const AlbumAccess = ({ check, setCheck }) => {
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
+            <ImgDeleteModal visible={deletevisible} onClose={() => setDeleteVisible(false)} />
             <View style={styles.upper_section}>
                 <Text style={styles.title}>앨범명</Text>
                 <TouchableOpacity onPress={() => {
@@ -57,7 +61,7 @@ const AlbumAccess = ({ check, setCheck }) => {
             />
             <View style={check ? styles.lower_section1 : styles.lower_section2}>
                 {check && 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => setDeleteVisible(true)}>
                     <Image style={{ width: 40, height: 40 }} source={require('../assets/icon/bin.png')}/>
                 </TouchableOpacity>
                 }
