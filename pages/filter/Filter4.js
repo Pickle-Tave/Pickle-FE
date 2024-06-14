@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   },
   step_3: {
     width: 300,
+    margin: 10,
   },
   text: {
     fontSize: 18,
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 150,
+    borderRadius: 10,
   },
   separator: {
     width: '100%',
