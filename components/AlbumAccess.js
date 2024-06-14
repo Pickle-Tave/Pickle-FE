@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ImgDeleteModal from './Modal/ImgDeleteModal';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const images = [
     { id: '1', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
@@ -16,6 +17,34 @@ const images = [
 
 const AlbumAccess = ({ check, setCheck }) => {
     const [deletevisible, setDeleteVisible] = useState(false);
+
+    const onSelectImage = () => {
+        launchImageLibrary(
+          {
+            mediaType: 'photo',
+            maxWidth: 512,
+            maxHeight: 512,
+            includeBase64: Platform.OS === 'android' || Platform.OS === 'ios',
+            quality: 1,
+            selectionLimit: 0,
+          },
+          res => {
+            if (res.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (res.errorCode) {
+              console.log('ImagePicker Error: ', res.errorMessage);
+            } else {
+              console.log('Selected images: ', res.assets);
+              // 선택된 이미지들에 대한 추가 처리 로직
+              res.assets.forEach(asset => {
+                console.log('Image URI: ', asset.uri);
+                // 이미지 표시, 업로드
+              });
+            }
+          },
+        );
+      };
+    
 
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
@@ -65,8 +94,8 @@ const AlbumAccess = ({ check, setCheck }) => {
                     <Image style={{ width: 40, height: 40 }} source={require('../assets/icon/bin.png')}/>
                 </TouchableOpacity>
                 }
-                <TouchableOpacity style={styles.pic_plus}>
-                    <Image style={{ width: 45, height: 45 }} source={require('../assets/icon/pic_plus.png')} />
+                <TouchableOpacity style={styles.pic_plus} onPress={onSelectImage}>
+                    <Image style={{ width: 45, height: 45 }} source={require('../assets/icon/pic_plus.png')} /> 
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
