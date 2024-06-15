@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   },
   step_3: {
     width: 300,
+    margin: 10,
   },
   text: {
     fontSize: 18,
