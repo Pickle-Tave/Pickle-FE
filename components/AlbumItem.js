@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
         width: '97%',
         alignItems: 'center',
         padding: 8,
+        marginLeft: 5,
         borderBottomWidth: 0.5,
         borderBottomColor: 'gray',
         marginVertical: 7,
@@ -46,22 +47,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     folder_image: {
-        width: 65,
-        height: 65,
+        width: 60,
+        height: 60,
         resizeMode: 'contain',
     },
     textContainer: {
         marginLeft: 20,
     },
     title_text: {
-        fontSize: 14.5,
+        fontSize: 12,
         fontWeight: 'bold',
         marginBottom: 3,
     },
     type_text1: {
         backgroundColor: '#A0B59C',
         borderRadius: 5,
-        fontSize: 11,
+        fontSize: 10,
         color: 'white',
         paddingHorizontal: 5,
         paddingVertical: 4,
@@ -77,8 +78,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     kebab_image: {
-        width: 21,
-        height: 21,
+        width: 16,
+        height: 16,
         resizeMode: 'contain',
     }
 });

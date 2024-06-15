@@ -63,7 +63,8 @@ const Album = ({ navigation }) => {
   const [items, setItems] = useState([
     { label: "전체", value: 1 },
     { label: "개인앨범", value: 2 },
-    { label: "공유앨범", value: 3 }
+    { label: "공유앨범", value: 3 },
+    { label: "즐겨찾기", value: 4 }
   ]);
 
   // 현재 선택된 값
