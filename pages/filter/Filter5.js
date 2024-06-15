@@ -10,10 +10,14 @@ import {
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {useNavigation} from '@react-navigation/native';
+import AlbumPlus from '../../components/Modal/AlbumPlus';
 
 const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newAlbumName, setNewAlbumName] = useState('');
+  const [plusvisible, setPlusVisible] = useState(false);
 
   const items = [
     {label: '동물', value: '동물'},
@@ -21,6 +25,7 @@ const Filter5 = () => {
     {label: '일상', value: '일상'},
     {label: '청춘', value: '청춘'},
     {label: '행복', value: '행복'},
+    {label: '새 앨범 추가하기', value: 'add_new_album'},
   ];
 
   const [images] = useState([
@@ -35,60 +40,80 @@ const Filter5 = () => {
     navigation.navigate('Filter');
   };
 
+  const handleValueChange = value => {
+    console.log('Selected value:', value); // 디버그를 위해 추가
+    if (value === 'add_new_album') {
+      setPlusVisible(true);
+    } else {
+      setSelectedOption(value);
+    }
+  };
+
+  const handleAddNewAlbum = albumName => {
+    if (albumName) {
+      items.push({label: albumName, value: albumName});
+      setSelectedOption(albumName);
+    }
+    setPlusVisible(false);
+  };
+
+  console.log('plusvisible:', plusvisible); // 모달 상태 확인
+
   return (
-    <View style={styles.mainContainer}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <Image
-            style={styles.step_4}
-            source={require('../../assets/icon/step_4.png')}
-            resizeMode="contain"
-          />
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <Image
+          style={styles.step_4}
+          source={require('../../assets/icon/step_4.png')}
+          resizeMode="contain"
+        />
 
-          <Text style={styles.text}>
-            사진을 선택하고 원하는 앨범에 넣어보세요!
-          </Text>
-        </View>
+        <Text style={styles.text}>
+          사진을 선택하고 원하는 앨범에 넣어보세요!
+        </Text>
+      </View>
 
-        <View style={styles.selectContainer}>
-          <RNPickerSelect
-            onValueChange={value => setSelectedOption(value)}
-            items={items}
-            placeholder={{label: '앨범을 선택하세요', value: null}}
-            style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false} // 임시
-          />
-        </View>
+      <View style={styles.selectContainer}>
+        <RNPickerSelect
+          onValueChange={handleValueChange}
+          items={items}
+          placeholder={{label: '앨범을 선택하세요', value: null}}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false} // 임시
+        />
+      </View>
 
-        <View style={styles.gridContainer}>
-          {images.map((image, index) => (
-            <React.Fragment key={image.id}>
-              {index % 2 === 0 && index !== 0 && (
-                <View style={styles.separator} />
-              )}
-              <View style={styles.imageContainer}>
-                <Image source={image.src} style={styles.image} />
-              </View>
-            </React.Fragment>
-          ))}
-        </View>
+      <View style={styles.gridContainer}>
+        {images.map((image, index) => (
+          <React.Fragment key={image.id}>
+            {index % 2 === 0 && index !== 0 && (
+              <View style={styles.separator} />
+            )}
+            <View style={styles.imageContainer}>
+              <Image source={image.src} style={styles.image} />
+            </View>
+          </React.Fragment>
+        ))}
+      </View>
 
-        <TouchableOpacity onPress={handleNavigation}>
-          <Image
-            style={styles.next}
-            source={require('../../assets/icon/done2.png')}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+      <TouchableOpacity onPress={handleNavigation}>
+        <Image
+          style={styles.next}
+          source={require('../../assets/icon/done2.png')}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+
+      <AlbumPlus
+        visible={plusvisible}
+        onClose={() => setPlusVisible(false)}
+        onAddAlbum={handleAddNewAlbum}
+      />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
   container: {
     backgroundColor: 'white',
     flexGrow: 1,
