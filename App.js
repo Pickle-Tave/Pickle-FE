@@ -38,18 +38,18 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
     <View style={styles.headerContainer}>
       {canGoBack && (
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.pop()}
           style={styles.headerLeft}>
           <Image
             style={styles.headerLeftImage}
-            source={require('./assets/icon/back.png')} // 뒤로가기 버튼 아이콘 경로로 변경
+            source={require('./assets/icon/back.png')} // 뒤로가기 버튼
           />
         </TouchableOpacity>
       )}
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.headerRight}>
         <TouchableOpacity
-          onPress={() => (alram ? setAlram(false) : setAlram(true))}>
+          onPress={() => setAlram(!alram)}>
           <Image
             style={styles.headerAlramImage}
             source={
@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    position: 'relative'
   },
   headerTitle: {
     color: '#FFFFFF',
@@ -299,6 +300,9 @@ const styles = StyleSheet.create({
   headerLeft: {
     position: 'absolute',
     left: 10,
+    top: '50%',
+    transform: [{translateY: -10}],
+    zIndex: 1
   },
   headerLeftImage: {
     width: 10, // 이미지 너비 조정
