@@ -87,6 +87,10 @@ const Album = ({ navigation }) => {
     setEditVisible(true);
   }
 
+  const AlbumItemAccess = (id) => {
+    navigation.navigate('AlbumInquiry', { id })
+  }
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -124,13 +128,12 @@ const Album = ({ navigation }) => {
           data={albumlist}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('AlbumInquiry', { id: item.id })}>
-              <AlbumItem 
+            <AlbumItem 
               {...item} 
               kebabvisible={kebabvisible} 
               setKebabVisible={setKebabVisible}
-              />
-            </TouchableOpacity>
+              AlbumItemAccess={() => AlbumItemAccess(item.id)}
+            />
           )}
         />
       </View>

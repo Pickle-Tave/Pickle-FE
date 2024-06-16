@@ -23,7 +23,7 @@ const AlbumItem = (props) => {
                         style={styles.heartIcon}
                         onPress={() => (heart ? deleteHeart() : addHeart())}>
                         <Image
-                            style={{ width: 16, height: 15 }}
+                            style={{ width: 18, height: 17 }}
                             source={
                                 heart
                                     ? require('../assets/icon/heart_on.png')
@@ -36,7 +36,7 @@ const AlbumItem = (props) => {
                         source={require('../assets/icon/folder.png')}
                     />
                 </View>
-                <TouchableOpacity onPress={() => props.navigation.navigate('AlbumInquiry', { id: item.id })}>
+                <TouchableOpacity onPress={props.AlbumItemAccess}>
                     <View style={styles.textContainer}>
                         <Text style={styles.title_text}>{props.title}</Text>
                         {
@@ -47,6 +47,7 @@ const AlbumItem = (props) => {
 
                     </View>
                 </TouchableOpacity>
+
             </View>
             <TouchableOpacity onPress={() => props.setKebabVisible(true)}>
                 <Image
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
         height: 60,
     },
     folder_image: {
-        width: 65,
-        height: 65,
+        width: 68,
+        height: 68,
         resizeMode: 'contain',
     },
     heartIcon: {
