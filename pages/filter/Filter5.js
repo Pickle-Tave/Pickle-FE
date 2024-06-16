@@ -40,7 +40,6 @@ const Filter5 = () => {
   };
 
   const handleValueChange = value => {
-    console.log('Selected value:', value); // 디버그를 위해 추가
     if (value === 'add_new_album') {
       setPlusVisible(true);
     } else {
@@ -100,13 +99,13 @@ const Filter5 = () => {
               style={[
                 styles.imageContainer,
                 selectedImageIds.includes(image.id) &&
-                  styles.selectedImageContainer, // 수정: 다중 선택을 위해 includes 사용
+                  styles.selectedImageContainer, // 다중 선택 -> includes
               ]}>
               <Image
                 source={image.src}
                 style={[
                   styles.image,
-                  selectedImageIds.includes(image.id) && styles.selectedImage, // 추가: 선택된 이미지 스타일 적용
+                  selectedImageIds.includes(image.id) && styles.selectedImage, // 선택된 이미지 스타일 적용
                 ]}
               />
             </View>
