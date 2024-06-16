@@ -61,9 +61,10 @@ const Album = ({navigation}) => {
   const [value, setValue] = useState(1);
 
   const [items, setItems] = useState([
-    {label: '전체', value: 1},
-    {label: '개인앨범', value: 2},
-    {label: '공유앨범', value: 3},
+    { label: "전체", value: 1 },
+    { label: "개인앨범", value: 2 },
+    { label: "공유앨범", value: 3 },
+    { label: "즐겨찾기", value: 4 }
   ]);
 
   // 현재 선택된 값
@@ -85,6 +86,10 @@ const Album = ({navigation}) => {
     setKebabVisible(false);
     setEditVisible(true);
   };
+
+  const AlbumItemAccess = (id) => {
+    navigation.navigate('AlbumInquiry', { id })
+  }
 
   return (
     <KeyboardAvoidingView
@@ -131,18 +136,14 @@ const Album = ({navigation}) => {
       <View style={styles.albumlist}>
         <FlatList
           data={albumlist}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('AlbumInquiry', {id: item.id})
-              }>
-              <AlbumItem
-                {...item}
-                kebabvisible={kebabvisible}
-                setKebabVisible={setKebabVisible}
-              />
-            </TouchableOpacity>
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <AlbumItem 
+              {...item} 
+              kebabvisible={kebabvisible} 
+              setKebabVisible={setKebabVisible}
+              AlbumItemAccess={() => AlbumItemAccess(item.id)}
+            />
           )}
         />
       </View>
