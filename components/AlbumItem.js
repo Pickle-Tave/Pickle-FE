@@ -23,7 +23,7 @@ const AlbumItem = (props) => {
                         style={styles.heartIcon}
                         onPress={() => (heart ? deleteHeart() : addHeart())}>
                         <Image
-                            style={{ width: 18, height: 17 }}
+                            style={{ width: 17, height: 15 }}
                             source={
                                 heart
                                     ? require('../assets/icon/heart_on.png')
