@@ -15,9 +15,8 @@ import AlbumPlus from '../../components/Modal/AlbumPlus';
 const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newAlbumName, setNewAlbumName] = useState('');
-  const [plusvisible, setPlusVisible] = useState(false);
+  const [plusVisible, setPlusVisible] = useState(false);
+  const [selectedImageIds, setSelectedImageIds] = useState([]); // 선택된 이미지 ID 배열
 
   const items = [
     {label: '동물', value: '동물'},
@@ -41,7 +40,6 @@ const Filter5 = () => {
   };
 
   const handleValueChange = value => {
-    console.log('Selected value:', value); // 디버그를 위해 추가
     if (value === 'add_new_album') {
       setPlusVisible(true);
     } else {
@@ -57,7 +55,15 @@ const Filter5 = () => {
     setPlusVisible(false);
   };
 
-  console.log('plusvisible:', plusvisible); // 모달 상태 확인
+  const handleImageSelect = id => {
+    if (selectedImageIds.includes(id)) {
+      // 이미 선택된 이미지라면 선택 해제
+      setSelectedImageIds(selectedImageIds.filter(imageId => imageId !== id));
+    } else {
+      // 선택되지 않은 이미지라면 추가
+      setSelectedImageIds([...selectedImageIds, id]);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -85,14 +91,25 @@ const Filter5 = () => {
 
       <View style={styles.gridContainer}>
         {images.map((image, index) => (
-          <React.Fragment key={image.id}>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
-            <View style={styles.imageContainer}>
-              <Image source={image.src} style={styles.image} />
+          <TouchableOpacity
+            key={image.id}
+            onPress={() => handleImageSelect(image.id)}
+            style={styles.imageWrapper}>
+            <View
+              style={[
+                styles.imageContainer,
+                selectedImageIds.includes(image.id) &&
+                  styles.selectedImageContainer, // 다중 선택 -> includes
+              ]}>
+              <Image
+                source={image.src}
+                style={[
+                  styles.image,
+                  selectedImageIds.includes(image.id) && styles.selectedImage, // 선택된 이미지 스타일 적용
+                ]}
+              />
             </View>
-          </React.Fragment>
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -105,7 +122,7 @@ const Filter5 = () => {
       </TouchableOpacity>
 
       <AlbumPlus
-        visible={plusvisible}
+        visible={plusVisible}
         onClose={() => setPlusVisible(false)}
         onAddAlbum={handleAddNewAlbum}
       />
@@ -138,14 +155,27 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  imageContainer: {
+  imageWrapper: {
     width: '48%',
     marginBottom: 20,
+  },
+  imageContainer: {
+    position: 'relative',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  selectedImageContainer: {
+    borderWidth: 5,
+    borderColor: '#769370',
+    borderRadius: 15,
   },
   image: {
     width: '100%',
     height: 150,
     borderRadius: 10,
+  },
+  selectedImage: {
+    opacity: 0.5,
   },
   separator: {
     width: '100%',
