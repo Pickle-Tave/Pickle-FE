@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,31 +7,14 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 
-const hashtag = [
-  {
-    id: 1,
-    content: '동물',
-  },
-  {
-    id: 2,
-    content: '여행',
-  },
-  {
-    id: 3,
-    content: '일상',
-  },
-  {
-    id: 4,
-    content: '청춘',
-  },
-  {
-    id: 5,
-    content: '행복',
-  },
-];
 
-const HashtagList = ({visible, onClose}) => {
+const HashtagList = ({ visible, onClose }) => {
+  const hashtagList = useSelector((state) =>
+    state.HashTagReducer
+  )
+
   return (
     <Modal
       visible={visible}
@@ -44,9 +27,9 @@ const HashtagList = ({visible, onClose}) => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>해시태그 목록</Text>
               <View style={styles.hashList}>
-                {hashtag.map(item => (
+                {hashtagList.map(item => (
                   <View key={item.id} style={styles.hashItem}>
-                    <Text style={styles.hashText}>#{item.content}</Text>
+                    <Text style={styles.hashText}>#{item.text}</Text>
                   </View>
                 ))}
               </View>
@@ -81,7 +64,7 @@ const styles = StyleSheet.create({
     borderColor: '#F7F8CB',
     borderWidth: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,

@@ -1,20 +1,17 @@
-import { useRef } from "react";
-const hashtag_idRef = useRef(6);
+//action type
+export const ADD_HASHTAG = 'ADD_HASHTAG';
+export const DELETE_HASHTAG = 'DELETE_HASHTAG';
 
-const ADD_HASHTAG = 'ADD_HASHTAG';
-const DELETE_HASHTAG = 'DELETE_HASHTAG';
-
-export const addHashTag = (hashtag_id, text) => ({ //해시태그 생성하기 위해서는 id와 해시태그 값 받기
+//action객체 
+export const addHashTag = (id, text) => ({ //해시태그 생성하기 위해서는 id와 해시태그 값 받기
     type: ADD_HASHTAG,
     payload: {
-        hashtag_id: hashtag_idRef++,
-        text
+        id,
+        text,
     }
 })
 
-export const deleteHashTag = (hashtag_id) => ({
+export const deleteHashTag = (id) => ({
     type: DELETE_HASHTAG,
-    payload: {
-        hashtag_id
-    }
+    id,
 })

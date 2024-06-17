@@ -1,33 +1,35 @@
+import { ADD_HASHTAG,DELETE_HASHTAG } from "../actions/HashTagAction"
+
 const initialState = [
     {
-        hashtag_id: 1,
+        id: 1,
         text: "동물"
     },
     {
-        hashtag_id: 2,
+        id: 2,
         text: "여행"
     },
     {
-        hashtag_id: 3,
+        id: 3,
         text: "일상"
     },
     {
-        hashtag_id: 4,
+        id: 4,
         text: "청춘"
     },
     {
-        hashtag_id: 5,
+        id: 5,
         text: "행복"
     },
 ]
 
 const HashTagReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "ADD_HASHTAG":
+        case ADD_HASHTAG:
             return [...state, action.payload]
-        case "DELETE_HASHTAG":
+        case DELETE_HASHTAG:
             return state.filter((item) =>
-                String(item.hashtag_id) !== String(action.hashtag_id))
+                String(item.id) !== String(action.id))
         default:
             return state;
     }
