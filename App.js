@@ -49,7 +49,7 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.headerRight}>
         <TouchableOpacity
-          onPress={() => setAlram(!alram)}>
+          onPress={() => alram ? setAlram(false) : setAlram(true)}>
           <Image
             style={styles.headerAlramImage}
             source={
