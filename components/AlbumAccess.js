@@ -2,62 +2,62 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ImgDeleteModal from './Modal/ImgDeleteModal';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useSelector, useDispatch } from 'react-redux';
+import { addAlbumImage, deleteAlbumImage } from '../src/actions/AlbumImageAction';
+import { selectAlbumImagesByAlbumId } from '../src/selectors/selectors';
 
-const images = [
-    { id: '1', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-    { id: '2', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-    { id: '3', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-    { id: '4', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-    { id: '5', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-    { id: '6', hashtag: '해시태그', src: require('../assets/icon/picture.png') },
-];
 
 // check가 true일때는 취소버튼,체크박스, 휴지통 생성하기
 
-const AlbumAccess = ({ check, setCheck }) => {
+const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
+    const dispatch = useDispatch();
+
+    const selectAlbumImages = selectAlbumImagesByAlbumId(album_id);
+    const imageList = useSelector(state => selectAlbumImages(state));
+
     const [deletevisible, setDeleteVisible] = useState(false);
 
     const onSelectImage = () => {
         launchImageLibrary(
-          {
-            mediaType: 'photo',
-            maxWidth: 512,
-            maxHeight: 512,
-            includeBase64: Platform.OS === 'android' || Platform.OS === 'ios',
-            quality: 1,
-            selectionLimit: 0,
-          },
-          res => {
-            if (res.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (res.errorCode) {
-              console.log('ImagePicker Error: ', res.errorMessage);
-            } else {
-              console.log('Selected images: ', res.assets);
-              // 선택된 이미지들에 대한 추가 처리 로직
-              res.assets.forEach(asset => {
-                console.log('Image URI: ', asset.uri);
-                // 이미지 표시, 업로드
-              });
-            }
-          },
+            {
+                mediaType: 'photo',
+                maxWidth: 512,
+                maxHeight: 512,
+                includeBase64: Platform.OS === 'android' || Platform.OS === 'ios',
+                quality: 1,
+                selectionLimit: 0,
+            },
+            res => {
+                if (res.didCancel) {
+                    console.log('User cancelled image picker');
+                } else if (res.errorCode) {
+                    console.log('ImagePicker Error: ', res.errorMessage);
+                } else {
+                    console.log('Selected images: ', res.assets);
+                    // 선택된 이미지들에 대한 추가 처리 로직
+                    res.assets.forEach(asset => {
+                        console.log('Image URI: ', asset.uri);
+                        // 이미지 표시, 업로드
+                    });
+                }
+            },
         );
-      };
-    
+    };
+
 
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
-            <Text style={styles.hash_text}>#{item.hashtag}</Text>
-            {check && 
-            <BouncyCheckbox 
-            style={styles.checkbox}
-            size={17}
-            fillColor='black'
-            unFillColor='transparent'
-            iconStyle={{borderColor: 'black'}}
-            // onPress
-            />
+            <Text style={styles.hash_text}>#해시태그</Text>
+            {check &&
+                <BouncyCheckbox
+                    style={styles.checkbox}
+                    size={17}
+                    fillColor='black'
+                    unFillColor='transparent'
+                    iconStyle={{ borderColor: 'black' }}
+                // onPress
+                />
             }
             <Image style={styles.picture} source={item.src} />
         </View>
@@ -70,7 +70,7 @@ const AlbumAccess = ({ check, setCheck }) => {
         >
             <ImgDeleteModal visible={deletevisible} onClose={() => setDeleteVisible(false)} />
             <View style={styles.upper_section}>
-                <Text style={styles.title}>앨범명</Text>
+                <Text style={styles.title}>{album_name}</Text>
                 <TouchableOpacity onPress={() => {
                     check ? setCheck(false) : setCheck(true)
                 }}>
@@ -81,21 +81,21 @@ const AlbumAccess = ({ check, setCheck }) => {
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={images}
+                data={imageList}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.image_id.toString()}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.image_list}
             />
             <View style={check ? styles.lower_section1 : styles.lower_section2}>
-                {check && 
-                <TouchableOpacity onPress={() => setDeleteVisible(true)}>
-                    <Image style={{ width: 40, height: 40 }} source={require('../assets/icon/bin.png')}/>
-                </TouchableOpacity>
+                {check &&
+                    <TouchableOpacity onPress={() => setDeleteVisible(true)}>
+                        <Image style={{ width: 36, height: 36 }} source={require('../assets/icon/bin.png')} />
+                    </TouchableOpacity>
                 }
                 <TouchableOpacity style={styles.pic_plus} onPress={onSelectImage}>
-                    <Image style={{ width: 45, height: 45 }} source={require('../assets/icon/pic_plus.png')} /> 
+                    <Image style={{ width: 41, height: 41}} source={require('../assets/icon/pic_plus.png')} />
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -118,9 +118,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         justifyContent: 'space-between',
         marginHorizontal: 15,
+        marginBottom: 8,
     },
     title: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: 'bold',
         color: 'black'
     },
@@ -158,12 +159,15 @@ const styles = StyleSheet.create({
     hash_text: {
         fontSize: 14,
         color: 'black',
+        marginLeft: 5,
+        marginBottom: 2,
     },
     picture: {
         width: '95%',
         height: 155,
         resizeMode: 'contain',
         borderRadius: 20,
+        marginBottom: 8
     },
     pic_plus: {
         marginBottom: 25,

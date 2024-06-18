@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   album_plus: {
     position: 'absolute',
     bottom: 100,
-    right: 30,
+    right: 40,
   },
   album_plus_image: {
     width: 45,
