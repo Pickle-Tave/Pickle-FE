@@ -154,13 +154,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: 20,
-        marginTop: 20,
+        marginTop: 5,
     },
     lower_section2: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginHorizontal: 20,
-        marginTop: 20,
+        marginTop: 5,
     },
     picture_container: {
         flex: 1,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
         width: 190,
         height: 155,
         resizeMode: 'contain',
-        borderRadius: 20,
+        borderRadius: 10,
         marginBottom: 8
     },
     pic_plus: {
