@@ -52,11 +52,11 @@ const HashtagMake = ({ visible, onClose }) => {
                             </View>
                             <View style={styles.HashtagList}>
                                 {hashtagList.map((item) => (
-                                    <View key={item.id} style={styles.hashtagItem}>
+                                    <View key={item.tag_id} style={styles.hashtagItem}>
                                         <Text style={styles.text}>
-                                            {`#${item.text}`}
+                                            {`#${item.tag_name}`}
                                         </Text>
-                                        <TouchableOpacity onPress={() => dispatch(deleteHashTag(item.id))}>
+                                        <TouchableOpacity onPress={() => dispatch(deleteHashTag(item.tag_id))}>
                                             <Text style={{ marginLeft: 5, alignItems: 'center' }}>X</Text>
                                         </TouchableOpacity>
                                     </View>

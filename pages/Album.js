@@ -16,43 +16,19 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import KebabModal from '../components/Modal/KebabModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
-
-const mockData = [
-  {
-    id: 1,
-    title: '일본여행',
-    type: '개인앨범',
-  },
-  {
-    id: 2,
-    title: '미국여행',
-    type: '공유앨범',
-  },
-  {
-    id: 3,
-    title: '강아지',
-    type: '개인앨범',
-  },
-  {
-    id: 4,
-    title: '셀카',
-    type: '공유앨범',
-  },
-  {
-    id: 5,
-    title: '풍경',
-    type: '개인앨범',
-  },
-];
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteAlbum } from '../src/actions/AlbumAction';
 
 const Album = ({navigation}) => {
-  const [albumlist, setAlbumList] = useState(mockData);
+  const albumList = useSelector((state) => state.AlbumReducer)
+  const dispatch = useDispatch();
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
   const [kebabvisible, setKebabVisible] = useState(false);
   const [editvisible, setEditVisible] = useState(false);
   const [sharevisible, setShareVisible] = useState(false);
+  const [albumId, setAlbumId] = useState(null); // 현재 수정할 앨범의 ID
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -82,9 +58,17 @@ const Album = ({navigation}) => {
   };
 
   // 공유 버튼 클릭시 kebab 모달이 사라지고 edit 모달이 뜸
-  const EditModal = () => {
+  const EditModal = (id) => {
     setKebabVisible(false);
+    setAlbumId(id);
     setEditVisible(true);
+  };
+
+  const handleDeleteAlbum = () => {
+    if (albumId !== null) {
+      dispatch(deleteAlbum(albumId));
+      setKebabVisible(false);
+    }
   };
 
   const AlbumItemAccess = (id) => {
@@ -99,12 +83,14 @@ const Album = ({navigation}) => {
       <KebabModal
         visible={kebabvisible}
         onClose={() => setKebabVisible(false)}
-        EditModal={EditModal}
+        EditModal={() => EditModal(albumId)}
         ShareModal={ShareModal}
+        DeleteAlbum={handleDeleteAlbum}
       />
       <AlbumEditModal
         visible={editvisible}
         onClose={() => setEditVisible(false)}
+        albumId={albumId}
       />
       <AlbumShareModal
         visible={sharevisible}
@@ -135,15 +121,16 @@ const Album = ({navigation}) => {
       </View>
       <View style={styles.albumlist}>
         <FlatList
-          data={albumlist}
-          keyExtractor={(item) => item.id.toString()}
+          data={albumList}
+          keyExtractor={(item) => item.album_id.toString()}
           renderItem={({ item }) => (
             <AlbumItem 
               {...item} 
               kebabvisible={kebabvisible} 
               setKebabVisible={setKebabVisible}
-              AlbumItemAccess={() => AlbumItemAccess(item.id)}
-            />
+              AlbumItemAccess={() => AlbumItemAccess(item.album_id)}
+              setAlbumId={setAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함     
+              />
           )}
         />
       </View>
@@ -190,6 +177,7 @@ const styles = StyleSheet.create({
   },
   albumlist: {
     width: '95%',
+    marginBottom: 190,
   },
   album_plus: {
     position: 'absolute',

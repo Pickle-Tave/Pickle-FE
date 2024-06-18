@@ -28,8 +28,8 @@ const HashtagList = ({ visible, onClose }) => {
               <Text style={styles.modalTitle}>해시태그 목록</Text>
               <View style={styles.hashList}>
                 {hashtagList.map(item => (
-                  <View key={item.id} style={styles.hashItem}>
-                    <Text style={styles.hashText}>#{item.text}</Text>
+                  <View key={item.tag_id} style={styles.hashItem}>
+                    <Text style={styles.hashText}>#{item.tag_name}</Text>
                   </View>
                 ))}
               </View>

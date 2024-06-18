@@ -2,24 +2,24 @@ import { ADD_HASHTAG,DELETE_HASHTAG } from "../actions/HashTagAction"
 
 const initialState = [
     {
-        id: 1,
-        text: "동물"
+        tag_id: 1,
+        tag_name: "동물"
     },
     {
-        id: 2,
-        text: "여행"
+        tag_id: 2,
+        tag_name: "여행"
     },
     {
-        id: 3,
-        text: "일상"
+        tag_id: 3,
+        tag_name: "일상"
     },
     {
-        id: 4,
-        text: "청춘"
+        tag_id: 4,
+        tag_name: "청춘"
     },
     {
-        id: 5,
-        text: "행복"
+        tag_id: 5,
+        tag_name: "행복"
     },
 ]
 
@@ -29,7 +29,7 @@ const HashTagReducer = (state = initialState, action) => {
             return [...state, action.payload]
         case DELETE_HASHTAG:
             return state.filter((item) =>
-                String(item.id) !== String(action.id))
+                String(item.tag_id) !== String(action.tag_id))
         default:
             return state;
     }
