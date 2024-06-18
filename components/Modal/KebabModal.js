@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
-const KebabModal = ({ visible, onClose, ShareModal, EditModal }) => {
+const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum }) => {
+   
+
     return (
         <Modal
             visible={visible}
@@ -19,7 +21,7 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal }) => {
                                 <TouchableOpacity onPress={ShareModal}>
                                     <Text style={styles.text2}>공유</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={DeleteAlbum}>
                                     <Text style={styles.text3}>삭제</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={onClose}>

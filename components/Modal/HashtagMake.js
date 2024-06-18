@@ -11,31 +11,23 @@ import {
     TouchableWithoutFeedback,
     FlatList
 } from 'react-native';
-
-const hashtag = [
-    {
-        id: 1,
-        content: '동물'
-    },
-    {
-        id: 2,
-        content: '여행'
-    },
-    {
-        id: 3,
-        content: '일상'
-    },
-    {
-        id: 4,
-        content: '청춘'
-    },
-    {
-        id: 5,
-        content: '행복'
-    },
-];
+import { useSelector, useDispatch } from 'react-redux';
+import { addHashTag, deleteHashTag } from '../../src/actions/HashTagAction';
 
 const HashtagMake = ({ visible, onClose }) => {
+    const dispatch = useDispatch();
+    const hashtagList = useSelector((state) => state.HashTagReducer);
+    const [newHashTag, setNewHashTag] = useState('');
+    const [nextId, setNextId] = useState(hashtagList.length + 1);
+
+    const handleAddHashTag = () => {
+        if (newHashTag.trim() !== '') {
+            dispatch(addHashTag(nextId, newHashTag));
+            setNewHashTag('');
+            setNextId(nextId + 1);
+        }
+    };
+
     return (
         <Modal
             visible={visible}
@@ -49,18 +41,22 @@ const HashtagMake = ({ visible, onClose }) => {
                             <Text style={styles.modalTitle}>#해시태그 만들기</Text>
                             <Text style={styles.modalSubtitle}>#해시태그를 입력하세요</Text>
                             <View style={styles.Modal_input_section}>
-                                <TextInput style={styles.modalInput} />
-                                <TouchableOpacity style={styles.Modal_plus}>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    value={newHashTag}
+                                    onChangeText={setNewHashTag}
+                                />
+                                <TouchableOpacity style={styles.Modal_plus} onPress={handleAddHashTag}>
                                     <Text style={styles.plusText}>추가</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.HashtagList}>
-                                {hashtag.map((item) => (
-                                    <View key={item.id} style={styles.hashtagItem}>
+                                {hashtagList.map((item) => (
+                                    <View key={item.tag_id} style={styles.hashtagItem}>
                                         <Text style={styles.text}>
-                                            {`#${item.content}`}
+                                            {`#${item.tag_name}`}
                                         </Text>
-                                        <TouchableOpacity>
+                                        <TouchableOpacity onPress={() => dispatch(deleteHashTag(item.tag_id))}>
                                             <Text style={{ marginLeft: 5, alignItems: 'center' }}>X</Text>
                                         </TouchableOpacity>
                                     </View>

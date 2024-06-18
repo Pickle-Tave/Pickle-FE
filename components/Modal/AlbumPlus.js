@@ -10,8 +10,21 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { addAlbum } from '../../src/actions/AlbumAction';
 
 const AlbumPlus = ({visible, onClose}) => {
+  const dispatch = useDispatch();
+  const albumList = useSelector((state) => state.AlbumReducer);
+  const [newAlbumName, setNewAlbumName] = useState('');
+  const [nextId, setNextId] = useState(albumList.length + 1)
+
+  const handleAddAlbum = () => {
+    dispatch(addAlbum(nextId, newAlbumName, "개인앨범"));
+            setNewAlbumName('');
+            setNextId(nextId + 1);
+            onClose();
+  }
   return (
     <Modal
       visible={visible}
@@ -26,7 +39,12 @@ const AlbumPlus = ({visible, onClose}) => {
               <Text style={styles.modalSubTitle}>
                 앨범의 이름을 입력하세요.
               </Text>
-              <TextInput style={styles.text_input} placeholder="제목" />
+              <TextInput 
+              style={styles.text_input} 
+              placeholder="제목" 
+              value={newAlbumName}
+              onChangeText={setNewAlbumName}
+              />
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   onPress={onClose}
@@ -34,7 +52,7 @@ const AlbumPlus = ({visible, onClose}) => {
                   <Text style={styles.modalButton}>취소</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={onClose}
+                  onPress={handleAddAlbum}
                   style={styles.modalButtonContainer2}>
                   <Text style={styles.modalButton}>완료</Text>
                 </TouchableOpacity>

@@ -15,6 +15,8 @@ const AlbumItem = (props) => {
         //앨범 id전달해서 즐겨찾기에 삭제하는 코드
     }
 
+   
+
     return (
         <View style={styles.container}>
             <View style={styles.leftContainer}>
@@ -38,18 +40,20 @@ const AlbumItem = (props) => {
                 </View>
                 <TouchableOpacity onPress={props.AlbumItemAccess}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.title_text}>{props.title}</Text>
+                        <Text style={styles.title_text}>{props.album_name}</Text>
                         {
-                            String(props.type) === "개인앨범" ?
-                                <Text style={styles.type_text1}>{props.type}</Text> :
-                                <Text style={styles.type_text2}>{props.type}</Text>
+                            String(props.album_type) === "개인앨범" ?
+                                <Text style={styles.type_text1}>{props.album_type}</Text> :
+                                <Text style={styles.type_text2}>{props.album_type}</Text>
                         }
 
                     </View>
                 </TouchableOpacity>
-
             </View>
-            <TouchableOpacity onPress={() => props.setKebabVisible(true)}>
+            <TouchableOpacity onPress={() => {
+                props.setAlbumId(props.album_id);
+                props.setKebabVisible(true);
+            }}>
                 <Image
                     style={styles.kebab_image}
                     source={require('../assets/icon/kebab.png')}
