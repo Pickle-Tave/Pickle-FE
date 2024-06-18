@@ -7,9 +7,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addAlbumImage, deleteAlbumImage } from '../src/actions/AlbumImageAction';
 import { selectAlbumImagesByAlbumId } from '../src/selectors/selectors';
 
-
-// check가 true일때는 취소버튼,체크박스, 휴지통 생성하기
-
 const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
     const dispatch = useDispatch();
 
@@ -17,6 +14,7 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
     const imageList = useSelector(state => selectAlbumImages(state));
 
     const [deletevisible, setDeleteVisible] = useState(false);
+    const [selectedImages, setSelectedImages] = useState([]);
 
     const onSelectImage = () => {
         launchImageLibrary(
@@ -35,16 +33,22 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
                     console.log('ImagePicker Error: ', res.errorMessage);
                 } else {
                     console.log('Selected images: ', res.assets);
-                    // 선택된 이미지들에 대한 추가 처리 로직
                     res.assets.forEach(asset => {
                         console.log('Image URI: ', asset.uri);
-                        // 이미지 표시, 업로드
                     });
                 }
             },
         );
     };
 
+    const handleDeleteImages = () => {
+        selectedImages.forEach(id => {
+            dispatch(deleteAlbumImage(id));
+        });
+        setSelectedImages([]);
+        setCheck(false);
+        setDeleteVisible(false);
+    };
 
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
@@ -56,7 +60,13 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
                     fillColor='black'
                     unFillColor='transparent'
                     iconStyle={{ borderColor: 'black' }}
-                // onPress
+                    onPress={(isChecked) => {
+                        if (isChecked) {
+                            setSelectedImages([...selectedImages, item.image_id]);
+                        } else {
+                            setSelectedImages(selectedImages.filter(id => id !== item.image_id));
+                        }
+                    }}
                 />
             }
             <Image style={styles.picture} source={item.src} />
@@ -68,7 +78,7 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <ImgDeleteModal visible={deletevisible} onClose={() => setDeleteVisible(false)} />
+            <ImgDeleteModal visible={deletevisible} onClose={() => setDeleteVisible(false)} onDelete={handleDeleteImages} />
             <View style={styles.upper_section}>
                 <Text style={styles.title}>{album_name}</Text>
                 <TouchableOpacity onPress={() => {
@@ -95,7 +105,7 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
                     </TouchableOpacity>
                 }
                 <TouchableOpacity style={styles.pic_plus} onPress={onSelectImage}>
-                    <Image style={{ width: 41, height: 41}} source={require('../assets/icon/pic_plus.png')} />
+                    <Image style={{ width: 41, height: 41 }} source={require('../assets/icon/pic_plus.png')} />
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     picture: {
-        width: '95%',
+        width: 190,
         height: 155,
         resizeMode: 'contain',
         borderRadius: 20,
