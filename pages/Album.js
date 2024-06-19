@@ -22,6 +22,7 @@ import { deleteAlbum } from '../src/actions/AlbumAction';
 const Album = ({navigation}) => {
   const albumList = useSelector((state) => state.AlbumReducer)
   const dispatch = useDispatch();
+  const albumLikeList = useSelector((state) => state.AlbumLikeReducer)
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);

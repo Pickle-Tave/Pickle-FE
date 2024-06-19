@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { addAlbumLike, deleteAlbumLike } from '../src/actions/AlbumLikeAction';
 
 const AlbumItem = (props) => {
-    const [heart, setHeart] = useState(false);
+    const dispatch = useDispatch();
+    const likedAlbums = useSelector(state => state.AlbumLikeReducer);
+    const isLiked = likedAlbums.some(album => album.album_id === props.album_id);
+
+    const [heart, setHeart] = useState(isLiked);
+
+    useEffect(() => {
+        setHeart(isLiked);
+    }, [isLiked]);
 
     const addHeart = () => {
-        setHeart(true)
-        //앨범 id전달해서 즐겨찾기에 추가하는 코드
-    }
+        setHeart(true);
+        dispatch(addAlbumLike(props.album_id, props.album_name, props.album_type));
+    };
 
     const deleteHeart = () => {
-        setHeart(false)
-        //앨범 id전달해서 즐겨찾기에 삭제하는 코드
-    }
-
-   
+        setHeart(false);
+        dispatch(deleteAlbumLike(props.album_id));
+    };
 
     return (
         <View style={styles.container}>
@@ -25,7 +32,7 @@ const AlbumItem = (props) => {
                         style={styles.heartIcon}
                         onPress={() => (heart ? deleteHeart() : addHeart())}>
                         <Image
-                            style={{ width: 17, height: 15 }}
+                            style={{ width: 16, height: 14 }}
                             source={
                                 heart
                                     ? require('../assets/icon/heart_on.png')
@@ -46,7 +53,6 @@ const AlbumItem = (props) => {
                                 <Text style={styles.type_text1}>{props.album_type}</Text> :
                                 <Text style={styles.type_text2}>{props.album_type}</Text>
                         }
-
                     </View>
                 </TouchableOpacity>
             </View>
@@ -85,8 +91,8 @@ const styles = StyleSheet.create({
         height: 60,
     },
     folder_image: {
-        width: 68,
-        height: 68,
+        width: 65,
+        height: 65,
         resizeMode: 'contain',
     },
     heartIcon: {
