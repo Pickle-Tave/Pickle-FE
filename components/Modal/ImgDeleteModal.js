@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
-const ImgDeleteModal = ({ visible, onClose }) => {
+const ImgDeleteModal = ({ visible, onClose, onDelete }) => {
     return (
         <Modal
             visible={visible}
@@ -18,7 +18,7 @@ const ImgDeleteModal = ({ visible, onClose }) => {
                                 <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
                                     <Text style={styles.modalButton}>취소</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer2}>
+                                <TouchableOpacity onPress={onDelete} style={styles.modalButtonContainer2}>
                                     <Text style={styles.modalButton}>삭제</Text>
                                 </TouchableOpacity>
                             </View>

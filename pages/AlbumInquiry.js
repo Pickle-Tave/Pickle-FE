@@ -3,10 +3,15 @@ import "react-native-gesture-handler";
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import AlbumAccess from "../components/AlbumAccess";
+import { useSelector } from "react-redux";
 
 const AlbumInquiry = ({ route }) => {
   const { id } = route.params;
   const [check, setCheck] = useState(false);
+  
+  const album = useSelector((state) =>
+    state.AlbumReducer.find((album) => album.album_id === id)
+  );
 
   return (
     <View style={styles.container}>
@@ -19,7 +24,7 @@ const AlbumInquiry = ({ route }) => {
           />
         </TouchableOpacity>
       </View>
-      <AlbumAccess check={check} setCheck={setCheck}/>
+      <AlbumAccess check={check} setCheck={setCheck} {...album} />
     </View>
   );
 }

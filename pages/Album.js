@@ -22,6 +22,7 @@ import { deleteAlbum } from '../src/actions/AlbumAction';
 const Album = ({navigation}) => {
   const albumList = useSelector((state) => state.AlbumReducer)
   const dispatch = useDispatch();
+  const albumLikeList = useSelector((state) => state.AlbumLikeReducer)
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   album_plus: {
     position: 'absolute',
     bottom: 100,
-    right: 30,
+    right: 40,
   },
   album_plus_image: {
     width: 45,
