@@ -18,7 +18,7 @@ const { width } = Dimensions.get('window');
 const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
+      <View style={styles.logoContainer}> 
         <Image
           style={styles.Logostyle}
           source={require('../assets/icon/logo_big.png')}
