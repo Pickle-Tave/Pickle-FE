@@ -16,6 +16,11 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
     const [deletevisible, setDeleteVisible] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
 
+    const getNextImageId = (images) => {
+        const maxId = images.reduce((max, image) => Math.max(max, image.image_id), 12);
+        return maxId + 1;
+    };
+
     const onSelectImage = () => {
         launchImageLibrary(
             {
@@ -33,8 +38,15 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
                     console.log('ImagePicker Error: ', res.errorMessage);
                 } else {
                     console.log('Selected images: ', res.assets);
+                    let nextImageId = getNextImageId(imageList);
                     res.assets.forEach(asset => {
-                        console.log('Image URI: ', asset.uri);
+                        const newImage = {
+                            image_id: nextImageId++,
+                            user_id: 'jina', // 사용자 ID를 적절히 설정
+                            album_id: album_id,
+                            src: { uri: asset.uri } // URI를 사용하여 이미지 표시
+                        };
+                        dispatch(addAlbumImage(newImage.image_id, newImage.user_id, newImage.album_id, newImage.src));
                     });
                 }
             },
@@ -49,6 +61,7 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
         setCheck(false);
         setDeleteVisible(false);
     };
+
 
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
