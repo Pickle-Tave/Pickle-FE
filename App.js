@@ -48,8 +48,7 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
       )}
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.headerRight}>
-        <TouchableOpacity
-          onPress={() => setAlram(!alram)}>
+        <TouchableOpacity onPress={() => setAlram(!alram)}>
           <Image
             style={styles.headerAlramImage}
             source={
@@ -150,7 +149,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    position: 'relative'
+    position: 'relative',
   },
   headerTitle: {
     color: '#FFFFFF',
@@ -302,7 +301,7 @@ const styles = StyleSheet.create({
     left: 10,
     top: '50%',
     transform: [{translateY: -10}],
-    zIndex: 1
+    zIndex: 1,
   },
   headerLeftImage: {
     width: 10, // 이미지 너비 조정

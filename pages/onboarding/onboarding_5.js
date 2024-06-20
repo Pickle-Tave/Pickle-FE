@@ -1,9 +1,84 @@
 import 'react-native-gesture-handler';
-
-import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
+import React, {useEffect, useCallback, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TouchableOpacity,
+  Linking,
+  Alert,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {loginKakao} from '../../api/loginKakao';
+import axios from '../../api/axios';
 
 const Onboarding_5 = () => {
+  const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
+  const REDIRECT_URI =
+    'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com/login/oauth2/code/kakao';
+  const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  const [accessToken, setAccessToken] = useState(null); // 카카오에서 받은 액세스 토큰 저장
+
+  const handleLogin = () => {
+    // 카카오 인증 페이지로 이동
+    Linking.openURL(KAKAO_AUTH_URI);
+  };
+
+  // 카카오에서 토큰 받기
+  // 카카오에서 받은 인증코드를 사용해 액세스 토큰 요청
+  // 성공 -> AsyncStorage에 액세스 토큰, 리프세시 토큰 저장
+
+  const getTokensFromKakao = useCallback(
+    async code => {
+      try {
+        // 백엔드로 인증 코드 전송
+        const loginData = await loginKakao(code);
+
+        if (loginData.success) {
+          await AsyncStorage.setItem('accessToken', loginData.data.accessToken);
+          await AsyncStorage.setItem(
+            'refreshToken',
+            loginData.data.refreshToken,
+          );
+          Alert.alert(
+            '로그인 성공',
+            '카카오 로그인이 성공적으로 완료되었습니다.',
+          );
+        } else {
+          throw new Error('백엔드 서버에서 인증에 실패했습니다.');
+        }
+      } catch (error) {
+        Alert.alert(
+          '로그인 실패',
+          error.message || '서버와 통신하는 중 오류가 발생했습니다.',
+        );
+      }
+    },
+    [REST_API_KEY, REDIRECT_URI],
+  );
+
+  // 카카오 인증을 마치고 오면 url에 포함된 인증코드를 추출하고 이를 통해 토큰 요청
+  useEffect(() => {
+    const handleUrl = async ({url}) => {
+      if (url.startsWith(REDIRECT_URI)) {
+        const code = url.split('code=')[1];
+        if (code) {
+          await getTokensFromKakao(code); // 인증코드 전송해서 토큰 요청
+        } else {
+          Alert.alert('인증 코드 오류', '인증 코드를 가져오지 못했습니다.');
+        }
+      }
+    };
+
+    const linkingListener = Linking.addListener('url', handleUrl);
+
+    return () => {
+      linkingListener.remove();
+    };
+  }, [REDIRECT_URI, getTokensFromKakao]);
+
   return (
     <View style={styles.container}>
       <Image
@@ -19,13 +94,13 @@ const Onboarding_5 = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <View style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Image
             style={styles.kakaoIcon}
             source={require('../../assets/icon/kakao.png')}
           />
           <Text style={styles.buttonText}>로그인</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -34,21 +109,21 @@ const Onboarding_5 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between', // 상하단에 공간을 분배
-    alignItems: 'center', // 가로 축에서 중앙 정렬
-    backgroundColor: 'white', // 배경색 설정 (선택 사항)
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
     marginTop: 0,
   },
   imageContainer: {
-    flex: 1, // 남은 공간을 차지하도록 설정
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%', // 이미지 컨테이너의 너비 설정
+    width: '100%',
   },
   buttonContainer: {
-    width: '100%', // 버튼 너비 설정
-    alignItems: 'center', // 버튼을 중앙에 정렬
-    marginBottom: 100, // 하단 여백 추가
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 100,
   },
   button: {
     backgroundColor: '#FFEB00',
@@ -64,7 +139,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 10, // 이미지와 텍스트 사이의 간격
+    marginLeft: 10,
   },
   kakaoIcon: {
     width: 20,
@@ -72,22 +147,22 @@ const styles = StyleSheet.create({
   },
   Ment: {
     fontSize: 20,
-    textAlign: 'center', // 텍스트를 중앙 정렬
-    marginVertical: 2, // 텍스트 간격 추가
+    textAlign: 'center',
+    marginVertical: 2,
     fontWeight: 'bold',
   },
   PickleLogo: {
-    width: 120, // 이미지의 너비를 줄여서 설정
-    height: 110, // 이미지의 높이를 줄여서 설정
-    marginBottom: 0, // 로고와 이미지 사이 간격 줄이기
+    width: 120,
+    height: 110,
+    marginBottom: 0,
     marginTop: 40,
   },
   PickleImage: {
     marginLeft: 20,
-    width: 300, // 이미지의 너비를 줄여서 설정
-    height: 300, // 이미지의 높이를 줄여서 설정
-    aspectRatio: 1, // 원본 비율 유지
-    marginVertical: 105, // 이미지 상하 간격 추가
+    width: 300,
+    height: 300,
+    aspectRatio: 1,
+    marginVertical: 105,
   },
 });
 
