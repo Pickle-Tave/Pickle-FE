@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
-const ImgDeleteModal = ({ visible, onClose, onDelete }) => {
+const AlbumPasswordModal = ({ visible, onClose }) => {
     return (
         <Modal
             visible={visible}
@@ -12,14 +12,12 @@ const ImgDeleteModal = ({ visible, onClose, onDelete }) => {
                 <View style={styles.modalBackground}>
                     <TouchableWithoutFeedback>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>사진 삭제하기</Text>
-                            <Text style={styles.modalSubTitle}>선택한 사진을 삭제하시겠습니까?</Text>
-                            <View style={styles.modalButtons}>
-                                <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
-                                    <Text style={styles.modalButton}>취소</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={onDelete} style={styles.modalButtonContainer2}>
-                                    <Text style={styles.modalButton}>삭제</Text>
+                            <Text style={styles.modalTitle}>비밀번호 입력하기</Text>
+                            <Text style={styles.textLeftAlign}>Password를 입력하세요.</Text>
+                            <View style={styles.password_section}>
+                                <TextInput style={styles.textinput} />
+                                <TouchableOpacity style={styles.done_btn}>
+                                    <Text style={styles.done_text}>완료</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -41,7 +39,7 @@ const styles = StyleSheet.create({
         width: '85%', // 모달 너비 설정
         backgroundColor: 'white',
         borderRadius: 10,
-        paddingVertical: 20,
+        padding: 20,
         alignItems: 'center',
         borderColor: '#F7F8CB',
         borderWidth: 5,
@@ -55,47 +53,58 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        marginTop: 7,
         alignItems: 'center',
         color: 'black'
     },
-    modalSubTitle: {
-        fontSize: 16,
-        marginBottom: 10,
-        alignItems: 'center',
-        color: 'black',
-        
+    textLeftAlign: {
+        width: '100%', 
+        textAlign: 'left', 
+        marginTop: 10,
     },
-    text_input:{
-        height: 38,
-        borderWidth: 1,
+    password_section: {
         width: '90%',
-        borderRadius: 30,
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 12,
+        justifyContent: 'center'
+
+    },
+    textinput: {
+        borderWidth: 1,
+        borderRadius: 20,
+        width: '90%',
+        height: 35,
+    },
+    done_btn: {
+        backgroundColor: 'black',
+        justifyContent: 'center', // 추가: 세로축 중앙 정렬
+        alignItems: 'center', // 추가: 세로축 중앙 정렬
+        color: 'white',
+        borderRadius: 20,
         paddingLeft: 15,
-        marginTop: 6,
-        fontSize: 13,
-        marginBottom: 10,
+        paddingRight: 15,
+        height: 35,
+        marginBottom: 20,
+    },
+    done_text: {
+        color: 'white',
+    },
+    link_section: {
+        width: '90%',
+        flexDirection: 'row',
+        gap: 10,
+        justifyContent: 'center',
+        marginTop: 7,
     },
     modalButtons: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         width: '100%',
-        marginTop: 15,
-        borderTopColor: '#CCCCCC',
-        borderTopWidth: 1,
+        marginTop: 30,
     },
     modalButtonContainer1: {
-        width: '50%', // 너비를 50%로 설정
-        height: '100%',
         alignItems: 'center', // 중앙 정렬
-        marginTop: 10,
-        paddingTop: 5,
-        borderRightColor: '#CCCCCC',
-        borderRightWidth: 1,
-    },
-    modalButtonContainer2: {
-        width: '50%', // 너비를 50%로 설정
-        alignItems: 'center', // 중앙 정렬
-        paddingTop: 15,
     },
     modalButton: {
         fontSize: 16,
@@ -103,4 +112,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ImgDeleteModal;
+export default AlbumPasswordModal;

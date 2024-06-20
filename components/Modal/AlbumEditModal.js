@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,31 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateAlbumName } from '../../src/actions/AlbumAction';
 
-const AlbumEditModal = ({visible, onClose}) => {
+const AlbumEditModal = ({ visible, onClose, albumId }) => {
+  const dispatch = useDispatch();
+
+  const album = useSelector((state) =>
+    state.AlbumReducer.find((album) => album.album_id === albumId)
+  );
+
+  const [newAlbumName, setNewAlbumName] = useState('');
+
+  useEffect(() => {
+    if (album) {
+      setNewAlbumName(album.album_name);
+    }
+  }, [album]);
+
+  const handleUpdateAlbumName = () => {
+    if (newAlbumName.trim() !== '') {
+      dispatch(updateAlbumName(albumId, newAlbumName, album.album_type));
+      onClose();
+    }
+  };
+
   return (
     <Modal
       visible={visible}
@@ -26,7 +49,14 @@ const AlbumEditModal = ({visible, onClose}) => {
               <Text style={styles.modalSubTitle}>
                 앨범의 이름을 입력하세요.
               </Text>
-              <TextInput style={styles.text_input} placeholder="원래 앨범명" />
+              {album && (
+                <TextInput
+                  style={styles.text_input}
+                  value={newAlbumName}
+                  onChangeText={setNewAlbumName}
+                  placeholder={`${album.album_name}`}
+                />
+              )}
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   onPress={onClose}
@@ -34,7 +64,7 @@ const AlbumEditModal = ({visible, onClose}) => {
                   <Text style={styles.modalButton}>취소</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={onClose}
+                  onPress={handleUpdateAlbumName}
                   style={styles.modalButtonContainer2}>
                   <Text style={styles.modalButton}>완료</Text>
                 </TouchableOpacity>
@@ -63,7 +93,7 @@ const styles = StyleSheet.create({
     borderColor: '#F7F8CB',
     borderWidth: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
