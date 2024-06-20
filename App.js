@@ -66,6 +66,7 @@ const CustomHeader = ({ navigation, title, canGoBack }) => {
             </View>
         </View>
     );
+
 };
 
 const MainScreen = () => {
@@ -148,7 +149,9 @@ const MainScreen = () => {
 };
 
 function App() {
-    const [isLogged, setIsLogged] = useState(true);
+
+  const [isLogged, setIsLogged] = useState(false);
+
 
     return isLogged ? (
         //로그인이 된 상태: Home화면
@@ -278,6 +281,7 @@ function App() {
 }
 
 const styles = StyleSheet.create({
+
     headerContainer: {
         backgroundColor: '#4C5A49',
         height: 70,
@@ -330,6 +334,7 @@ const styles = StyleSheet.create({
         height: 26,
         marginTop: 5,
     },
+
 });
 
 export default App;

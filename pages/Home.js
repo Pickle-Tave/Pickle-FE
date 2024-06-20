@@ -8,14 +8,14 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import PoseRCMD from '../components/PoseRCMD';
 import PlaceRCMD from '../components/PlaceRCMD';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const Home = ({ navigation }) => {
+const Home = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}> 
@@ -47,9 +47,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10, 
+    marginBottom: 10,
     marginTop: 10,
-    height: 150
+    height: 150,
   },
   Logostyle: {
     height: 110,
