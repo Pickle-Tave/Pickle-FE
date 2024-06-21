@@ -18,6 +18,9 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum }) =>
                                 <TouchableOpacity onPress={EditModal}>
                                     <Text style={styles.text1}>수정</Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Text style={styles.text1}>복제</Text>
+                                </TouchableOpacity>
                                 <TouchableOpacity onPress={ShareModal}>
                                     <Text style={styles.text2}>공유</Text>
                                 </TouchableOpacity>
