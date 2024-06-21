@@ -1,4 +1,4 @@
-import { ADD_ALBUM, UPDATE_ALBUM_NAME, UPDATE_ALBUM_TYPE, DELETE_ALBUM } from "../actions/AlbumAction";
+import { ADD_ALBUM, UPDATE_ALBUM_NAME, UPDATE_ALBUM_TYPE, DELETE_ALBUM, COPY_ALBUM } from "../actions/AlbumAction";
 
 const initialState = [
     {
@@ -43,6 +43,8 @@ const AlbumReducer = (state = initialState, action) => {
         case UPDATE_ALBUM_TYPE:
             return state.map((item) =>
                 String(item.album_id) === String(action.payload.album_id) ? action.payload : item);
+        case COPY_ALBUM:
+            return [...state, action.payload]
         case DELETE_ALBUM:
             return state.filter((item) =>
                 String(item.album_id) !== String(action.album_id))

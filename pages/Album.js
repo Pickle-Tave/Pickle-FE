@@ -1,5 +1,4 @@
-import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -16,20 +15,32 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import KebabModal from '../components/Modal/KebabModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
+import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteAlbum } from '../src/actions/AlbumAction';
+import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
+import { addAlbumImage } from '../src/actions/AlbumImageAction';
 
-const Album = ({navigation}) => {
-  const albumList = useSelector((state) => state.AlbumReducer)
+const Album = ({ navigation }) => {
+  const albumList = useSelector((state) => state.AlbumReducer);
   const dispatch = useDispatch();
-  const albumLikeList = useSelector((state) => state.AlbumLikeReducer)
+  const albumImages = useSelector((state) => state.AlbumImageReducer);
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
   const [kebabvisible, setKebabVisible] = useState(false);
   const [editvisible, setEditVisible] = useState(false);
   const [sharevisible, setShareVisible] = useState(false);
+  const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
+
   const [albumId, setAlbumId] = useState(null); // 현재 수정할 앨범의 ID
+
+  // 새로 생성될 앨범의 id값
+  const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
+  const [newAlbumId, setNewAlbumId] = useState(maxAlbumId + 1);
+
+  useEffect(() => {
+    setNewAlbumId(maxAlbumId + 1);
+  }, [albumList]);
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -38,17 +49,17 @@ const Album = ({navigation}) => {
   const [value, setValue] = useState(1);
 
   const [items, setItems] = useState([
-    { label: "전체", value: 1 },
-    { label: "개인앨범", value: 2 },
-    { label: "공유앨범", value: 3 },
-    { label: "즐겨찾기", value: 4 }
+    { label: '전체', value: 1 },
+    { label: '개인앨범', value: 2 },
+    { label: '공유앨범', value: 3 },
+    { label: '즐겨찾기', value: 4 },
   ]);
 
   // 현재 선택된 값
   const [currentValue, setCurrentValue] = useState(1);
 
   // 드롭다운 메뉴를 선택할 때마다 값 변경
-  const onChange = value => {
+  const onChange = (value) => {
     setCurrentValue(value);
   };
 
@@ -72,30 +83,60 @@ const Album = ({navigation}) => {
     }
   };
 
+  const handleCopyAlbum = (albumId) => {
+    const album = albumList.find((album) => album.album_id === albumId);
+    if (album) {
+      // 앨범 복제
+      dispatch(addAlbum(newAlbumId, album.album_name, '개인앨범'));
+
+      // 복제된 앨범에 속하는 이미지 복제
+      const imagesToCopy = albumImages.filter((image) => image.album_id === albumId);
+      imagesToCopy.forEach((image) => {
+        dispatch(addAlbumImage(image.image_id, image.user_id, newAlbumId, image.src));
+      });
+
+      console.log('복제된 앨범 ID:', newAlbumId);
+      console.log('복제된 이미지:', imagesToCopy);
+    }
+    setKebabVisible(false);
+  };
+
+  const DeleteWarn = () => {
+    setKebabVisible(false);
+    setDeleteWarnVisible(true);
+  };
+
   const AlbumItemAccess = (id) => {
-    navigation.navigate('AlbumInquiry', { id })
-  }
+    navigation.navigate('AlbumInquiry', { id });
+  };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <AlbumPlus visible={plusvisible} onClose={() => setPlusVisible(false)} />
+      <AlbumPlus
+        visible={plusvisible}
+        newAlbumId={newAlbumId}
+        onClose={() => setPlusVisible(false)}
+      />
       <KebabModal
         visible={kebabvisible}
         onClose={() => setKebabVisible(false)}
         EditModal={() => EditModal(albumId)}
         ShareModal={ShareModal}
         DeleteAlbum={handleDeleteAlbum}
+        DeleteWarn={DeleteWarn}
+        CopyAlbum={() => handleCopyAlbum(albumId)} // 복제 기능 추가
       />
       <AlbumEditModal
         visible={editvisible}
         onClose={() => setEditVisible(false)}
         albumId={albumId}
       />
-      <AlbumShareModal
-        visible={sharevisible}
-        onClose={() => setShareVisible(false)}
+      <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
+      <DeleteWarnModal
+        visible={deletewarnvisible}
+        onClose={() => setDeleteWarnVisible(false)}
       />
       <View style={styles.search_section}>
         <TextInput style={styles.textinput} placeholder="앨범명을 입력하시오" />
@@ -125,19 +166,17 @@ const Album = ({navigation}) => {
           data={albumList}
           keyExtractor={(item) => item.album_id.toString()}
           renderItem={({ item }) => (
-            <AlbumItem 
-              {...item} 
-              kebabvisible={kebabvisible} 
+            <AlbumItem
+              {...item}
+              kebabvisible={kebabvisible}
               setKebabVisible={setKebabVisible}
               AlbumItemAccess={() => AlbumItemAccess(item.album_id)}
-              setAlbumId={setAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함     
-              />
+              setAlbumId={setAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
+            />
           )}
         />
       </View>
-      <TouchableOpacity
-        onPress={() => setPlusVisible(true)}
-        style={styles.album_plus}>
+      <TouchableOpacity onPress={() => setPlusVisible(true)} style={styles.album_plus}>
         <Image
           style={styles.album_plus_image}
           source={require('../assets/icon/album_plus.png')}
