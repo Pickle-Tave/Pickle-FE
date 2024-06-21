@@ -150,7 +150,7 @@ const MainScreen = () => {
 
 function App() {
 
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
 
 
     return isLogged ? (

@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { copyAlbum } from '../../src/actions/AlbumAction';
 
-const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum }) => {
+const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum, DeleteWarn, CopyAlbum }) => {
    
+    const pressCopy = () => {
+        DeleteWarn();
+        CopyAlbum();
+    }
 
     return (
         <Modal
@@ -17,6 +22,9 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum }) =>
                             <View style={styles.modal_section1}>
                                 <TouchableOpacity onPress={EditModal}>
                                     <Text style={styles.text1}>수정</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={CopyAlbum}>
+                                    <Text style={styles.text1}>복제</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={ShareModal}>
                                     <Text style={styles.text2}>공유</Text>

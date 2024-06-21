@@ -13,16 +13,15 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbum } from '../../src/actions/AlbumAction';
 
-const AlbumPlus = ({visible, onClose}) => {
+const AlbumPlus = ({visible, onClose, newAlbumId}) => {
   const dispatch = useDispatch();
   const albumList = useSelector((state) => state.AlbumReducer);
   const [newAlbumName, setNewAlbumName] = useState('');
-  const [nextId, setNextId] = useState(albumList.length + 1)
 
   const handleAddAlbum = () => {
-    dispatch(addAlbum(nextId, newAlbumName, "개인앨범"));
+    dispatch(addAlbum(newAlbumId, newAlbumName, "개인앨범"));
             setNewAlbumName('');
-            setNextId(nextId + 1);
+            // setNextId(nextId + 1);
             onClose();
   }
   return (
