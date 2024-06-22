@@ -12,9 +12,10 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {loginKakao} from '../../api/loginKakao';
 import axios from '../../api/axios';
+import {REACT_APP_REST_API_KEY} from '@env';
 
 const Onboarding_5 = () => {
-  const REST_API_KEY = process.env.REACT_APP_REST_API_KEY;
+  const REST_API_KEY = 'f5f79be138b94b36d3be6f56a53a610e';
   const REDIRECT_URI =
     'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com/login/oauth2/code/kakao';
   const KAKAO_AUTH_URI = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
@@ -35,6 +36,7 @@ const Onboarding_5 = () => {
       try {
         // 백엔드로 인증 코드 전송
         const loginData = await loginKakao(code);
+        console.log('Login data received:', loginData); // 로그인 데이터 로그 출력
 
         if (loginData.success) {
           await AsyncStorage.setItem('accessToken', loginData.data.accessToken);
@@ -60,12 +62,19 @@ const Onboarding_5 = () => {
   );
 
   // 카카오 인증을 마치고 오면 url에 포함된 인증코드를 추출하고 이를 통해 토큰 요청
+
   useEffect(() => {
-    const handleUrl = async ({url}) => {
+    const handleUrl = async event => {
+      const url = event.url;
+      console.log('Received URL:', url); // URL 로그 출력
+
       if (url.startsWith(REDIRECT_URI)) {
-        const code = url.split('code=')[1];
+        const urlParams = new URLSearchParams(new URL(url).search);
+        const code = urlParams.get('code');
+
         if (code) {
-          await getTokensFromKakao(code); // 인증코드 전송해서 토큰 요청
+          console.log('Extracted code:', code); // 추출된 코드 로그 출력
+          await getTokensFromKakao(code);
         } else {
           Alert.alert('인증 코드 오류', '인증 코드를 가져오지 못했습니다.');
         }
