@@ -6,6 +6,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbumImage, deleteAlbumImage } from '../src/actions/AlbumImageAction';
 import { selectAlbumImagesByAlbumId } from '../src/selectors/selectors';
+import ImgEnlargeModal from './Modal/ImgEnlargeModal';
 
 const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
     const dispatch = useDispatch();
@@ -15,11 +16,15 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
 
     const [deletevisible, setDeleteVisible] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
+    const [imgEnlargevisible, setImgEnlargevisible] = useState(false);
+    //현재 선택된 이미지 정보 저장
+    const [selectedImageSrc, setSelectedImageSrc] = useState(null);
 
     const getNextImageId = (images) => {
         const maxId = images.reduce((max, image) => Math.max(max, image.image_id), 12);
         return maxId + 1;
     };
+
 
     const onSelectImage = () => {
         launchImageLibrary(
@@ -82,7 +87,13 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
                     }}
                 />
             }
-            <Image style={styles.picture} source={item.src} />
+            <TouchableOpacity onPress={() => {
+                setSelectedImageSrc(item.src);
+                setImgEnlargevisible(true);
+            }}>
+                <Image style={styles.picture} source={item.src} />
+            </TouchableOpacity>
+
         </View>
     );
 
@@ -92,6 +103,10 @@ const AlbumAccess = ({ check, setCheck, album_name, album_id }) => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <ImgDeleteModal visible={deletevisible} onClose={() => setDeleteVisible(false)} onDelete={handleDeleteImages} />
+            <ImgEnlargeModal
+                visible={imgEnlargevisible}
+                onClose={() => setImgEnlargevisible(false)}
+                imageSrc={selectedImageSrc} />
             <View style={styles.upper_section}>
                 <Text style={styles.title}>{album_name}</Text>
                 <TouchableOpacity onPress={() => {

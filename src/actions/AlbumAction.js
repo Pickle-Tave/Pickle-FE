@@ -2,6 +2,7 @@
 export const ADD_ALBUM = 'ADD_ALBUM';
 export const UPDATE_ALBUM_NAME = 'UPDATE_ALBUM_NAME';
 export const UPDATE_ALBUM_TYPE = 'UPDATE_ALBUM_TYPE';
+export const COPY_ALBUM = 'COPY_ALBUM';
 export const DELETE_ALBUM = 'DELETE_ALBUM';
 
 //action객체 
@@ -29,6 +30,15 @@ export const updateAlbumType = (album_id, album_name, album_type) => ({
         album_id,
         album_name,
         album_type
+    }
+})
+
+export const copyAlbum = (album_id, album_name, album_type) => ({
+    type: COPY_ALBUM,
+    payload: {
+        album_id,
+        album_name,
+        album_type,
     }
 })
 
