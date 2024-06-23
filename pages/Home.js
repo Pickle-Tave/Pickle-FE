@@ -13,12 +13,12 @@ import {
 import PoseRCMD from '../components/PoseRCMD';
 import PlaceRCMD from '../components/PlaceRCMD';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}> 
+      <View style={styles.logoContainer}>
         <Image
           style={styles.Logostyle}
           source={require('../assets/icon/logo_big.png')}
@@ -29,7 +29,9 @@ const Home = ({navigation}) => {
       <View style={styles.hashtagContainer}>
         <TouchableOpacity
           style={styles.hashtagButton}
-          onPress={() => navigation.navigate('MyPage')}>
+          onPress={() =>
+            navigation.navigate('MyPage')
+          }>
           <Text style={styles.hashtagButtonText}>#해시태그 설정하러 가기</Text>
         </TouchableOpacity>
       </View>

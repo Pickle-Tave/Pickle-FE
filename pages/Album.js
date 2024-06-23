@@ -42,6 +42,7 @@ const Album = ({ navigation }) => {
     setNewAlbumId(maxAlbumId + 1);
   }, [albumList]);
 
+
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
 
