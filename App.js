@@ -1,9 +1,8 @@
-import 'react-native-gesture-handler';
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './pages/Home';
 import Album from './pages/Album';
 import Filter from './pages/filter/Filter';
@@ -19,19 +18,20 @@ import Filter2 from './pages/filter/Filter2';
 import Filter3 from './pages/filter/Filter3';
 import Filter4 from './pages/filter/Filter4';
 import Filter5 from './pages/filter/Filter5';
+import KakaoLoginRedirect from './components/login/KakaoLoginRedirect';
+import KakaoLoginWebview from './components/login/KakaoLoginWebview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const CustomHeader = ({navigation, title, canGoBack}) => {
+const CustomHeader = ({ navigation, title, canGoBack }) => {
   const [alram, setAlram] = useState(false);
 
   return (
     <View style={styles.headerContainer}>
       {canGoBack && (
-        <TouchableOpacity
-          onPress={() => navigation.pop()}
-          style={styles.headerLeft}>
+        <TouchableOpacity onPress={() => navigation.pop()} style={styles.headerLeft}>
           <Image
             style={styles.headerLeftImage}
             source={require('./assets/icon/back.png')} // 뒤로가기 버튼
@@ -40,8 +40,7 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
       )}
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.headerRight}>
-        <TouchableOpacity
-          onPress={() => (alram ? setAlram(false) : setAlram(true))}>
+        <TouchableOpacity onPress={() => (alram ? setAlram(false) : setAlram(true))}>
           <Image
             style={styles.headerAlramImage}
             source={
@@ -91,7 +90,7 @@ const MainScreen = () => {
         component={Filter}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -108,7 +107,7 @@ const MainScreen = () => {
         component={Home}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -125,7 +124,7 @@ const MainScreen = () => {
         component={Album}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -142,9 +141,33 @@ const MainScreen = () => {
 };
 
 function App() {
-
   const [isLogged, setIsLogged] = useState(false);
 
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
+  const checkLoginStatus = async () => {
+    try {
+      const value = await AsyncStorage.getItem('isLogged');
+      if (value === 'true') {
+        setIsLogged(true);
+      }
+    } catch (error) {
+      console.error('Failed to check login status:', error);
+    }
+  };
+
+  const handleLoginSuccess = async () => {
+    try {
+      // 여기에 로그인 성공 후 처리 로직 추가
+      // 예를 들어, AsyncStorage에 로그인 상태를 저장하는 로직을 추가할 수 있습니다.
+      await AsyncStorage.setItem('isLogged', 'true');
+      setIsLogged(true);
+    } catch (error) {
+      console.error('Failed to store login state:', error);
+    }
+  };
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
@@ -153,7 +176,7 @@ function App() {
         <Stack.Screen
           name="Main"
           component={MainScreen}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="Pickle" />
             ),
@@ -162,7 +185,7 @@ function App() {
         <Stack.Screen
           name="MyPage"
           component={MyPage}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader
                 navigation={navigation}
@@ -176,7 +199,7 @@ function App() {
         <Stack.Screen
           name="AlbumInquiry"
           component={AlbumInquiry}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader
                 navigation={navigation}
@@ -190,7 +213,7 @@ function App() {
         <Stack.Screen
           name="Filter1"
           component={Filter1}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="옵션 설정" />
             ),
@@ -200,7 +223,7 @@ function App() {
         <Stack.Screen
           name="Filter2"
           component={Filter2}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="로딩 중" />
             ),
@@ -210,7 +233,7 @@ function App() {
         <Stack.Screen
           name="Filter3"
           component={Filter3}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="사진 선택" />
             ),
@@ -220,7 +243,7 @@ function App() {
         <Stack.Screen
           name="Filter4"
           component={Filter4}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="해시태그 설정" />
             ),
@@ -230,7 +253,7 @@ function App() {
         <Stack.Screen
           name="Filter5"
           component={Filter5}
-          options={({navigation}) => ({
+          options={({ navigation }) => ({
             header: () => (
               <CustomHeader navigation={navigation} title="앨범에 추가" />
             ),
@@ -246,28 +269,40 @@ function App() {
         <Stack.Screen
           name="Onboarding_1"
           component={Onboarding_1}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Onboarding_2"
           component={Onboarding_2}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Onboarding_3"
           component={Onboarding_3}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Onboarding_4"
           component={Onboarding_4}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Onboarding_5"
           component={Onboarding_5}
-          options={{headerShown: false}}
+          options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="KakaoLoginWebview"
+          options={{ headerShown: false }}
+        >
+          {(props) => <KakaoLoginWebview {...props} onLoginSuccess={handleLoginSuccess} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name="KakaoLoginRedirect"
+          options={{ headerShown: false }}
+        >
+          {(props) => <KakaoLoginRedirect {...props} onLoginSuccess={handleLoginSuccess} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -295,7 +330,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     top: '50%',
-    transform: [{translateY: -10}],
+    transform: [{ translateY: -10 }],
     zIndex: 1,
   },
   headerLeftImage: {

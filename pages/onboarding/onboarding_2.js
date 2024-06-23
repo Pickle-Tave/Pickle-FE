@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const Onboarding_2 = () => {
   const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Image
