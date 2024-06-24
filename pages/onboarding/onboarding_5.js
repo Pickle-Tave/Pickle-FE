@@ -1,7 +1,8 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 const Onboarding_5 = () => {
   const navigation = useNavigation();
@@ -12,10 +13,7 @@ const Onboarding_5 = () => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.PickleLogo}
-        source={require('../../assets/icon/logo_small.png')}
-      />
+      <Image style={styles.PickleLogo} source={require('../../assets/icon/logo_small.png')} />
       <View style={styles.imageContainer}>
         <Text style={styles.Ment}>그럼, 준비됐나요?</Text>
         <Image
@@ -26,10 +24,7 @@ const Onboarding_5 = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Image
-            style={styles.kakaoIcon}
-            source={require('../../assets/icon/kakao.png')}
-          />
+          <Image style={styles.kakaoIcon} source={require('../../assets/icon/kakao.png')} />
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
       </View>

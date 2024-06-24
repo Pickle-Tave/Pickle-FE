@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
 
 import React from 'react';
-import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Onboarding_1 = () => {
   const navigation = useNavigation();
@@ -23,11 +23,14 @@ const Onboarding_1 = () => {
         </Text>
         <TouchableOpacity
           style={styles.buttonContainer}
-          onPress={() => navigation.navigate('Onboarding_2')}>
+          onPress={() => {
+            navigation.navigate('Onboarding_2')
+          }}
+        >
           <Text style={styles.button}>다음</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </View >
   );
 };
 
