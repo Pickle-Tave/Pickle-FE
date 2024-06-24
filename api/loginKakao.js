@@ -1,10 +1,10 @@
 import instance from './axios';
 
-export const loginKakao = async (code) => {
+export const loginKakao = async code => {
   try {
     console.log('Sending code to backend:', code);
 
-    const response = await instance.post('/auth/login', {code});
+    const response = await instance.post('/auth/login', {code: code});
 
     console.log('Received response from backend:', response.data);
     return response.data;
