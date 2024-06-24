@@ -143,31 +143,6 @@ const MainScreen = () => {
 function App() {
   const [isLogged, setIsLogged] = useState(false);
 
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
-
-  const checkLoginStatus = async () => {
-    try {
-      const value = await AsyncStorage.getItem('isLogged');
-      if (value === 'true') {
-        setIsLogged(true);
-      }
-    } catch (error) {
-      console.error('Failed to check login status:', error);
-    }
-  };
-
-  const handleLoginSuccess = async () => {
-    try {
-      // 여기에 로그인 성공 후 처리 로직 추가
-      // 예를 들어, AsyncStorage에 로그인 상태를 저장하는 로직을 추가할 수 있습니다.
-      await AsyncStorage.setItem('isLogged', 'true');
-      setIsLogged(true);
-    } catch (error) {
-      console.error('Failed to store login state:', error);
-    }
-  };
 
   return isLogged ? (
     //로그인이 된 상태: Home화면

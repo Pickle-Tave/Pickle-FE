@@ -3,6 +3,7 @@ import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+
 const Onboarding_5 = () => {
   const navigation = useNavigation();
 
