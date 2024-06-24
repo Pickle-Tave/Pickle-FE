@@ -142,9 +142,7 @@ const MainScreen = () => {
 };
 
 function App() {
-
   const [isLogged, setIsLogged] = useState(false);
-
 
   return isLogged ? (
     //로그인이 된 상태: Home화면
