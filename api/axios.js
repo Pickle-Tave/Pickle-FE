@@ -9,10 +9,14 @@ const instance = axios.create({
 // Axios 요청 인터셉터
 instance.interceptors.request.use(
   async config => {
-    const accessToken = await AsyncStorage.getItem('accessToken');
-    console.log('Access token in request interceptor:', accessToken);
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      console.log('Access token in request interceptor:', accessToken);
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+    } catch (error) {
+      console.error('Error getting access token from AsyncStorage:', error);
     }
     return config;
   },
