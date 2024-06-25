@@ -10,14 +10,14 @@ const instance = axios.create({
 instance.interceptors.request.use(
   async config => {
     const accessToken = await AsyncStorage.getItem('accessToken');
-    console.log('Access token in request interceptor:', accessToken); // 로그 추가
+    console.log('Access token in request interceptor:', accessToken);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
   error => {
-    console.error('Request interceptor error:', error); // 로그 추가
+    console.error('Request interceptor error:', error);
     return Promise.reject(error);
   },
 );
@@ -29,7 +29,7 @@ instance.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    console.error('Response interceptor error:', error); // 로그 추가
+    console.error('Response interceptor error:', error);
 
     if (
       error.response &&
@@ -39,7 +39,7 @@ instance.interceptors.response.use(
       originalRequest._retry = true; // 요청 재시도 플래그 설정
 
       try {
-        console.log('Attempting to refresh token...'); // 로그 추가
+        console.log('Attempting to refresh token...');
         const newTokens = await refreshAccessToken();
         await AsyncStorage.setItem('accessToken', newTokens.accessToken);
         await AsyncStorage.setItem('refreshToken', newTokens.refreshToken);
@@ -48,7 +48,7 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
         return instance(originalRequest);
       } catch (e) {
-        console.error('Token refresh failed:', e); // 로그 추가
+        console.error('Token refresh failed:', e);
         // 토큰 갱신 실패 시 로그아웃 또는 다른 처리
         return Promise.reject(e);
       }
