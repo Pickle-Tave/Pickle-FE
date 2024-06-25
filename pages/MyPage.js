@@ -10,6 +10,7 @@ import {
 import HashtagMake from '../components/Modal/HashtagMake';
 import HashtagList from '../components/Modal/HashtagList';
 import {logoutKakao} from '../api/logoutKakao';
+import {withdrawKakao} from '../api/withdrawKakao';
 
 const MyPage = ({navigation, handleLogoutSuccess}) => {
   const [MakeHashVisible, setMakeHashVisible] = useState(false);
@@ -23,6 +24,19 @@ const MyPage = ({navigation, handleLogoutSuccess}) => {
     } catch (error) {
       Alert.alert(
         '로그아웃 실패',
+        error.message || '서버와 통신하는 중 오류가 발생했습니다.',
+      );
+    }
+  };
+
+  const handleWithdraw = async () => {
+    try {
+      await withdrawKakao();
+      handleLogoutSuccess();
+      navigation.navigate('Onboarding_1');
+    } catch (error) {
+      Alert.alert(
+        '회원 탈퇴 실패',
         error.message || '서버와 통신하는 중 오류가 발생했습니다.',
       );
     }
@@ -88,7 +102,7 @@ const MyPage = ({navigation, handleLogoutSuccess}) => {
           />
           <Text style={styles.text3}>로그아웃</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.member_out}>
+        <TouchableOpacity style={styles.member_out} onPress={handleWithdraw}>
           <Image
             style={{width: 40, height: 40, marginLeft: 16}}
             source={require('../assets/icon/member_out.png')}
