@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -12,17 +12,19 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbum } from '../../src/actions/AlbumAction';
+import { AlbumCreate } from '../../api/AlbumCreate';
 
-const AlbumPlus = ({visible, onClose, newAlbumId}) => {
+const AlbumPlus = ({ visible, onClose, newAlbumId }) => {
   const dispatch = useDispatch();
   const albumList = useSelector((state) => state.AlbumReducer);
   const [newAlbumName, setNewAlbumName] = useState('');
 
   const handleAddAlbum = () => {
-    dispatch(addAlbum(newAlbumId, newAlbumName, "개인앨범"));
-            setNewAlbumName('');
-            // setNextId(nextId + 1);
-            onClose();
+    // dispatch(addAlbum(newAlbumId, newAlbumName, "개인앨범"));
+    setNewAlbumName('');
+    // setNextId(nextId + 1);
+    onClose();
+    AlbumCreate(newAlbumName);
   }
   return (
     <Modal
@@ -38,11 +40,11 @@ const AlbumPlus = ({visible, onClose, newAlbumId}) => {
               <Text style={styles.modalSubTitle}>
                 앨범의 이름을 입력하세요.
               </Text>
-              <TextInput 
-              style={styles.text_input} 
-              placeholder="제목" 
-              value={newAlbumName}
-              onChangeText={setNewAlbumName}
+              <TextInput
+                style={styles.text_input}
+                placeholder="제목"
+                value={newAlbumName}
+                onChangeText={setNewAlbumName}
               />
               <View style={styles.modalButtons}>
                 <TouchableOpacity
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     borderColor: '#F7F8CB',
     borderWidth: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,

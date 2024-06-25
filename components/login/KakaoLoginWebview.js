@@ -2,7 +2,7 @@ import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {useNavigation} from '@react-navigation/native';
-import {REACT_APP_REST_API_KEY, REDIRECT_URI} from '@env';
+import {REACT_APP_REST_API_KEY, REDIRECT_URI} from '@env'
 
 const KakaoLoginWebview = () => {
   const navigation = useNavigation();
