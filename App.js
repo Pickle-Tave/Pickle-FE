@@ -35,7 +35,7 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
           style={styles.headerLeft}>
           <Image
             style={styles.headerLeftImage}
-            source={require('./assets/icon/back.png')} // 뒤로가기 버튼
+            source={require('./assets/icon/back.png')}
           />
         </TouchableOpacity>
       )}
@@ -49,13 +49,13 @@ const CustomHeader = ({navigation, title, canGoBack}) => {
               alram
                 ? require('./assets/icon/alram_on.png')
                 : require('./assets/icon/alram_off.png')
-            } // 버튼 아이콘 이미지 경로로 변경
+            }
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('MyPage')}>
           <Image
             style={styles.headerMyPageImage}
-            source={require('./assets/icon/mypage.png')} // 버튼 아이콘 이미지 경로로 변경
+            source={require('./assets/icon/mypage.png')}
           />
         </TouchableOpacity>
       </View>
@@ -80,7 +80,7 @@ const MainScreen = () => {
           borderTopRightRadius: 20,
           borderColor: '#4C5A49',
           borderWidth: 5,
-          position: 'absolute', // 둥근 모서리를 위해 탭바를 고정 위치로 설정
+          position: 'absolute',
         },
         tabBarItemStyle: {
           flex: 1,
@@ -149,144 +149,148 @@ function App() {
     setIsLogged(true);
   };
 
-  return isLogged ? (
-    //로그인이 된 상태: Home화면
+  return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
-        <Stack.Screen
-          name="Main"
-          component={MainScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="Pickle" />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="MyPage"
-          component={MyPage}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                navigation={navigation}
-                title="MyPage"
-                canGoBack={true}
-              />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="AlbumInquiry"
-          component={AlbumInquiry}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                navigation={navigation}
-                title="앨범조회"
-                canGoBack={true}
-              />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="Filter1"
-          component={Filter1}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="옵션 설정" />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="Filter2"
-          component={Filter2}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="로딩 중" />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="Filter3"
-          component={Filter3}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="사진 선택" />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="Filter4"
-          component={Filter4}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="해시태그 설정" />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-        <Stack.Screen
-          name="Filter5"
-          component={Filter5}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader navigation={navigation} title="앨범에 추가" />
-            ),
-            headerBackVisible: true,
-          })}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  ) : (
-    //로그인이 안된 상태: 온보딩 화면
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Onboarding_1">
-        <Stack.Screen
-          name="Onboarding_1"
-          component={Onboarding_1}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Onboarding_2"
-          component={Onboarding_2}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Onboarding_3"
-          component={Onboarding_3}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Onboarding_4"
-          component={Onboarding_4}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Onboarding_5"
-          component={Onboarding_5}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="KakaoLoginWebview" options={{headerShown: false}}>
-          {props => (
-            <KakaoLoginWebview
-              {...props}
-              handleLoginSuccess={handleLoginSuccess}
+      <Stack.Navigator initialRouteName={isLogged ? 'Main' : 'Onboarding_1'}>
+        {isLogged ? (
+          <>
+            <Stack.Screen
+              name="Main"
+              component={MainScreen}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="Pickle" />
+                ),
+              })}
             />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="KakaoLoginRedirect" options={{headerShown: false}}>
-          {props => (
-            <KakaoLoginRedirect
-              {...props}
-              handleLoginSuccess={handleLoginSuccess}
+            <Stack.Screen
+              name="MyPage"
+              component={MyPage}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader
+                    navigation={navigation}
+                    title="MyPage"
+                    canGoBack={true}
+                  />
+                ),
+                headerBackVisible: true,
+              })}
             />
-          )}
-        </Stack.Screen>
+            <Stack.Screen
+              name="AlbumInquiry"
+              component={AlbumInquiry}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader
+                    navigation={navigation}
+                    title="앨범조회"
+                    canGoBack={true}
+                  />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="Filter1"
+              component={Filter1}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="옵션 설정" />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="Filter2"
+              component={Filter2}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="로딩 중" />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="Filter3"
+              component={Filter3}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="사진 선택" />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="Filter4"
+              component={Filter4}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="해시태그 설정" />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="Filter5"
+              component={Filter5}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader navigation={navigation} title="앨범에 추가" />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Onboarding_1"
+              component={Onboarding_1}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Onboarding_2"
+              component={Onboarding_2}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Onboarding_3"
+              component={Onboarding_3}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Onboarding_4"
+              component={Onboarding_4}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Onboarding_5"
+              component={Onboarding_5}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="KakaoLoginWebview"
+              options={{headerShown: false}}>
+              {props => (
+                <KakaoLoginWebview
+                  {...props}
+                  handleLoginSuccess={handleLoginSuccess}
+                />
+              )}
+            </Stack.Screen>
+            <Stack.Screen
+              name="KakaoLoginRedirect"
+              options={{headerShown: false}}>
+              {props => (
+                <KakaoLoginRedirect
+                  {...props}
+                  handleLoginSuccess={handleLoginSuccess}
+                />
+              )}
+            </Stack.Screen>
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
