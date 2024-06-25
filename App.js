@@ -149,6 +149,10 @@ function App() {
     setIsLogged(true);
   };
 
+  const handleLogoutSuccess = () => {
+    setIsLogged(false);
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={isLogged ? 'Main' : 'Onboarding_1'}>
@@ -165,7 +169,6 @@ function App() {
             />
             <Stack.Screen
               name="MyPage"
-              component={MyPage}
               options={({navigation}) => ({
                 header: () => (
                   <CustomHeader
@@ -175,8 +178,11 @@ function App() {
                   />
                 ),
                 headerBackVisible: true,
-              })}
-            />
+              })}>
+              {props => (
+                <MyPage {...props} handleLogoutSuccess={handleLogoutSuccess} />
+              )}
+            </Stack.Screen>
             <Stack.Screen
               name="AlbumInquiry"
               component={AlbumInquiry}
