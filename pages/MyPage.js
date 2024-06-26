@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,38 @@ import {
 } from 'react-native';
 import HashtagMake from '../components/Modal/HashtagMake';
 import HashtagList from '../components/Modal/HashtagList';
-import {logoutKakao} from '../api/logoutKakao';
-import {withdrawKakao} from '../api/withdrawKakao';
+import { logoutKakao } from '../api/logoutKakao';
+import { withdrawKakao } from '../api/withdrawKakao';
+import { GetProfile } from '../api/GetProfile';
 
-const MyPage = ({navigation, handleLogoutSuccess}) => {
+const MyPage = ({ navigation, handleLogoutSuccess }) => {
   const [MakeHashVisible, setMakeHashVisible] = useState(false);
   const [HashListVisible, setHashListVisible] = useState(false);
+  const [profile, setProfile] = useState({
+    nickname: null,
+    oauthInfo: {
+      oauthId: null,
+      profile: null,
+    },
+    role: null,
+    status: null
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await GetProfile();
+        setProfile(profileData.data);
+      } catch (error) {
+        console.error('회원 정보 조회 에러:', error);
+        Alert.alert('회원 정보 조회 실패', '서버와 통신하는 중 오류가 발생했습니다.');
+      }
+    };
+
+    fetchProfile();
+  }, []);
+  console.log(profile);
+ 
 
   const handleLogout = async () => {
     try {
@@ -56,11 +82,15 @@ const MyPage = ({navigation, handleLogoutSuccess}) => {
         <View style={styles.profile_section}>
           <Image
             style={styles.user_profile}
-            source={require('.././assets/icon/user_profile.png')}
+            source={
+              profile.oauthInfo && profile.oauthInfo.profile
+                ? { uri: profile.oauthInfo.profile }
+                : require('.././assets/icon/user_profile.png')
+            }
           />
           <View style={styles.name_profile}>
-            <Text style={styles.text1}>닉네임</Text>
-            <Text style={styles.text2}>@태입희</Text>
+            <Text style={styles.text1}>{profile && profile.nickname ? profile.nickname : 'Guest'}</Text>
+            <Text style={styles.text2}>{profile && profile.role ? profile.role : 'Guest'}</Text>
           </View>
         </View>
         <TouchableOpacity
@@ -74,21 +104,21 @@ const MyPage = ({navigation, handleLogoutSuccess}) => {
           style={styles.hashtag}
           onPress={() => setHashListVisible(true)}>
           <Image
-            style={{width: 40, height: 40, marginLeft: 16}}
+            style={{ width: 40, height: 40, marginLeft: 16 }}
             source={require('../assets/icon/hashtag.png')}
           />
           <Text style={styles.text3}>해시태그 목록</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.setting}>
           <Image
-            style={{width: 40, height: 40, marginLeft: 16}}
+            style={{ width: 40, height: 40, marginLeft: 16 }}
             source={require('../assets/icon/setting.png')}
           />
           <Text style={styles.text3}>환경설정</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.gonggi}>
           <Image
-            style={{width: 30, height: 30, marginLeft: 20}}
+            style={{ width: 30, height: 30, marginLeft: 20 }}
             source={require('../assets/icon/gonggi.png')}
           />
           <Text style={styles.text3}>공지사항</Text>
@@ -97,14 +127,14 @@ const MyPage = ({navigation, handleLogoutSuccess}) => {
       <View style={styles.lower_section}>
         <TouchableOpacity style={styles.logout} onPress={handleLogout}>
           <Image
-            style={{width: 38, height: 38, marginLeft: 16}}
+            style={{ width: 38, height: 38, marginLeft: 16 }}
             source={require('../assets/icon/logout.png')}
           />
           <Text style={styles.text3}>로그아웃</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.member_out} onPress={handleWithdraw}>
           <Image
-            style={{width: 40, height: 40, marginLeft: 16}}
+            style={{ width: 40, height: 40, marginLeft: 16 }}
             source={require('../assets/icon/member_out.png')}
           />
           <Text style={styles.text3}>회원탈퇴</Text>
@@ -136,6 +166,7 @@ const styles = StyleSheet.create({
     height: 80,
     width: 80,
     marginLeft: 30, // 수정: 왼쪽 여백 설정
+    borderRadius: 40, // 추가: 이미지를 동그랗게 만듦 (width와 height의 절반)
   },
   name_profile: {
     justifyContent: 'center',
