@@ -22,9 +22,9 @@ const HashtagMake = ({ visible, onClose }) => {
 
     const handleAddHashTag = async () => {
         if (newHashTag.trim() !== '') {
-            await HashTagCreate(newHashTag);
-            dispatch(HashTagListCheck()); // 해시태그 목록 다시 불러오기
             setNewHashTag('');
+            await HashTagCreate(newHashTag); //해시태그 생성 
+            dispatch(HashTagListCheck()); // 해시태그 목록 다시 불러오기
         }
     };
 
