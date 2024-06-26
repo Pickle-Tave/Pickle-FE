@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,28 @@ import {
   TouchableOpacity,
   Modal,
   TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { HashTagListCheck } from '../../api/HashTagListCheck';
 
 const HashtagList = ({ visible, onClose }) => {
-  const hashtagList = useSelector((state) =>
-    state.HashTagReducer
-  )
+
+  const dispatch = useDispatch();
+  const hashtagList = useSelector((state) => state.HashTagReducer.hashtagList);
+  console.log('나의 해시태그 목록:', hashtagList);
+
+  useEffect(() => {
+    if (visible) {
+      dispatch(HashTagListCheck()); // 액션 크리에이터로 호출
+    }
+  }, [dispatch, visible]);
+
+  const renderHashTagItem = (item) => (
+    <View style={styles.hashItem} key={item.id.toString()}>
+      <Text style={styles.hashText}>{`#${item.text}`}</Text>
+    </View>
+  );
 
   return (
     <Modal
@@ -26,13 +40,13 @@ const HashtagList = ({ visible, onClose }) => {
           <TouchableWithoutFeedback>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>해시태그 목록</Text>
-              <View style={styles.hashList}>
-                {hashtagList.map(item => (
-                  <View key={item.tag_id} style={styles.hashItem}>
-                    <Text style={styles.hashText}>#{item.tag_name}</Text>
-                  </View>
-                ))}
-              </View>
+              <ScrollView
+                horizontal={true}
+                contentContainerStyle={styles.hashList}
+                showsHorizontalScrollIndicator={false}
+              >
+                {hashtagList.map(renderHashTagItem)}
+              </ScrollView>
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   onPress={onClose}
@@ -77,22 +91,27 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   hashList: {
-    width: '95%',
-    borderWidth: 1,
-    borderRadius: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap', // 아이템이 너비를 넘으면 다음 줄로 넘어가도록 설정
+    flexDirection: 'row', // 가로로 배치
     paddingVertical: 15,
-    justifyContent: 'center', // 가로축 기준 중앙 정렬
+    justifyContent: 'flex-start', // 가로축 기준 왼쪽 정렬
     alignItems: 'center', // 세로축 기준 중앙 정렬
-    marginTop: 15,
   },
   hashItem: {
     marginHorizontal: 8, // 해시태그 간 간격 추가
     marginVertical: 4, // 세로 간격 추가
+    alignItems: 'center', // 중앙 정렬
   },
   hashText: {
     fontSize: 14,
+  },
+  emptyMessageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyMessageText: {
+    fontSize: 16,
+    color: 'gray',
   },
   modalButtons: {
     flexDirection: 'row',
