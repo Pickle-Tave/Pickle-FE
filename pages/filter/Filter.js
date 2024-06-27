@@ -1,15 +1,16 @@
-import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
   TouchableOpacity,
-  Platform,
+  Alert,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
+import instance from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Filter = () => {
   const navigation = useNavigation();
@@ -20,26 +21,67 @@ const Filter = () => {
         mediaType: 'photo',
         maxWidth: 512,
         maxHeight: 512,
-        includeBase64: Platform.OS === 'android' || Platform.OS === 'ios',
+        includeBase64: false,
         quality: 1,
         selectionLimit: 0,
       },
-      res => {
+      async res => {
         if (res.didCancel) {
           console.log('User cancelled image picker');
         } else if (res.errorCode) {
           console.log('ImagePicker Error: ', res.errorMessage);
         } else {
-          console.log('Selected images: ', res.assets);
-          // 선택된 이미지들에 대한 추가 처리 로직
-          res.assets.forEach(asset => {
-            console.log('Image URI: ', asset.uri);
-            // 이미지 표시, 업로드
-          });
+          const asset = res.assets[0];
+          await uploadImageToS3(asset); // s3에 업로드
           navigation.navigate('Filter1', {images: res.assets});
         }
       },
     );
+  };
+
+  const uploadImageToS3 = async asset => {
+    try {
+      // AsyncStorage에서 accessToken 가져오기
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!accessToken) {
+        throw new Error('No access token found');
+      }
+
+      // Presigned URL 요청
+      const response = await instance.post(
+        '/album/upload-url',
+        {albumId: 1},
+        {headers: {Authorization: `Bearer ${accessToken}`}},
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to get presigned URL: ${response.status}`);
+      }
+
+      const presignedUrl = response.data.data.presignedUrl;
+      console.log('Presigned URL:', presignedUrl);
+
+      // 이미지를 Blob으로 변환하여 PUT 요청으로 업로드
+      const fetchResponse = await fetch(asset.uri);
+      const blob = await fetchResponse.blob();
+
+      const uploadResponse = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: blob,
+      });
+      if (uploadResponse.ok) {
+        Alert.alert('Success', '이미지 업로드가 성공적으로 완료되었습니다!');
+      } else {
+        console.error('Failed to upload image:', uploadResponse);
+        Alert.alert('Error', '이미지 업로드에 실패했습니다');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      Alert.alert(
+        'Error',
+        `이미지 업로드 중 오류가 발생했습니다: ${error.message}`,
+      );
+    }
   };
 
   return (
