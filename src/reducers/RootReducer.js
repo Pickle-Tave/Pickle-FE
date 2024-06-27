@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import HashTagReducer from "./HashTagReducer";
+import HashTagReducer from './HashTagReducer';
 import AlbumReducer from "./AlbumReducer";
 import AlbumImageReducer from "./AlbumImageReducer";
 import AlbumLikeReducer from "./AlbumLikeReducer";
