@@ -12,14 +12,21 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateAlbumName } from '../../src/actions/AlbumAction';
+import { AlbumEdit } from '../../api/AlbumEdit';
+import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
+import { GetAlbumList } from '../../api/GetAlbumList';
 
-const AlbumEditModal = ({ visible, onClose, albumId }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
-    state.AlbumReducer.find((album) => album.album_id === albumId)
+    state.AlbumReducer.find((album) => album.album_id === checkedAlbumId)
   );
 
+  const deleteAlum = useSelector((state) =>
+    state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
+
+  //새로 수정할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
   useEffect(() => {
@@ -30,7 +37,9 @@ const AlbumEditModal = ({ visible, onClose, albumId }) => {
 
   const handleUpdateAlbumName = () => {
     if (newAlbumName.trim() !== '') {
-      dispatch(updateAlbumName(albumId, newAlbumName, album.album_type));
+      AlbumEdit(deleteAlum.albumId, newAlbumName);
+      dispatch(InitializeAlbumList());
+      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
       onClose();
     }
   };
@@ -49,12 +58,12 @@ const AlbumEditModal = ({ visible, onClose, albumId }) => {
               <Text style={styles.modalSubTitle}>
                 앨범의 이름을 입력하세요.
               </Text>
-              {album && (
+              {deleteAlum && (
                 <TextInput
                   style={styles.text_input}
                   value={newAlbumName}
                   onChangeText={setNewAlbumName}
-                  placeholder={`${album.album_name}`}
+                  placeholder={`${deleteAlum.searchedAlbumName}`}
                 />
               )}
               <View style={styles.modalButtons}>
