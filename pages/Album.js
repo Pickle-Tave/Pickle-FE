@@ -29,13 +29,8 @@ const Album = ({ navigation }) => {
   //API연동부분
   const dispatch = useDispatch();
   const AlbumList = useSelector((state) => state.AlbumListReducer)
-  console.log('전역관리된 앨범목록정보', AlbumList);
-  console.log('마지막', AlbumList.last);
-  console.log('마지막아이디', AlbumList.lastAlbumId)
 
   const albumImages = useSelector((state) => state.AlbumImageReducer);
-
-
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
