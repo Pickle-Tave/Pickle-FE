@@ -33,6 +33,7 @@ const initialState = [
     },
 ]
 
+
 const AlbumReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_ALBUM:

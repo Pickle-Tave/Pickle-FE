@@ -46,3 +46,4 @@ export const deleteAlbum = (album_id) => ({
     type: DELETE_ALBUM,
     album_id,
 })
+

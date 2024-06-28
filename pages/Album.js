@@ -29,7 +29,7 @@ const Album = ({ navigation }) => {
 
   //API연동부분
   const [getalbum, setGetAlbum] = useState();
-  console.log('앨범목록요청응답',getalbum);
+
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
