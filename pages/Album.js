@@ -19,11 +19,17 @@ import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
 import { addAlbumImage } from '../src/actions/AlbumImageAction';
+import { GetAlbumList } from '../api/GetAlbumList';
 
 const Album = ({ navigation }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
   const dispatch = useDispatch();
   const albumImages = useSelector((state) => state.AlbumImageReducer);
+
+
+  //API연동부분
+  const [getalbum, setGetAlbum] = useState();
+  console.log('앨범목록요청응답',getalbum);
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
@@ -37,6 +43,21 @@ const Album = ({ navigation }) => {
   // 새로 생성될 앨범의 id값
   const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
   const [newAlbumId, setNewAlbumId] = useState(maxAlbumId + 1);
+
+
+  //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
+  useEffect(() => {
+    const fetchAlbumList = async () => {
+        try {
+            const data = await GetAlbumList(null, 10);
+            setGetAlbum(data);
+        } catch (error) {
+            console.error('앨범 목록 요청 에러:', error);
+        }
+    };
+
+    fetchAlbumList();
+}, []);
 
   useEffect(() => {
     setNewAlbumId(maxAlbumId + 1);
