@@ -6,7 +6,7 @@ import { addAlbumLike, deleteAlbumLike } from '../src/actions/AlbumLikeAction';
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
     const likedAlbums = useSelector(state => state.AlbumLikeReducer);
-    const isLiked = likedAlbums.some(album => album.album_id === props.album_id);
+    const isLiked = likedAlbums.some(album => album.album_id === props.albumId);
 
     const [heart, setHeart] = useState(isLiked);
 
@@ -47,17 +47,17 @@ const AlbumItem = (props) => {
                 </View>
                 <TouchableOpacity onPress={props.AlbumItemAccess}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.title_text}>{props.album_name}</Text>
+                        <Text style={styles.title_text}>{props.searchedAlbumName}</Text>
                         {
-                            String(props.album_type) === "개인앨범" ?
-                                <Text style={styles.type_text1}>{props.album_type}</Text> :
-                                <Text style={styles.type_text2}>{props.album_type}</Text>
+                            String(props.searchedAlbumStatus) === "PRIVATE" ?
+                                <Text style={styles.type_text1}>개인앨범</Text> :
+                                <Text style={styles.type_text2}>공유앨범</Text>
                         }
                     </View>
                 </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => {
-                props.setAlbumId(props.album_id);
+                props.setAlbumId(props.albumId);
                 props.setKebabVisible(true);
             }}>
                 <Image

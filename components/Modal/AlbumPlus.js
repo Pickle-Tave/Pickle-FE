@@ -13,19 +13,27 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbum } from '../../src/actions/AlbumAction';
 import { AlbumCreate } from '../../api/AlbumCreate';
+import { GetAlbumList } from '../../api/GetAlbumList';
+import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 
 const AlbumPlus = ({ visible, onClose, newAlbumId }) => {
   const dispatch = useDispatch();
   const albumList = useSelector((state) => state.AlbumReducer);
   const [newAlbumName, setNewAlbumName] = useState('');
 
-  const handleAddAlbum = () => {
-    // dispatch(addAlbum(newAlbumId, newAlbumName, "개인앨범"));
-    setNewAlbumName('');
-    // setNextId(nextId + 1);
-    onClose();
-    AlbumCreate(newAlbumName);
-  }
+  const handleAddAlbum = async () => {
+    try {
+      await AlbumCreate(newAlbumName);
+      setNewAlbumName('');
+      dispatch(InitializeAlbumList());
+      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
+      
+      onClose();
+    } catch (error) {
+      console.error('앨범 생성 중 오류:', error);
+    }
+  };
+
   return (
     <Modal
       visible={visible}

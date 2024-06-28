@@ -3,6 +3,7 @@ import HashTagReducer from './HashTagReducer';
 import AlbumReducer from "./AlbumReducer";
 import AlbumImageReducer from "./AlbumImageReducer";
 import AlbumLikeReducer from "./AlbumLikeReducer";
+import AlbumListReducer from "./AlbumListReducer";
 
 
 
@@ -10,7 +11,8 @@ const RootReducer = combineReducers({
     HashTagReducer,
     AlbumReducer,
     AlbumImageReducer,
-    AlbumLikeReducer
+    AlbumLikeReducer,
+    AlbumListReducer,
 })
 
 export default RootReducer;
