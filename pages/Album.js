@@ -42,8 +42,8 @@ const Album = ({ navigation }) => {
   // 로딩 상태를 나타내기 위한 변수
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-
-  const [albumId, setAlbumId] = useState(null); // 현재 수정할 앨범의 ID
+  // 현재 선택된 앨범 id
+  const [checkedAlbumId, setcheckedAlbumId] = useState(null); 
 
   // 새로 생성될 앨범의 id값
   const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
@@ -118,15 +118,15 @@ const Album = ({ navigation }) => {
   };
 
   // 공유 버튼 클릭시 kebab 모달이 사라지고 edit 모달이 뜸
-  const EditModal = (id) => {
+  const EditModal = () => {
     setKebabVisible(false);
-    setAlbumId(id);
+    // setAlbumId(id);
     setEditVisible(true);
   };
 
   const handleDeleteAlbum = () => {
-    if (albumId !== null) {
-      dispatch(deleteAlbum(albumId));
+    if (checkedAlbumId !== null) {
+      dispatch(deleteAlbum(checkedAlbumId));
       setKebabVisible(false);
     }
   };
@@ -170,16 +170,16 @@ const Album = ({ navigation }) => {
       <KebabModal
         visible={kebabvisible}
         onClose={() => setKebabVisible(false)}
-        EditModal={() => EditModal(albumId)}
+        EditModal={() => EditModal(checkedAlbumId)}
         ShareModal={ShareModal}
         DeleteAlbum={handleDeleteAlbum}
         DeleteWarn={DeleteWarn}
-        CopyAlbum={() => handleCopyAlbum(albumId)} // 복제 기능 추가
+        CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
       />
       <AlbumEditModal
         visible={editvisible}
         onClose={() => setEditVisible(false)}
-        albumId={albumId}
+        checkedAlbumId={checkedAlbumId}
       />
       <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
       <DeleteWarnModal
@@ -219,7 +219,7 @@ const Album = ({ navigation }) => {
               kebabvisible={kebabvisible}
               setKebabVisible={setKebabVisible}
               AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
-              setAlbumId={setAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
+              setAlbumId={setcheckedAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
             />
           )}
           onEndReached={fetchMoreAlbums} // 끝에 도달하면 추가 데이터 요청
