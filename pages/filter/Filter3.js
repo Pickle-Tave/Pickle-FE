@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,28 @@ import CheckBox from '@react-native-community/checkbox';
 import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 
-const images = [
-  {id: 1, src: require('../../assets/icon/pic1.png')},
-  {id: 2, src: require('../../assets/icon/pic1.png')},
-  {id: 3, src: require('../../assets/icon/pic2.png')},
-  {id: 4, src: require('../../assets/icon/pic2.png')},
-  {id: 5, src: require('../../assets/icon/pic3.png')},
-  {id: 6, src: require('../../assets/icon/pic3.png')},
-];
-
 const Filter3 = () => {
   const navigation = useNavigation();
+  const [images, setImages] = useState([]);
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
+
+  useEffect(() => {
+    // API 호출하여 이미지 데이터 받아오기
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(''); // 수정
+        const data = await response.json();
+        setImages(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const handleNavigation = () => {
     navigation.navigate('Filter4');
@@ -50,7 +57,7 @@ const Filter3 = () => {
   };
 
   const handleImagePress = image => {
-    setCurrentImage(image);
+    setCurrentImage(image.imageUrl);
     setModalVisible(true);
   };
 
@@ -73,15 +80,14 @@ const Filter3 = () => {
       <View style={styles.gridContainer}>
         {images.map((image, index) => (
           <React.Fragment key={image.id}>
-            {index % 2 === 0 &&
-              index !== 0 && ( // 사진 그룹별로 나누는 기준 수정 필요
-                <View style={styles.separator} />
-              )}
+            {index % 2 === 0 && index !== 0 && (
+              <View style={styles.separator} />
+            )}
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 style={styles.imageWrapper}
-                onPress={() => handleImagePress(image.src)}>
-                <Image source={image.src} style={styles.image} />
+                onPress={() => handleImagePress(image)}>
+                <Image source={{uri: image.imageUrl}} style={styles.image} />
                 <CheckBox
                   value={selected.includes(image.id)}
                   onValueChange={() => handleSelect(image.id)}
@@ -106,7 +112,7 @@ const Filter3 = () => {
               <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
             <Image
-              source={currentImage}
+              source={{uri: currentImage}}
               style={styles.fullImage}
               resizeMode="contain"
             />
@@ -147,7 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imageContainer: {
-    width: '48%', // 2개씩 배치
+    width: '48%',
     marginBottom: 20,
   },
   imageWrapper: {
