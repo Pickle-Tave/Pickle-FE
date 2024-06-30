@@ -8,6 +8,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator
 } from 'react-native';
 import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
@@ -19,10 +20,16 @@ import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
 import { useSelector, useDispatch } from 'react-redux';
 import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
 import { addAlbumImage } from '../src/actions/AlbumImageAction';
+import { GetAlbumList } from '../api/GetAlbumList';
+import { InitializeAlbumList } from '../src/actions/AlbumListAction';
 
 const Album = ({ navigation }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
+
+  //API연동부분
   const dispatch = useDispatch();
+  const AlbumList = useSelector((state) => state.AlbumListReducer)
+
   const albumImages = useSelector((state) => state.AlbumImageReducer);
 
   // 모달 visible state
@@ -32,15 +39,55 @@ const Album = ({ navigation }) => {
   const [sharevisible, setShareVisible] = useState(false);
   const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
 
-  const [albumId, setAlbumId] = useState(null); // 현재 수정할 앨범의 ID
+  // 로딩 상태를 나타내기 위한 변수
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // 현재 선택된 앨범 id
+  const [checkedAlbumId, setcheckedAlbumId] = useState(null); 
 
   // 새로 생성될 앨범의 id값
   const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
   const [newAlbumId, setNewAlbumId] = useState(maxAlbumId + 1);
 
+
+  //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
+  useEffect(() => {
+
+    //마지막이 아니면서 처음 요청일때
+    if (!AlbumList.last && AlbumList.first) {
+      console.log("처음 요청이 들어가는 중")
+      dispatch(GetAlbumList(null, 10));
+    }
+  }, []);
+
+  // 추가 데이터 요청 함수
+  const fetchMoreAlbums = () => {
+    if (isLoadingMore) {
+      return; // 이미 로딩 중인 경우 추가 요청 방지
+    }
+  
+    if (AlbumList.last) {
+      return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
+    }
+  
+    setIsLoadingMore(true); // 로딩 시작
+  
+    dispatch(GetAlbumList(AlbumList.lastAlbumId, 10))
+      .then(() => setIsLoadingMore(false)) // 로딩 완료
+      .catch((error) => {
+        setIsLoadingMore(false); // 에러 발생 시 로딩 해제
+        console.error('앨범 목록 추가 요청 에러:', error);
+      });
+  };
+  
+
+
   useEffect(() => {
     setNewAlbumId(maxAlbumId + 1);
   }, [albumList]);
+
+
+
 
 
   // 드롭다운 열고 닫기
@@ -71,15 +118,15 @@ const Album = ({ navigation }) => {
   };
 
   // 공유 버튼 클릭시 kebab 모달이 사라지고 edit 모달이 뜸
-  const EditModal = (id) => {
+  const EditModal = () => {
     setKebabVisible(false);
-    setAlbumId(id);
+    // setAlbumId(id);
     setEditVisible(true);
   };
 
   const handleDeleteAlbum = () => {
-    if (albumId !== null) {
-      dispatch(deleteAlbum(albumId));
+    if (checkedAlbumId !== null) {
+      dispatch(deleteAlbum(checkedAlbumId));
       setKebabVisible(false);
     }
   };
@@ -123,16 +170,16 @@ const Album = ({ navigation }) => {
       <KebabModal
         visible={kebabvisible}
         onClose={() => setKebabVisible(false)}
-        EditModal={() => EditModal(albumId)}
+        EditModal={() => EditModal(checkedAlbumId)}
         ShareModal={ShareModal}
         DeleteAlbum={handleDeleteAlbum}
         DeleteWarn={DeleteWarn}
-        CopyAlbum={() => handleCopyAlbum(albumId)} // 복제 기능 추가
+        CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
       />
       <AlbumEditModal
         visible={editvisible}
         onClose={() => setEditVisible(false)}
-        albumId={albumId}
+        checkedAlbumId={checkedAlbumId}
       />
       <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
       <DeleteWarnModal
@@ -164,16 +211,25 @@ const Album = ({ navigation }) => {
       </View>
       <View style={styles.albumlist}>
         <FlatList
-          data={albumList}
-          keyExtractor={(item) => item.album_id.toString()}
+          data={AlbumList.albumList}
+          keyExtractor={(item) => item.albumId.toString()}
           renderItem={({ item }) => (
             <AlbumItem
               {...item}
               kebabvisible={kebabvisible}
               setKebabVisible={setKebabVisible}
-              AlbumItemAccess={() => AlbumItemAccess(item.album_id)}
-              setAlbumId={setAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
+              AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
+              setAlbumId={setcheckedAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
             />
+          )}
+          onEndReached={fetchMoreAlbums} // 끝에 도달하면 추가 데이터 요청
+          onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
+          ListFooterComponent={() => ( // 로딩 중임을 나타내는 컴포넌트
+            isLoadingMore && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="gray" />
+              </View>
+            )
           )}
         />
       </View>
