@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-
 import {useNavigation} from '@react-navigation/native';
 
 const Filter1 = () => {
@@ -33,20 +32,23 @@ const Filter1 = () => {
         source={require('../../assets/icon/option1.png')}
         resizeMode="contain"
       />
-      <TouchableOpacity>
-        <Image
-          style={styles.weak}
-          source={require('../../assets/icon/weak.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Image
-          style={styles.strong}
-          source={require('../../assets/icon/strong.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+      <View style={styles.strengthContainer}>
+        <TouchableOpacity>
+          <Image
+            style={styles.strong}
+            source={require('../../assets/icon/strong.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Image
+            style={styles.weak}
+            source={require('../../assets/icon/weak.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.separator} />
       <Image
         style={styles.option2}
         source={require('../../assets/icon/option2.png')}
@@ -90,26 +92,37 @@ const styles = StyleSheet.create({
   option1: {
     width: 200,
   },
+  strengthContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginVertical: -20,
+  },
   weak: {
     width: 130,
-    left: 80,
+    marginVertical: -50,
+    top: -15,
   },
   strong: {
     width: 130,
-    top: -175,
-    left: -80,
+    marginVertical: 10,
   },
   option2: {
     width: 184,
-    top: -160,
+    top: -10,
+  },
+  separator: {
+    width: '80%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 30,
   },
   checkboxes: {
-    top: -170,
+    marginTop: 10,
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: 20,
   },
   checkbox: {
     width: 24,
@@ -118,6 +131,7 @@ const styles = StyleSheet.create({
     borderColor: '#769370',
     borderRadius: 8,
     marginRight: 8,
+    margin: 3,
   },
   checkedCheckbox: {
     backgroundColor: '#99AD81',
@@ -127,8 +141,8 @@ const styles = StyleSheet.create({
   },
   next: {
     width: 120,
-    left: 45,
-    top: 20,
+    marginTop: 30,
+    left: 50,
   },
 });
 
