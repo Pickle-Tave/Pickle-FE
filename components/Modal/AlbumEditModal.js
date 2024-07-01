@@ -15,15 +15,17 @@ import { updateAlbumName } from '../../src/actions/AlbumAction';
 import { AlbumEdit } from '../../api/AlbumEdit';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
+import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, searchQuery }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
     state.AlbumReducer.find((album) => album.album_id === checkedAlbumId)
   );
 
-  const deleteAlum = useSelector((state) =>
+  const editedAlbum = useSelector((state) =>
     state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
 
   //새로 수정할 앨범명
@@ -37,7 +39,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId }) => {
 
   const handleUpdateAlbumName = () => {
     if (newAlbumName.trim() !== '') {
-      AlbumEdit(deleteAlum.albumId, newAlbumName);
+      AlbumEdit(editedAlbum.albumId, newAlbumName);
       dispatch(InitializeAlbumList());
       dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
       onClose();
@@ -58,12 +60,12 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId }) => {
               <Text style={styles.modalSubTitle}>
                 앨범의 이름을 입력하세요.
               </Text>
-              {deleteAlum && (
+              {editedAlbum && (
                 <TextInput
                   style={styles.text_input}
                   value={newAlbumName}
                   onChangeText={setNewAlbumName}
-                  placeholder={`${deleteAlum.searchedAlbumName}`}
+                  placeholder={`${editedAlbum.searchedAlbumName}`}
                 />
               )}
               <View style={styles.modalButtons}>

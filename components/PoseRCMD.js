@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     },
     pose_img: {
       height: 120,
-      width: 120,
+      width: 129,
       resizeMode: 'contain'
     },
     poseItem: {

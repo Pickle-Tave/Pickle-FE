@@ -22,6 +22,8 @@ import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
 import { addAlbumImage } from '../src/actions/AlbumImageAction';
 import { GetAlbumList } from '../api/GetAlbumList';
 import { InitializeAlbumList } from '../src/actions/AlbumListAction';
+import { SearchAlbumName } from '../api/SearchAlbumName';
+import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
 
 const Album = ({ navigation }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
@@ -43,16 +45,27 @@ const Album = ({ navigation }) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // 현재 선택된 앨범 id
-  const [checkedAlbumId, setcheckedAlbumId] = useState(null); 
+  const [checkedAlbumId, setcheckedAlbumId] = useState(null);
 
   // 새로 생성될 앨범의 id값
   const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
   const [newAlbumId, setNewAlbumId] = useState(maxAlbumId + 1);
 
+  // 검색 입력 값을 관리하는 상태 변수
+  const [searchQuery, setSearchQuery] = useState('');
+
+  //검색된 앨범 정보
+  const searchedAlbumList = useSelector((state) => state.SearchedAlbumReducer);
+  console.log('현재 검색된 앨범정보요!', searchedAlbumList);
+
+
+  // 검색 중인지 여부를 나타내는 상태 변수
+  const [isSearching, setIsSearching] = useState(false);
+  // 마지막으로 검색한 쿼리를 저장하는 상태 변수
+  const [lastSearchQuery, setLastSearchQuery] = useState('');
 
   //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
   useEffect(() => {
-
     //마지막이 아니면서 처음 요청일때
     if (!AlbumList.last && AlbumList.first) {
       console.log("처음 요청이 들어가는 중")
@@ -65,13 +78,13 @@ const Album = ({ navigation }) => {
     if (isLoadingMore) {
       return; // 이미 로딩 중인 경우 추가 요청 방지
     }
-  
+
     if (AlbumList.last) {
       return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
     }
-  
+
     setIsLoadingMore(true); // 로딩 시작
-  
+
     dispatch(GetAlbumList(AlbumList.lastAlbumId, 10))
       .then(() => setIsLoadingMore(false)) // 로딩 완료
       .catch((error) => {
@@ -79,16 +92,10 @@ const Album = ({ navigation }) => {
         console.error('앨범 목록 추가 요청 에러:', error);
       });
   };
-  
-
 
   useEffect(() => {
     setNewAlbumId(maxAlbumId + 1);
   }, [albumList]);
-
-
-
-
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -109,6 +116,7 @@ const Album = ({ navigation }) => {
   // 드롭다운 메뉴를 선택할 때마다 값 변경
   const onChange = (value) => {
     setCurrentValue(value);
+
   };
 
   // 수정 버튼 클릭시 kebab 모달이 사라지고 share 모달이 뜸
@@ -158,13 +166,26 @@ const Album = ({ navigation }) => {
     navigation.navigate('AlbumInquiry', { id });
   };
 
+
+  const handleAlbumSearch = () => {
+    if (searchQuery.trim() && !isSearching && searchQuery !== lastSearchQuery) {
+
+        setIsSearching(true); //검색중
+        setLastSearchQuery(searchQuery);
+
+        // dispatch(InitializeSearchedAlbum());
+        // dispatch(SearchAlbumName(searchQuery, searchedAlbumList.lastAlbumId, 10));
+        navigation.navigate('SearchedAlbum', { searchQuery, isSearching });
+        setSearchQuery('');
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <AlbumPlus
         visible={plusvisible}
-        newAlbumId={newAlbumId}
         onClose={() => setPlusVisible(false)}
       />
       <KebabModal
@@ -187,8 +208,13 @@ const Album = ({ navigation }) => {
         onClose={() => setDeleteWarnVisible(false)}
       />
       <View style={styles.search_section}>
-        <TextInput style={styles.textinput} placeholder="앨범명을 입력하시오" />
-        <TouchableOpacity>
+        <TextInput
+          style={styles.textinput}
+          placeholder="앨범명을 입력하시오"
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
+        />
+        <TouchableOpacity onPress={handleAlbumSearch}>
           <Image
             style={styles.search_bar}
             source={require('../assets/icon/search.png')}
