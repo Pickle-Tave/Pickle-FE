@@ -22,9 +22,10 @@ const SearchedAlbumReducer = (state = initialState, action) => {
             return { ...state };
         case FETCH_SEARCHED_ALBUM_SUCCESS:
             const newAlbumList = [...state.searchedAlbumList, ...action.payload.content];
-            const lastAlbumId = action.payload.content[action.payload.content.length - 1].albumId;
+            const lastAlbumId = action.payload.content.length > 0 ? action.payload.content[action.payload.content.length - 1].albumId : null;
             const first = false;
-            const last = action.payload.last;
+            const last = action.payload.content.length === 0 || action.payload.last;  // 빈 배열일 때 `last`를 true로 설정
+
             return {
                 ...state,
                 searchedAlbumList: newAlbumList,
@@ -38,5 +39,6 @@ const SearchedAlbumReducer = (state = initialState, action) => {
             return state;
     }
 };
+
 
 export default SearchedAlbumReducer;

@@ -3,22 +3,17 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Modal,
   TextInput,
-  ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateAlbumName } from '../../src/actions/AlbumAction';
 import { AlbumEdit } from '../../api/AlbumEdit';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
-import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
-import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId, searchQuery }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
@@ -27,7 +22,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, searchQuery }) => {
 
   const editedAlbum = useSelector((state) =>
     state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
-
+ 
   //새로 수정할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
@@ -39,10 +34,14 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, searchQuery }) => {
 
   const handleUpdateAlbumName = () => {
     if (newAlbumName.trim() !== '') {
-      AlbumEdit(editedAlbum.albumId, newAlbumName);
-      dispatch(InitializeAlbumList());
-      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
-      onClose();
+      AlbumEdit(editedAlbum.albumId, newAlbumName)
+        .then(() => {
+          dispatch(InitializeAlbumList());
+          dispatch(GetAlbumList(null, 10));
+          onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
+          onClose();
+        })
+        .catch((error) => console.error('앨범 수정 오류:', error));
     }
   };
 

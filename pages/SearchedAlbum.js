@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, KeyboardAvoidingView, ActivityIndicator, Platform } from 'react-native';
 import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
 import KebabModal from '../components/Modal/KebabModal';
@@ -30,42 +30,44 @@ const SearchedAlbum = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (!isLoading && !searchedAlbumList.searchedAlbumList.length) {
-            handleAlbumSearch();
-        }
-    }, []);
+        handleAlbumSearch();
+    }, []); 
 
     const handleAlbumSearch = () => {
         if (searchQuery.trim() && !isLoading) {
-            try {
-                setIsLoading(true); // 검색 중
-                console.log("첫 검색 요청!!");
-                dispatch(InitializeSearchedAlbum());
-                dispatch(SearchAlbumName(searchQuery, null, 10))
-                    .then(() => setIsLoading(false)) // 로딩 완료
-                    .catch((error) => {
-                        setIsLoading(false); // 에러 발생 시 로딩 해제
-                        console.error('앨범 검색 에러:', error);
-                    });
-            } catch (error) {
-                setIsLoading(false);
-                console.error('앨범 검색 에러:', error);
-            }
+            setIsLoading(true); // 검색 중
+            console.log("첫 검색 요청!!");
+            dispatch(InitializeSearchedAlbum());
+            dispatch(SearchAlbumName(searchQuery, null, 10))
+                .then(() => {
+                    // 빈 배열로 응답받았을 때 로딩 상태를 해제하고 추가 요청 방지
+                    if (searchedAlbumList.searchedAlbumList.length === 0) {
+                        setIsLoading(false);
+                    }
+                })
+                .catch((error) => {
+                    setIsLoading(false); // 에러 발생 시 로딩 해제
+                });
         }
     };
 
     const fetchMoreSearchedAlbums = () => {
-        if (isLoading || !searchQuery || searchedAlbumList.last) {
-            return; // 이미 로딩 중이거나 검색어가 없거나 마지막 페이지에 도달한 경우 추가 요청 방지
+        // 로딩 중이거나 검색어가 없거나 마지막 페이지에 도달한 경우 추가 요청 방지
+        if (isLoading || !searchQuery.trim() || searchedAlbumList.last || searchedAlbumList.searchedAlbumList.length === 0) {
+            return;
         }
 
         setIsLoading(true); // 로딩 시작
         console.log("추가 요청!!");
         dispatch(SearchAlbumName(searchQuery, searchedAlbumList.lastAlbumId, 10))
-            .then(() => setIsLoading(false)) // 로딩 완료
+            .then(() => {
+                // 빈 배열로 응답받았을 때 추가 요청 차단
+                if (searchedAlbumList.searchedAlbumList.length === 0 || searchedAlbumList.last) {
+                    setIsLoading(false);
+                }
+            })
             .catch((error) => {
                 setIsLoading(false); // 에러 발생 시 로딩 해제
-                console.error('앨범 목록 추가 요청 에러:', error);
             });
     };
 
@@ -90,6 +92,11 @@ const SearchedAlbum = ({ route, navigation }) => {
         setDeleteWarnVisible(true);
     };
 
+    // 앨범 수정 후 검색 앨범 리스트를 다시 요청하는 함수
+    const handleUpdate = () => {
+        handleAlbumSearch();
+    };
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -110,7 +117,7 @@ const SearchedAlbum = ({ route, navigation }) => {
                 visible={editvisible}
                 onClose={() => setEditVisible(false)}
                 checkedAlbumId={checkedAlbumId}
-                searchQuery={searchQuery}
+                onUpdate={handleUpdate} 
             />
             <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
             <DeleteWarnModal
@@ -122,7 +129,7 @@ const SearchedAlbum = ({ route, navigation }) => {
                     <ActivityIndicator size="large" color="gray" />
                 ) : (
                     <>
-                        <Text style={styles.title}>Search Results for "{searchQuery}"</Text>
+                        <Text style={styles.title}>"{searchQuery} 에 대한 검색결과..."</Text>
                         <FlatList
                             data={searchedAlbumList.searchedAlbumList}
                             keyExtractor={(item) => item.albumId.toString()}
@@ -135,14 +142,17 @@ const SearchedAlbum = ({ route, navigation }) => {
                                     setAlbumId={setcheckedAlbumId}
                                 />
                             )}
-                            ListEmptyComponent={<Text>No albums found</Text>}
+                            ListEmptyComponent={<Text>앨범을 찾을 수 없습니다!!</Text>}
                             onEndReached={fetchMoreSearchedAlbums} // 끝에 도달하면 추가 데이터 요청
                             onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
-                            ListFooterComponent={() => ( // 로딩 중임을 나타내는 컴포넌트
-                                isLoading && (
-                                    <View style={styles.loadingContainer}>
-                                        <ActivityIndicator size="small" color="gray" />
-                                    </View>
+                            ListFooterComponent={() => (
+                                // 로딩 중임을 나타내는 컴포넌트
+                                searchedAlbumList.last ? null : (
+                                    isLoading && (
+                                        <View style={styles.loadingContainer}>
+                                            <ActivityIndicator size="small" color="gray" />
+                                        </View>
+                                    )
                                 )
                             )}
                         />
@@ -166,6 +176,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+    },
+    loadingContainer: {
+        marginTop: 10,
     },
 });
 

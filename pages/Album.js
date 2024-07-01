@@ -168,15 +168,18 @@ const Album = ({ navigation }) => {
 
 
   const handleAlbumSearch = () => {
-    if (searchQuery.trim() && !isSearching && searchQuery !== lastSearchQuery) {
+    console.log("searchQuery", searchQuery) 
+    console.log("isSearching", isSearching)
+  
+    if (searchQuery.trim() && !isSearching) {
 
-        setIsSearching(true); //검색중
-        setLastSearchQuery(searchQuery);
-
-        // dispatch(InitializeSearchedAlbum());
-        // dispatch(SearchAlbumName(searchQuery, searchedAlbumList.lastAlbumId, 10));
-        navigation.navigate('SearchedAlbum', { searchQuery, isSearching });
-        setSearchQuery('');
+      console.log("검색하는 중");
+      dispatch(InitializeSearchedAlbum());
+      setIsSearching(true); 
+      setLastSearchQuery(searchQuery);
+      navigation.navigate('SearchedAlbum', { searchQuery, isSearching });
+      setSearchQuery('');
+      setIsSearching(false);
     }
   };
 

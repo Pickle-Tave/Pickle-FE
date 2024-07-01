@@ -28,22 +28,22 @@ export const HashTagCreate = async (tag_name) => {
     
 
             if (status === 404) {
-                Alert.alert('에러', '리소스를 찾을 수 없습니다. 경로를 확인하세요: ' + errorMessage);
+                alert('에러', '리소스를 찾을 수 없습니다. 경로를 확인하세요: ' + errorMessage);
             } else if (status === 409) {
                 if (error.response.data.data.errorClassName === 'EXCEED_HASHTAG_NUMBER') {
-                    Alert.alert('에러', '해시태그 개수를 초과했습니다: ' + errorMessage);
+                    alert(errorMessage);
                 } else if (error.response.data.data.errorClassName === 'HASHTAG_ALREADY_EXIST') {
-                    Alert.alert('에러', '해시태그가 이미 존재합니다: ' + errorMessage);
+                    alert(errorMessage);
                 } else {
-                    Alert.alert('에러', '충돌이 발생했습니다: ' + errorMessage);
+                    alert('에러', '충돌이 발생했습니다: ' + errorMessage);
                 }
             } else {
-                Alert.alert('에러', '오류가 발생했습니다: ' + errorMessage);
+                alert('에러', '오류가 발생했습니다: ' + errorMessage);
             }
         } else {
-            Alert.alert('에러', '알 수 없는 에러가 발생했습니다.');
+            alert('에러', '알 수 없는 에러가 발생했습니다.');
         }
 
-        throw error; // 에러를 다시 던져서 상위 코드에서 처리할 수 있게 함
+        throw error; 
     }
 };
