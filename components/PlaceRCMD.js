@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     place_img: {
-        height: 160,
-        width: 177,
+        height: 165,
+        width: 195,
         resizeMode: 'contain'
     },
     placeItem: {

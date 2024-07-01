@@ -16,7 +16,7 @@ import { AlbumCreate } from '../../api/AlbumCreate';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 
-const AlbumPlus = ({ visible, onClose, newAlbumId }) => {
+const AlbumPlus = ({ visible, onClose }) => {
   const dispatch = useDispatch();
   const albumList = useSelector((state) => state.AlbumReducer);
   const [newAlbumName, setNewAlbumName] = useState('');
@@ -27,7 +27,6 @@ const AlbumPlus = ({ visible, onClose, newAlbumId }) => {
       setNewAlbumName('');
       dispatch(InitializeAlbumList());
       dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
-      
       onClose();
     } catch (error) {
       console.error('앨범 생성 중 오류:', error);

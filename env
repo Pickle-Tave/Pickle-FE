@@ -1,2 +1,0 @@
-REACT_APP_REST_API_KEY=f5f79be138b94b36d3be6f56a53a610e
-REDIRECT_URI=http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com/login/oauth2/code/kakao

@@ -15,7 +15,7 @@ export const AlbumCreate = async (album_name) => {
                 }
             }
         );
-        console.log('Received response from backend:', response.data); // 백엔드 응답 로그 출력
+        console.log('앨범 생성 응답:', response.data); // 백엔드 응답 로그 출력
         return response.data;
     } catch (error) {
         console.error('앨범 생성 에러:', error);

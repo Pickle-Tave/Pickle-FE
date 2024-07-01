@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addAlbumLike, deleteAlbumLike } from '../src/actions/AlbumLikeAction';
+import { LikeApply } from '../api/LikeApply';
+import { LikeUnApply } from '../api/LikeUnApply';
+import { InitializeAlbumList } from '../src/actions/AlbumListAction';
+import { GetAlbumList } from '../api/GetAlbumList';
 
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
-    const likedAlbums = useSelector(state => state.AlbumLikeReducer);
-    const isLiked = likedAlbums.some(album => album.album_id === props.albumId);
 
-    const [heart, setHeart] = useState(isLiked);
-
-    useEffect(() => {
-        setHeart(isLiked);
-    }, [isLiked]);
-
-    const addHeart = () => {
-        setHeart(true);
-        dispatch(addAlbumLike(props.album_id, props.album_name, props.album_type));
+    // 즐겨찾기 설정
+    const handleLikeApply = async () => {
+        try {
+            await LikeApply(props.albumId);
+            dispatch(InitializeAlbumList());
+            dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+        } catch (error) {
+            console.error('좋아요 설정 에러:', error);
+        }
     };
 
-    const deleteHeart = () => {
-        setHeart(false);
-        dispatch(deleteAlbumLike(props.album_id));
+    // 즐겨찾기 해제
+    const handleLikeUnApply = async () => {
+        try {
+            await LikeUnApply(props.albumId);
+            dispatch(InitializeAlbumList());
+            dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+        } catch (error) {
+            console.error('좋아요 해제 에러:', error);
+        }
     };
+
+    const handleLike = () => {
+        if (props.searchedAlbumMarkedStatus === "MARKED") {
+            handleLikeUnApply();
+        } else if (props.searchedAlbumMarkedStatus === "UNMARKED") {
+            handleLikeApply();
+        }
+    }
+
 
     return (
         <View style={styles.container}>
@@ -30,13 +46,13 @@ const AlbumItem = (props) => {
                 <View style={styles.imageContainer}>
                     <TouchableOpacity
                         style={styles.heartIcon}
-                        onPress={() => (heart ? deleteHeart() : addHeart())}>
+                        onPress={handleLike}>
                         <Image
                             style={{ width: 16, height: 14 }}
                             source={
-                                heart
-                                    ? require('../assets/icon/heart_on.png')
-                                    : require('../assets/icon/heart_off.png')
+                                (props.searchedAlbumMarkedStatus === "UNMARKED")
+                                    ? require('../assets/icon/heart_off.png')
+                                    : require('../assets/icon/heart_on.png')
                             }
                         />
                     </TouchableOpacity>

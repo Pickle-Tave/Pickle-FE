@@ -1,18 +1,25 @@
-//action type
-export const ADD_ALBUM_LIKE = 'ADD_ALBUM_LIKE';
-export const DELETE_ALBUM_LIKE = 'DELETE_ALBUM_LIKE';
+// API 연동부분
+export const INITIALIZE_LIKE = 'INITIALIZE_LIKE';
+export const FETCH_LIKE_REQUEST = 'FETCH_LIKE_REQUEST';
+export const FETCH_LIKE_SUCCESS = 'FETCH_LIKE_SUCCESS';
+export const FETCH_LIKE_ERROR = 'FETCH_LIKE_ERROR';
 
-//action객체 
-export const addAlbumLike = (album_id, album_name, album_type) => ({
-    type: ADD_ALBUM_LIKE,
-    payload: {
-        album_id,
-        album_name,
-        album_type
-    }
+// API 연동 부분 
+
+export const InitializeAlbumList = () => ({
+    type: INITIALIZE_LIKE,
 })
 
-export const deleteAlbumLike = (album_id) => ({
-    type: DELETE_ALBUM_LIKE,
-    album_id
-})
+export const fetchAlbumRequest = () => ({
+    type: FETCH_LIKE_REQUEST,
+});
+
+export const fetchAlbumSuccess = (res) => ({
+    type: FETCH_LIKE_SUCCESS,
+    payload: res,
+});
+
+export const fetchAlbumError = (error) => ({
+    type: FETCH_LIKE_ERROR,
+    payload: error,
+});
