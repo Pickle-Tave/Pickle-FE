@@ -21,5 +21,3 @@ export const refreshAccessToken = async () => {
     throw error;
   }
 };
-
-export default instance;

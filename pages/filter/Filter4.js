@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,47 +8,70 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  FlatList,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchHashTags} from '../../src/actions/ImageHashTagAction';
 
 const Filter4 = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
-  const [images, setImages] = useState([
-    {id: 1, src: require('../../assets/icon/photo1.png'), selectedOptions: []},
-    {id: 2, src: require('../../assets/icon/photo2.png'), selectedOptions: []},
-    {id: 3, src: require('../../assets/icon/photo3.png'), selectedOptions: []},
-    {id: 4, src: require('../../assets/icon/photo4.png'), selectedOptions: []},
-    {id: 5, src: require('../../assets/icon/photo5.png'), selectedOptions: []},
-  ]);
-
+  const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentImageId, setCurrentImageId] = useState(null);
+  const hashTags = useSelector(state => state.imageHashTag?.hashTags || {}); // 상태 확인 추가
+  const [groups, setGroups] = useState([]); // 그룹 상태 추가
+
+  useEffect(() => {
+    // 그룹 데이터 가져오기
+    const fetchGroups = async () => {
+      // API 호출
+      // const response = await fetch('API_URL');
+      // const data = await response.json();
+
+      /* 예시 데이터
+      const data = [
+        {
+          id: 1,
+          thumbnails: ['', ''],
+          selectedOptions: [],
+        },
+      ];*/
+
+      setGroups(data);
+    };
+
+    fetchGroups();
+    dispatch(fetchHashTags()); // 해시태그 가져오기
+  }, [dispatch]);
 
   const handleNavigation = () => {
     navigation.navigate('Filter5');
   };
 
-  const handleImagePress = imageId => {
-    setCurrentImageId(imageId);
+  const handleGroupPress = groupId => {
+    setCurrentGroupId(groupId); // 선택한 그룹 ID 저장
     setModalVisible(true);
   };
 
+  // 수정
   const handleOptionPress = option => {
-    setImages(prevImages =>
-      prevImages.map(img =>
-        img.id === currentImageId
+    setGroups(prevGroups =>
+      prevGroups.map(group =>
+        group.id === currentGroupId
           ? {
-              ...img,
-              selectedOptions: img.selectedOptions.includes(option)
-                ? img.selectedOptions.filter(item => item !== option)
-                : [...img.selectedOptions, option],
+              ...group,
+              selectedOptions: group.selectedOptions.includes(option)
+                ? group.selectedOptions.filter(item => item !== option)
+                : [...group.selectedOptions, option],
             }
-          : img,
+          : group,
       ),
     );
   };
 
-  const currentImage = images.find(img => img.id === currentImageId);
+  const currentGroup = groups.find(group => group.id === currentGroupId);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -62,22 +85,25 @@ const Filter4 = () => {
       </View>
 
       <View style={styles.gridContainer}>
-        {images.map((image, index) => (
-          <React.Fragment key={image.id}>
+        {groups.map((group, index) => (
+          <React.Fragment key={group.id}>
             {index % 2 === 0 && index !== 0 && (
               <View style={styles.separator} />
             )}
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 style={styles.imageWrapper}
-                onPress={() => handleImagePress(image.id)}>
-                <Image source={image.src} style={styles.image} />
+                onPress={() => handleGroupPress(group.id)}>
+                <Image
+                  source={{uri: group.thumbnails[0]}} // 썸네일
+                  style={styles.image}
+                />
               </TouchableOpacity>
             </View>
           </React.Fragment>
         ))}
       </View>
-      {currentImage && (
+      {currentGroup && (
         <Modal visible={modalVisible} transparent={true} animationType="fade">
           <TouchableOpacity
             style={styles.modalBackground}
@@ -85,18 +111,18 @@ const Filter4 = () => {
             onPressOut={() => setModalVisible(false)}>
             <View style={styles.modalContainer}>
               <View style={styles.optionContainer}>
-                {['동물', '여행', '일상', '청춘', '행복'].map(option => (
-                  <TouchableOpacity
-                    key={option}
-                    style={[
-                      styles.option,
-                      currentImage.selectedOptions.includes(option) &&
-                        styles.selectedOption,
-                    ]}
-                    onPress={() => handleOptionPress(option)}>
-                    <Text style={styles.optionText}>#{option}</Text>
-                  </TouchableOpacity>
-                ))}
+                <FlatList
+                  data={hashTags[currentGroupId] || []} // 현재 그룹의 해시태그 가져오기
+                  renderItem={({item}) => (
+                    <View style={styles.hashTagItem}>
+                      <Text style={styles.hashTagText}>#{item}</Text>
+                      <TouchableOpacity onPress={() => handleOptionPress(item)}>
+                        <Text style={styles.optionText}>추가/제거</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
               </View>
             </View>
           </TouchableOpacity>
