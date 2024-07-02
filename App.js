@@ -144,7 +144,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
 
   const handleLoginSuccess = () => {
     setIsLogged(true);
@@ -248,18 +248,19 @@ function App() {
                 headerBackVisible: true,
               })}
             />
-            <Stack.Screen 
-            name="SearchedAlbum"
-            component={SearchedAlbum}
-            options={({navigation}) => ({
-              header: () => (
-                <CustomHeader navigation={navigation} 
-                title="앨범 검색"
-                canGoBack={true} 
-                />
-              ),
-              headerBackVisible: true,
-            })}
+            <Stack.Screen
+              name="SearchedAlbum"
+              component={SearchedAlbum}
+              options={({navigation}) => ({
+                header: () => (
+                  <CustomHeader
+                    navigation={navigation}
+                    title="앨범 검색"
+                    canGoBack={true}
+                  />
+                ),
+                headerBackVisible: true,
+              })}
             />
           </>
         ) : (

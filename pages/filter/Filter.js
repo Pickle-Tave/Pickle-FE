@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import instance from '../../api/axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getPresignedUrls} from '../../api/ImageUpload';
 
 const Filter = () => {
   const navigation = useNavigation();
 
+  // 이미지를 선택하는 함수
   const onSelectImage = () => {
     launchImageLibrary(
       {
@@ -23,7 +23,7 @@ const Filter = () => {
         maxHeight: 512,
         includeBase64: false,
         quality: 1,
-        selectionLimit: 0,
+        selectionLimit: 0, // 0으로 설정하면 여러 개의 이미지 선택 가능
       },
       async res => {
         if (res.didCancel) {
@@ -31,58 +31,49 @@ const Filter = () => {
         } else if (res.errorCode) {
           console.log('ImagePicker Error: ', res.errorMessage);
         } else {
-          const asset = res.assets[0];
-          await uploadImageToS3(asset); // s3에 업로드
-          navigation.navigate('Filter1', {images: res.assets});
+          const assets = res.assets; // 선택한 모든 이미지들
+          console.log('Selected assets:', assets);
+
+          // 필요한 Presigned URL 개수만큼 요청
+          const presignedUrls = await getPresignedUrls(assets.length);
+
+          // 각 이미지에 대해 Presigned URL을 사용하여 업로드
+          const imageUrls = await Promise.all(
+            assets.map((asset, index) =>
+              uploadImageToS3(asset, presignedUrls[index]),
+            ),
+          );
+
+          console.log('Uploaded image URLs:', imageUrls);
+          navigation.navigate('Filter1', {imageUrls});
         }
       },
     );
   };
 
-  const uploadImageToS3 = async asset => {
+  // 이미지를 S3에 업로드하는 함수
+  const uploadImageToS3 = async (asset, presignedUrl) => {
     try {
-      // AsyncStorage에서 accessToken 가져오기
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
-
-      // console.log('Requesting presigned URL...');
-      // Presigned URL 요청
-      const response = await instance.post(
-        '/images/upload-url',
-        {imageUploadSize: 2},
-        {headers: {Authorization: `Bearer ${accessToken}`}},
-      );
-
-      console.log('Received response from backend:', response.data.data);
-
-      if (response.status !== 200) {
-        throw new Error(`Failed to get presigned URL: ${response.status}`);
-      }
-
-      const presignedUrls = response.data.data.presignedUrls; // 배열로 받는지 확인
-      if (!presignedUrls || presignedUrls.length === 0) {
-        throw new Error('No presigned URLs received');
-      }
-
-      const presignedUrl = presignedUrls[0]; // 첫 번째 URL 사용
-      console.log('Presigned URL:', presignedUrl);
+      console.log('Uploading image to S3 with URL:', presignedUrl);
 
       // 이미지를 Blob으로 변환하여 PUT 요청으로 업로드
       const fetchResponse = await fetch(asset.uri);
       const blob = await fetchResponse.blob();
 
-      console.log('Uploading image to S3...');
       const uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
         body: blob,
       });
+
       if (uploadResponse.ok) {
-        Alert.alert('Success', '이미지 업로드가 성공적으로 완료되었습니다!');
+        console.log('Image uploaded successfully!');
+        //Alert.alert('Success', '이미지 업로드에 성공했습니다!');
+        return presignedUrl.split('?')[0]; // 업로드된 이미지 URL 반환
       } else {
-        console.error('Failed to upload image:', uploadResponse);
+        const responseText = await uploadResponse.text();
+        console.error('Failed to upload image:', uploadResponse, responseText);
         Alert.alert('Error', '이미지 업로드에 실패했습니다');
+        return null;
       }
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -90,6 +81,7 @@ const Filter = () => {
         'Error',
         `이미지 업로드 중 오류가 발생했습니다: ${error.message}`,
       );
+      return null;
     }
   };
 

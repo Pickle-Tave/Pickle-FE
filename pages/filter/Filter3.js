@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,36 +9,24 @@ import {
   ScrollView,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 
 const Filter3 = () => {
   const navigation = useNavigation();
-  const [images, setImages] = useState([]);
+  const route = useRoute();
+  const {groupedImages = []} = route.params; // Filter1에서 전달된 분류된 이미지 리스트 기본값 설정
+
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
 
-  useEffect(() => {
-    // API 호출하여 이미지 데이터 받아오기
-    const fetchImages = async () => {
-      try {
-        const response = await fetch(''); // 수정
-        const data = await response.json();
-        setImages(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchImages();
-  }, []);
-
   const handleNavigation = () => {
-    navigation.navigate('Filter4');
+    navigation.navigate('Filter4', {groupedImages});
   };
 
+  // 개별 이미지 선택 및 해제
   const handleSelect = id => {
     if (selected.includes(id)) {
       setSelected(selected.filter(item => item !== id));
@@ -47,17 +35,19 @@ const Filter3 = () => {
     }
   };
 
+  // 전체 이미지 선택 및 해제
   const handleSelectAll = () => {
     if (selectAll) {
       setSelected([]);
     } else {
-      setSelected(images.map(image => image.id));
+      const allImageIds = groupedImages.flat().map((imageUrl, index) => index);
+      setSelected(allImageIds);
     }
     setSelectAll(!selectAll);
   };
 
   const handleImagePress = image => {
-    setCurrentImage(image.imageUrl);
+    setCurrentImage(image);
     setModalVisible(true);
   };
 
@@ -78,8 +68,8 @@ const Filter3 = () => {
         <Text style={styles.selectAllText}>전체선택</Text>
       </View>
       <View style={styles.gridContainer}>
-        {images.map((image, index) => (
-          <React.Fragment key={image.id}>
+        {groupedImages.flat().map((image, index) => (
+          <React.Fragment key={index}>
             {index % 2 === 0 && index !== 0 && (
               <View style={styles.separator} />
             )}
@@ -87,10 +77,10 @@ const Filter3 = () => {
               <TouchableOpacity
                 style={styles.imageWrapper}
                 onPress={() => handleImagePress(image)}>
-                <Image source={{uri: image.imageUrl}} style={styles.image} />
+                <Image source={{uri: image}} style={styles.image} />
                 <CheckBox
-                  value={selected.includes(image.id)}
-                  onValueChange={() => handleSelect(image.id)}
+                  value={selected.includes(index)}
+                  onValueChange={() => handleSelect(index)}
                   style={styles.checkbox}
                   tintColors={{true: '#017AFF', false: '#000000'}}
                 />

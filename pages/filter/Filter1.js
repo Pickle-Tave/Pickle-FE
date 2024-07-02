@@ -1,12 +1,22 @@
 import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {classifyImages} from '../../api/ImageClassify';
 
-const Filter1 = () => {
+const Filter1 = ({route}) => {
   const navigation = useNavigation();
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
+  const [strongClustering, setStrongClustering] = useState(true);
+  const {imageUrls} = route.params; // 이전 화면에서 전달된 이미지 URL 리스트
 
   const handlePress1 = () => {
     setChecked1(!checked1);
@@ -16,8 +26,38 @@ const Filter1 = () => {
     setChecked2(!checked2);
   };
 
-  const handleNavigation = () => {
-    navigation.navigate('Filter2');
+  const handleStrongPress = () => {
+    setStrongClustering(true);
+  };
+
+  const handleWeakPress = () => {
+    setStrongClustering(false);
+  };
+
+  const handleNavigation = async () => {
+    try {
+      // API 요청 본문 생성
+      const requestBody = {
+        imageUrls: imageUrls.map(url => url.split('?')[0]), // Presigned URL에서 파라미터 제거
+        strongClustering,
+        eyeClosing: checked2,
+        blurred: checked1,
+      };
+      console.log('Request Body:', requestBody);
+
+      // API 호출
+      const data = await classifyImages(requestBody);
+
+      console.log('Grouped Images:', data.groupedImages);
+
+      // 다음 화면으로 이동하면서 분류 결과 전달
+      navigation.navigate('Filter3', {groupedImages: data.groupedImages});
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        `이미지 분류 중 오류가 발생했습니다: ${error.message}`,
+      );
+    }
   };
 
   return (
@@ -33,14 +73,14 @@ const Filter1 = () => {
         resizeMode="contain"
       />
       <View style={styles.strengthContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleStrongPress}>
           <Image
             style={styles.strong}
             source={require('../../assets/icon/strong.png')}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleWeakPress}>
           <Image
             style={styles.weak}
             source={require('../../assets/icon/weak.png')}
@@ -56,16 +96,18 @@ const Filter1 = () => {
       />
       <View style={styles.checkboxes}>
         <TouchableOpacity
-          style={styles.checkboxContainer}
+          style={[styles.textButton, checked1 && styles.checkedBackground]}
           onPress={handlePress1}>
-          <View style={[styles.checkbox, checked1 && styles.checkedCheckbox]} />
-          <Text style={styles.label}>선명하지 않은 사진 제외</Text>
+          <Text style={[styles.label, checked1 && styles.checkedLabel]}>
+            선명하지 않은 사진 제외
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.checkboxContainer}
+          style={[styles.textButton, checked2 && styles.checkedBackground]}
           onPress={handlePress2}>
-          <View style={[styles.checkbox, checked2 && styles.checkedCheckbox]} />
-          <Text style={styles.label}>눈 감은 사진 제외</Text>
+          <Text style={[styles.label, checked2 && styles.checkedLabel]}>
+            눈 감은 사진 제외
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleNavigation}>
           <Image
@@ -118,31 +160,45 @@ const styles = StyleSheet.create({
   },
   checkboxes: {
     marginTop: 10,
+    width: '55%',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
   },
+  textButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 10,
+    justifyContent: 'center',
+  },
   checkbox: {
     width: 24,
     height: 24,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: '#769370',
     borderRadius: 8,
     marginRight: 8,
-    margin: 3,
+    margin: 5,
   },
-  checkedCheckbox: {
-    backgroundColor: '#99AD81',
+  checkedBackground: {
+    backgroundColor: '#B9CCA0',
+    borderRadius: 13,
+  },
+  checkedLabel: {
+    color: 'white',
   },
   label: {
     fontSize: 18,
+    textAlign: 'center',
   },
   next: {
     width: 120,
     marginTop: 30,
-    left: 50,
+    left: 55,
   },
 });
 
