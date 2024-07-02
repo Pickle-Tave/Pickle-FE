@@ -56,16 +56,18 @@ const Filter1 = () => {
       />
       <View style={styles.checkboxes}>
         <TouchableOpacity
-          style={styles.checkboxContainer}
+          style={[styles.textButton, checked1 && styles.checkedBackground]}
           onPress={handlePress1}>
-          <View style={[styles.checkbox, checked1 && styles.checkedCheckbox]} />
-          <Text style={styles.label}>선명하지 않은 사진 제외</Text>
+          <Text style={[styles.label, checked1 && styles.checkedLabel]}>
+            선명하지 않은 사진 제외
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.checkboxContainer}
+          style={[styles.textButton, checked2 && styles.checkedBackground]}
           onPress={handlePress2}>
-          <View style={[styles.checkbox, checked2 && styles.checkedCheckbox]} />
-          <Text style={styles.label}>눈 감은 사진 제외</Text>
+          <Text style={[styles.label, checked2 && styles.checkedLabel]}>
+            눈 감은 사진 제외
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleNavigation}>
           <Image
@@ -118,31 +120,45 @@ const styles = StyleSheet.create({
   },
   checkboxes: {
     marginTop: 10,
+    width: '55%',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
   },
+  textButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 10,
+    justifyContent: 'center',
+  },
   checkbox: {
     width: 24,
     height: 24,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: '#769370',
     borderRadius: 8,
     marginRight: 8,
-    margin: 3,
+    margin: 5,
   },
-  checkedCheckbox: {
-    backgroundColor: '#99AD81',
+  checkedBackground: {
+    backgroundColor: '#B9CCA0',
+    borderRadius: 13,
+  },
+  checkedLabel: {
+    color: 'white',
   },
   label: {
     fontSize: 18,
+    textAlign: 'center',
   },
   next: {
     width: 120,
     marginTop: 30,
-    left: 50,
+    left: 55,
   },
 });
 
