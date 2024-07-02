@@ -1,9 +1,5 @@
-import axios from 'axios';
+import instance from './axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const instance = axios.create({
-  baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
-});
 
 export const refreshAccessToken = async () => {
   const refreshToken = await AsyncStorage.getItem('refreshToken');

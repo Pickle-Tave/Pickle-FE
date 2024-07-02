@@ -9,11 +9,12 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import {getPresignedUrl} from '../../api/ImageUpload';
+import {getPresignedUrls} from '../../api/ImageUpload';
 
 const Filter = () => {
   const navigation = useNavigation();
 
+  // 이미지를 선택하는 함수
   const onSelectImage = () => {
     launchImageLibrary(
       {
@@ -31,10 +32,16 @@ const Filter = () => {
           console.log('ImagePicker Error: ', res.errorMessage);
         } else {
           const assets = res.assets; // 선택한 모든 이미지들
-          //console.log('Selected assets:', assets);
+          // console.log('Selected assets:', assets);
 
+          // 필요한 Presigned URL 개수만큼 요청
+          const presignedUrls = await getPresignedUrls(assets.length);
+
+          // 각 이미지에 대해 Presigned URL을 사용하여 업로드
           const imageUrls = await Promise.all(
-            assets.map(async asset => await uploadImageToS3(asset)),
+            assets.map((asset, index) =>
+              uploadImageToS3(asset, presignedUrls[index]),
+            ),
           );
 
           console.log('Uploaded image URLs:', imageUrls);
@@ -44,18 +51,15 @@ const Filter = () => {
     );
   };
 
-  const uploadImageToS3 = async asset => {
+  // 이미지를 S3에 업로드하는 함수
+  const uploadImageToS3 = async (asset, presignedUrl) => {
     try {
-      console.log('Requesting presigned URL...');
-      const presignedUrl = await getPresignedUrl(); // API 호출
-
-      console.log('Presigned URL:', presignedUrl);
+      console.log('Uploading image to S3 with URL:', presignedUrl);
 
       // 이미지를 Blob으로 변환하여 PUT 요청으로 업로드
       const fetchResponse = await fetch(asset.uri);
       const blob = await fetchResponse.blob();
 
-      console.log('Uploading image to S3...');
       const uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
         body: blob,
@@ -63,7 +67,7 @@ const Filter = () => {
 
       if (uploadResponse.ok) {
         console.log('Image uploaded successfully!');
-        Alert.alert('Success', '이미지 업로드에 성공했습니다!');
+        // Alert.alert('Success', '이미지 업로드에 성공했습니다!');
         return presignedUrl.split('?')[0]; // 업로드된 이미지 URL 반환
       } else {
         const responseText = await uploadResponse.text();

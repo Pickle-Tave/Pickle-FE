@@ -9,13 +9,13 @@ import {
   Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import instance from '../../api/axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {classifyImages} from '../../api/ImageClassify';
 
 const Filter1 = ({route}) => {
   const navigation = useNavigation();
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
+  const [strongClustering, setStrongClustering] = useState(true);
   const {imageUrls} = route.params; // 이전 화면에서 전달된 이미지 URL 리스트
 
   const handlePress1 = () => {
@@ -26,38 +26,33 @@ const Filter1 = ({route}) => {
     setChecked2(!checked2);
   };
 
+  const handleStrongPress = () => {
+    setStrongClustering(true);
+  };
+
+  const handleWeakPress = () => {
+    setStrongClustering(false);
+  };
+
   const handleNavigation = async () => {
     try {
-      // AsyncStorage에서 accessToken 가져오기
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
-
       // API 요청 본문 생성
       const requestBody = {
         imageUrls: imageUrls.map(url => url.split('?')[0]), // Presigned URL에서 파라미터 제거
-        strongClustering: true, // 강하게 클러스터링 (예시)
-        eyeClosing: checked2, // 눈 감은 사진 제외
-        blurred: checked1, // 선명하지 않은 사진 제외
+        strongClustering,
+        eyeClosing: checked2,
+        blurred: checked1,
       };
+      console.log('Request Body:', requestBody);
 
       // API 호출
-      const response = await instance.post('/images/classify', requestBody, {
-        headers: {Authorization: `Bearer ${accessToken}`},
-      });
+      const data = await classifyImages(requestBody);
 
-      if (response.status === 200) {
-        // 성공적인 응답 처리
-        const {groupedImages} = response.data.data;
-        console.log('Grouped Images:', groupedImages);
-        // 다음 화면으로 이동하면서 분류 결과 전달
-        navigation.navigate('Filter2', {groupedImages});
-      } else {
-        throw new Error(`Failed to classify images: ${response.status}`);
-      }
+      console.log('Grouped Images:', data.groupedImages);
+
+      // 다음 화면으로 이동하면서 분류 결과 전달
+      navigation.navigate('Filter3', {groupedImages: data.groupedImages});
     } catch (error) {
-      console.error('Error classifying images:', error);
       Alert.alert(
         'Error',
         `이미지 분류 중 오류가 발생했습니다: ${error.message}`,
@@ -78,14 +73,14 @@ const Filter1 = ({route}) => {
         resizeMode="contain"
       />
       <View style={styles.strengthContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleStrongPress}>
           <Image
             style={styles.strong}
             source={require('../../assets/icon/strong.png')}
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleWeakPress}>
           <Image
             style={styles.weak}
             source={require('../../assets/icon/weak.png')}
