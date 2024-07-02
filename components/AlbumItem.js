@@ -5,6 +5,8 @@ import { LikeApply } from '../api/LikeApply';
 import { LikeUnApply } from '../api/LikeUnApply';
 import { InitializeAlbumList } from '../src/actions/AlbumListAction';
 import { GetAlbumList } from '../api/GetAlbumList';
+import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
+import { SearchAlbumLike } from '../api/SearchAlbumLike';
 
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
@@ -15,6 +17,8 @@ const AlbumItem = (props) => {
             await LikeApply(props.albumId);
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+            dispatch(InitializeLikeList());
+            dispatch(SearchAlbumLike(null, 10));
         } catch (error) {
             console.error('좋아요 설정 에러:', error);
         }
@@ -26,6 +30,8 @@ const AlbumItem = (props) => {
             await LikeUnApply(props.albumId);
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+            dispatch(InitializeLikeList());
+            dispatch(SearchAlbumLike(null, 10));
         } catch (error) {
             console.error('좋아요 해제 에러:', error);
         }

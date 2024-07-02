@@ -1,3 +1,4 @@
+//삭제할 것
 //action type
 export const ADD_ALBUM = 'ADD_ALBUM';
 export const UPDATE_ALBUM_NAME = 'UPDATE_ALBUM_NAME';
