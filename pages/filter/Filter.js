@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+// src/components/Filter.js
+import React from 'react';
 import {
   View,
   Text,
@@ -9,8 +10,7 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import instance from '../../api/axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getPresignedUrl} from '../../api/ImageUpload';
 
 const Filter = () => {
   const navigation = useNavigation();
@@ -41,32 +41,9 @@ const Filter = () => {
 
   const uploadImageToS3 = async asset => {
     try {
-      // AsyncStorage에서 accessToken 가져오기
-      const accessToken = await AsyncStorage.getItem('accessToken');
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
+      console.log('Requesting presigned URL...');
+      const presignedUrl = await getPresignedUrl(); // API 호출
 
-      // console.log('Requesting presigned URL...');
-      // Presigned URL 요청
-      const response = await instance.post(
-        '/images/upload-url',
-        {imageUploadSize: 2},
-        {headers: {Authorization: `Bearer ${accessToken}`}},
-      );
-
-      console.log('Received response from backend:', response.data.data);
-
-      if (response.status !== 200) {
-        throw new Error(`Failed to get presigned URL: ${response.status}`);
-      }
-
-      const presignedUrls = response.data.data.presignedUrls; // 배열로 받는지 확인
-      if (!presignedUrls || presignedUrls.length === 0) {
-        throw new Error('No presigned URLs received');
-      }
-
-      const presignedUrl = presignedUrls[0]; // 첫 번째 URL 사용
       console.log('Presigned URL:', presignedUrl);
 
       // 이미지를 Blob으로 변환하여 PUT 요청으로 업로드
@@ -79,6 +56,7 @@ const Filter = () => {
         body: blob,
       });
       if (uploadResponse.ok) {
+        console.log('Image uploaded successfully!');
         Alert.alert('Success', '이미지 업로드가 성공적으로 완료되었습니다!');
       } else {
         console.error('Failed to upload image:', uploadResponse);
