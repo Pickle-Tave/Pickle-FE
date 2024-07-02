@@ -16,7 +16,7 @@ export const getPresignedUrls = async count => {
       {headers: {Authorization: `Bearer ${accessToken}`}},
     );
 
-    // console.log('Received response from backend:', response.data);
+    console.log('Received response from backend:', response.data);
 
     if (response.status !== 200) {
       throw new Error(`Failed to get presigned URLs: ${response.status}`);

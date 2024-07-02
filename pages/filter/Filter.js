@@ -32,7 +32,7 @@ const Filter = () => {
           console.log('ImagePicker Error: ', res.errorMessage);
         } else {
           const assets = res.assets; // 선택한 모든 이미지들
-          // console.log('Selected assets:', assets);
+          console.log('Selected assets:', assets);
 
           // 필요한 Presigned URL 개수만큼 요청
           const presignedUrls = await getPresignedUrls(assets.length);
@@ -67,7 +67,7 @@ const Filter = () => {
 
       if (uploadResponse.ok) {
         console.log('Image uploaded successfully!');
-        // Alert.alert('Success', '이미지 업로드에 성공했습니다!');
+        //Alert.alert('Success', '이미지 업로드에 성공했습니다!');
         return presignedUrl.split('?')[0]; // 업로드된 이미지 URL 반환
       } else {
         const responseText = await uploadResponse.text();

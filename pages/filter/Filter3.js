@@ -9,12 +9,13 @@ import {
   ScrollView,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 
-const Filter3 = ({route}) => {
+const Filter3 = () => {
   const navigation = useNavigation();
-  const {groupedImages} = route.params; // Filter1에서 전달된 분류된 이미지 리스트
+  const route = useRoute();
+  const {groupedImages = []} = route.params; // Filter1에서 전달된 분류된 이미지 리스트 기본값 설정
 
   const [selected, setSelected] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -22,9 +23,10 @@ const Filter3 = ({route}) => {
   const [currentImage, setCurrentImage] = useState(null);
 
   const handleNavigation = () => {
-    navigation.navigate('Filter4');
+    navigation.navigate('Filter4', {groupedImages});
   };
 
+  // 개별 이미지 선택 및 해제
   const handleSelect = id => {
     if (selected.includes(id)) {
       setSelected(selected.filter(item => item !== id));
@@ -33,6 +35,7 @@ const Filter3 = ({route}) => {
     }
   };
 
+  // 전체 이미지 선택 및 해제
   const handleSelectAll = () => {
     if (selectAll) {
       setSelected([]);
