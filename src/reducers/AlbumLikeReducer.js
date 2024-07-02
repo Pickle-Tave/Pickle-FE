@@ -5,18 +5,14 @@ const initialState = {
     lastAlbumId: null, // 마지막으로 반환받는 앨범 id
     first: true, //처음들어가는 요청인지
     last: false, // 마지막 요청인지 여부
-    error: null
+    error: null,
 };
 
 const AlbumLikeReducer = (state = initialState, action) => {
     switch (action.type) {
         case INITIALIZE_LIKE:
             return {
-                likeList: [],
-                lastAlbumId: null,
-                first: true,
-                last: false,
-                error: null
+                ...initialState,
             };
         case FETCH_LIKE_REQUEST:
             return { ...state };
@@ -28,9 +24,9 @@ const AlbumLikeReducer = (state = initialState, action) => {
             return {
                 ...state,
                 likeList: newLikeList,
-                lastAlbumId: lastAlbumId,
-                first: first,
-                last: last,
+                lastAlbumId,
+                first,
+                last,
             };
         case FETCH_LIKE_ERROR:
             return { ...state, error: action.payload };

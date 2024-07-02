@@ -24,13 +24,17 @@ import { GetAlbumList } from '../api/GetAlbumList';
 import { InitializeAlbumList } from '../src/actions/AlbumListAction';
 import { SearchAlbumName } from '../api/SearchAlbumName';
 import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
+import { SearchAlbumLike } from '../api/SearchAlbumLike';
+import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 
 const Album = ({ navigation }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
 
   //API연동부분
   const dispatch = useDispatch();
-  const AlbumList = useSelector((state) => state.AlbumListReducer)
+  const AlbumList = useSelector((state) => state.AlbumListReducer);
+  const LikeList = useSelector((state) => state.AlbumLikeReducer);
+
 
   const albumImages = useSelector((state) => state.AlbumImageReducer);
 
@@ -56,46 +60,11 @@ const Album = ({ navigation }) => {
 
   //검색된 앨범 정보
   const searchedAlbumList = useSelector((state) => state.SearchedAlbumReducer);
-  console.log('현재 검색된 앨범정보요!', searchedAlbumList);
-
 
   // 검색 중인지 여부를 나타내는 상태 변수
   const [isSearching, setIsSearching] = useState(false);
   // 마지막으로 검색한 쿼리를 저장하는 상태 변수
   const [lastSearchQuery, setLastSearchQuery] = useState('');
-
-  //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
-  useEffect(() => {
-    //마지막이 아니면서 처음 요청일때
-    if (!AlbumList.last && AlbumList.first) {
-      console.log("처음 요청이 들어가는 중")
-      dispatch(GetAlbumList(null, 10));
-    }
-  }, []);
-
-  // 추가 데이터 요청 함수
-  const fetchMoreAlbums = () => {
-    if (isLoadingMore) {
-      return; // 이미 로딩 중인 경우 추가 요청 방지
-    }
-
-    if (AlbumList.last) {
-      return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
-    }
-
-    setIsLoadingMore(true); // 로딩 시작
-
-    dispatch(GetAlbumList(AlbumList.lastAlbumId, 10))
-      .then(() => setIsLoadingMore(false)) // 로딩 완료
-      .catch((error) => {
-        setIsLoadingMore(false); // 에러 발생 시 로딩 해제
-        console.error('앨범 목록 추가 요청 에러:', error);
-      });
-  };
-
-  useEffect(() => {
-    setNewAlbumId(maxAlbumId + 1);
-  }, [albumList]);
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -113,10 +82,61 @@ const Album = ({ navigation }) => {
   // 현재 선택된 값
   const [currentValue, setCurrentValue] = useState(1);
 
+  //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
+  useEffect(() => {
+    if (value === 1) {
+      if (!AlbumList.last && AlbumList.first) {
+        console.log("처음 요청이 들어가는 중");
+        dispatch(InitializeAlbumList());
+        dispatch(GetAlbumList(null, 10));
+      }
+    } else if (value === 4) {
+      if (!LikeList.last && LikeList.first) {
+        console.log("즐겨찾기 요청이 들어가는 중");
+        dispatch(InitializeLikeList());
+        dispatch(SearchAlbumLike(null, 10));
+      }
+    }
+  }, [value]);
+
+  const renderData = () => {
+    if(value == 1) {
+      return AlbumList.albumList;
+    } else if (value === 4) {
+      return LikeList.likeList;
+    }
+  }
+
+  // 추가 데이터 요청 함수
+  const fetchMoreAlbums = () => {
+    if (isLoadingMore) {
+      return; // 이미 로딩 중인 경우 추가 요청 방지
+    }
+
+    const currentList = value === 4 ? LikeList : AlbumList;
+
+    if (currentList.last) {
+      return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
+    }
+
+    setIsLoadingMore(true); // 로딩 시작
+
+    const fetchAction = value === 4 ? SearchAlbumLike : GetAlbumList;
+    dispatch(fetchAction(currentList.lastAlbumId, 10))
+      .then(() => setIsLoadingMore(false)) // 로딩 완료
+      .catch((error) => {
+        setIsLoadingMore(false); // 에러 발생 시 로딩 해제
+        console.error('앨범 목록 추가 요청 에러:', error);
+      });
+  };
+
+  useEffect(() => {
+    setNewAlbumId(maxAlbumId + 1);
+  }, [albumList]);
+
   // 드롭다운 메뉴를 선택할 때마다 값 변경
   const onChange = (value) => {
     setCurrentValue(value);
-
   };
 
   // 수정 버튼 클릭시 kebab 모달이 사라지고 share 모달이 뜸
@@ -128,7 +148,6 @@ const Album = ({ navigation }) => {
   // 공유 버튼 클릭시 kebab 모달이 사라지고 edit 모달이 뜸
   const EditModal = () => {
     setKebabVisible(false);
-    // setAlbumId(id);
     setEditVisible(true);
   };
 
@@ -166,16 +185,14 @@ const Album = ({ navigation }) => {
     navigation.navigate('AlbumInquiry', { id });
   };
 
-
   const handleAlbumSearch = () => {
-    console.log("searchQuery", searchQuery) 
-    console.log("isSearching", isSearching)
-  
-    if (searchQuery.trim() && !isSearching) {
+    console.log("searchQuery", searchQuery);
+    console.log("isSearching", isSearching);
 
+    if (searchQuery.trim() && !isSearching) {
       console.log("검색하는 중");
       dispatch(InitializeSearchedAlbum());
-      setIsSearching(true); 
+      setIsSearching(true);
       setLastSearchQuery(searchQuery);
       navigation.navigate('SearchedAlbum', { searchQuery, isSearching });
       setSearchQuery('');
@@ -240,7 +257,7 @@ const Album = ({ navigation }) => {
       </View>
       <View style={styles.albumlist}>
         <FlatList
-          data={AlbumList.albumList}
+          data={renderData()}
           keyExtractor={(item) => item.albumId.toString()}
           renderItem={({ item }) => (
             <AlbumItem
