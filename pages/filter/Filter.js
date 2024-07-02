@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import instance from 'axios';
+import instance from '../../api/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Filter = () => {
@@ -47,24 +47,33 @@ const Filter = () => {
         throw new Error('No access token found');
       }
 
+      // console.log('Requesting presigned URL...');
       // Presigned URL 요청
       const response = await instance.post(
-        '/album/upload-url',
-        {albumId: 1},
+        '/images/upload-url',
+        {imageUploadSize: 2},
         {headers: {Authorization: `Bearer ${accessToken}`}},
       );
+
+      console.log('Received response from backend:', response.data.data);
 
       if (response.status !== 200) {
         throw new Error(`Failed to get presigned URL: ${response.status}`);
       }
 
-      const presignedUrl = response.data.data.presignedUrl;
+      const presignedUrls = response.data.data.presignedUrls; // 배열로 받는지 확인
+      if (!presignedUrls || presignedUrls.length === 0) {
+        throw new Error('No presigned URLs received');
+      }
+
+      const presignedUrl = presignedUrls[0]; // 첫 번째 URL 사용
       console.log('Presigned URL:', presignedUrl);
 
       // 이미지를 Blob으로 변환하여 PUT 요청으로 업로드
       const fetchResponse = await fetch(asset.uri);
       const blob = await fetchResponse.blob();
 
+      console.log('Uploading image to S3...');
       const uploadResponse = await fetch(presignedUrl, {
         method: 'PUT',
         body: blob,
