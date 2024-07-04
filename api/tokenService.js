@@ -1,5 +1,9 @@
-import instance from './axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const instance = axios.create({
+  baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+});
 
 export const refreshAccessToken = async () => {
   const refreshToken = await AsyncStorage.getItem('refreshToken');
@@ -13,7 +17,14 @@ export const refreshAccessToken = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error refreshing token:', error);
-
+    if (error.response && error.response.status === 401) {
+      // Refresh token is invalid or expired
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      throw new Error('Refresh token expired or invalid. Please log in again.');
+    }
     throw error;
   }
 };
+
+export default instance;
