@@ -258,7 +258,12 @@ const Album = ({ navigation }) => {
         checkedAlbumId={checkedAlbumId}
         dropdownValue={value}
       />
-      <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
+      <AlbumShareModal
+        visible={sharevisible}
+        onClose={() => setShareVisible(false)}
+        checkedAlbumId={checkedAlbumId}
+        dropdownValue={value}
+      />
       <DeleteWarnModal
         visible={deletewarnvisible}
         onClose={() => setDeleteWarnVisible(false)}

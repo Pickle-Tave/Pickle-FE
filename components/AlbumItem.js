@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 5,
         paddingVertical: 4,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold'
     },
     type_text2: {
         backgroundColor: '#E2DD8D',
@@ -165,7 +166,8 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 5,
         paddingVertical: 4,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold'
     },
     kebab_image: {
         width: 16,
