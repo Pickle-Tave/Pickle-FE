@@ -12,8 +12,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AlbumEdit } from '../../api/AlbumEdit';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
+import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
+import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
@@ -22,7 +24,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
 
   const editedAlbum = useSelector((state) =>
     state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
- 
+
   //새로 수정할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
@@ -38,7 +40,16 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
         .then(() => {
           dispatch(InitializeAlbumList());
           dispatch(GetAlbumList(null, 10));
-          onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
+          // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
+          console.log("dropdownValue",dropdownValue)
+          if (dropdownValue === 2) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+          } else if (dropdownValue === 3) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+          }
+
           onClose();
         })
         .catch((error) => console.error('앨범 수정 오류:', error));

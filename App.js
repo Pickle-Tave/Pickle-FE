@@ -79,8 +79,9 @@ const MainScreen = () => {
           backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
+          borderTopWidth: 3,
           borderColor: '#4C5A49',
-          borderWidth: 5,
+          borderWidth: 3,
           position: 'absolute',
         },
         tabBarItemStyle: {
@@ -144,7 +145,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
 
   const handleLoginSuccess = () => {
     setIsLogged(true);

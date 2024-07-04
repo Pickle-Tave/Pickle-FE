@@ -7,6 +7,8 @@ import { InitializeAlbumList } from '../src/actions/AlbumListAction';
 import { GetAlbumList } from '../api/GetAlbumList';
 import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 import { SearchAlbumLike } from '../api/SearchAlbumLike';
+import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
+import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
 
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
@@ -19,6 +21,14 @@ const AlbumItem = (props) => {
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
             dispatch(InitializeLikeList());
             dispatch(SearchAlbumLike(null, 10));
+            console.log("dropdown",props.dropdownValue)
+            if (props.dropdownValue === 2) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+            } else if (props.dropdownValue === 3) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+            }
         } catch (error) {
             console.error('좋아요 설정 에러:', error);
         }
@@ -32,6 +42,13 @@ const AlbumItem = (props) => {
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
             dispatch(InitializeLikeList());
             dispatch(SearchAlbumLike(null, 10));
+            if (props.dropdownValue === 2) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+            } else if (props.dropdownValue === 3) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+            }
         } catch (error) {
             console.error('좋아요 해제 에러:', error);
         }
@@ -133,6 +150,7 @@ const styles = StyleSheet.create({
     },
     type_text1: {
         backgroundColor: '#A0B59C',
+        maxWidth: 50,
         borderRadius: 5,
         fontSize: 10,
         color: 'white',
