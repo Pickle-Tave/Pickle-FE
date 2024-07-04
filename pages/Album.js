@@ -248,7 +248,9 @@ const Album = ({ navigation }) => {
         ShareModal={ShareModal}
         DeleteAlbum={handleDeleteAlbum}
         DeleteWarn={DeleteWarn}
-        CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
+        CopyAlbum={() => handleCopyAlbum(checkedAlbumId)}
+        checkedAlbumId={checkedAlbumId}
+        dropdownValue={value}
       />
       <AlbumEditModal
         visible={editvisible}
@@ -355,7 +357,7 @@ const styles = StyleSheet.create({
   },
   albumlist: {
     width: '95%',
-    marginBottom: 190,
+    marginBottom: 180,
   },
   album_plus: {
     position: 'absolute',

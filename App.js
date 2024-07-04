@@ -79,9 +79,9 @@ const MainScreen = () => {
           backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          borderTopWidth: 3,
+          borderTopWidth: 2,
           borderColor: '#4C5A49',
-          borderWidth: 3,
+          borderWidth: 2   ,
           position: 'absolute',
         },
         tabBarItemStyle: {
