@@ -22,19 +22,20 @@ import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
 import { addAlbumImage } from '../src/actions/AlbumImageAction';
 import { GetAlbumList } from '../api/GetAlbumList';
 import { InitializeAlbumList } from '../src/actions/AlbumListAction';
-import { SearchAlbumName } from '../api/SearchAlbumName';
 import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
 import { SearchAlbumLike } from '../api/SearchAlbumLike';
 import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
+import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
+import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
 
 const Album = ({ navigation }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
 
   //API연동부분
   const dispatch = useDispatch();
-  const AlbumList = useSelector((state) => state.AlbumListReducer);
-  const LikeList = useSelector((state) => state.AlbumLikeReducer);
-
+  const AlbumList = useSelector((state) => state.AlbumListReducer); //사용자 앨범 목록
+  const LikeList = useSelector((state) => state.AlbumLikeReducer); //즐겨찾기 앨범 목록
+  const StatusList = useSelector((state) => state.AlbumStatusReducer); //앨범 상태 목록(개인앨범 혹은 공유앨범)
 
   const albumImages = useSelector((state) => state.AlbumImageReducer);
 
@@ -58,13 +59,8 @@ const Album = ({ navigation }) => {
   // 검색 입력 값을 관리하는 상태 변수
   const [searchQuery, setSearchQuery] = useState('');
 
-  //검색된 앨범 정보
-  const searchedAlbumList = useSelector((state) => state.SearchedAlbumReducer);
-
   // 검색 중인지 여부를 나타내는 상태 변수
   const [isSearching, setIsSearching] = useState(false);
-  // 마지막으로 검색한 쿼리를 저장하는 상태 변수
-  const [lastSearchQuery, setLastSearchQuery] = useState('');
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -85,27 +81,55 @@ const Album = ({ navigation }) => {
   //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
   useEffect(() => {
     if (value === 1) {
+      dispatch(InitializeAlbumList());
       if (!AlbumList.last && AlbumList.first) {
-        console.log("처음 요청이 들어가는 중");
-        dispatch(InitializeAlbumList());
+        console.log("전체 앨범 요청이 들어가는 중");
         dispatch(GetAlbumList(null, 10));
       }
+    } else if (value === 2) {
+      dispatch(InitializeAlbumStatus());
+      if (!StatusList.last && StatusList.first) {
+        console.log("개인앨범 검색이 들어가는 중");
+        dispatch(SearchAlbumStatus('PRIVATE', null, 10))
+
+      }
+    } else if (value === 3) {
+      dispatch(InitializeAlbumStatus());
+      if (!StatusList.last && StatusList.first) {
+        console.log("공유앨범 검색이 들어가는 중");
+        dispatch(SearchAlbumStatus('PUBLIC', null, 10))
+
+      }
     } else if (value === 4) {
+      dispatch(InitializeLikeList());
       if (!LikeList.last && LikeList.first) {
         console.log("즐겨찾기 요청이 들어가는 중");
-        dispatch(InitializeLikeList());
         dispatch(SearchAlbumLike(null, 10));
       }
     }
+
   }, [value]);
 
   const renderData = () => {
-    if(value == 1) {
+    if (value == 1) {
       return AlbumList.albumList;
+    } else if (value === 2 || value === 3) {
+      return StatusList.statusList;
     } else if (value === 4) {
       return LikeList.likeList;
     }
   }
+
+  const currentList = () => {
+    if (value === 1) {
+      return AlbumList;
+    } else if (value === 2 || value === 3) {
+      return StatusList
+    } else {
+      return LikeList
+    }
+  };
+
 
   // 추가 데이터 요청 함수
   const fetchMoreAlbums = () => {
@@ -113,16 +137,25 @@ const Album = ({ navigation }) => {
       return; // 이미 로딩 중인 경우 추가 요청 방지
     }
 
-    const currentList = value === 4 ? LikeList : AlbumList;
-
-    if (currentList.last) {
+    if (currentList().last) {
       return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
     }
 
     setIsLoadingMore(true); // 로딩 시작
 
-    const fetchAction = value === 4 ? SearchAlbumLike : GetAlbumList;
-    dispatch(fetchAction(currentList.lastAlbumId, 10))
+    const action = () => {
+      if (value === 1) {
+        return dispatch(GetAlbumList(currentList().lastAlbumId, 10));
+      } else if (value === 2) {
+        return dispatch(SearchAlbumStatus('PRIVATE', currentList().lastAlbumId, 10));
+      } else if (value === 3) {
+        return dispatch(SearchAlbumStatus('PUBLIC', currentList().lastAlbumId, 10));
+      } else {
+        return dispatch(SearchAlbumLike(currentList().lastAlbumId, 10));
+      }
+    };
+
+    action()
       .then(() => setIsLoadingMore(false)) // 로딩 완료
       .catch((error) => {
         setIsLoadingMore(false); // 에러 발생 시 로딩 해제
@@ -193,7 +226,6 @@ const Album = ({ navigation }) => {
       console.log("검색하는 중");
       dispatch(InitializeSearchedAlbum());
       setIsSearching(true);
-      setLastSearchQuery(searchQuery);
       navigation.navigate('SearchedAlbum', { searchQuery, isSearching });
       setSearchQuery('');
       setIsSearching(false);
@@ -207,6 +239,7 @@ const Album = ({ navigation }) => {
       <AlbumPlus
         visible={plusvisible}
         onClose={() => setPlusVisible(false)}
+        dropdownValue={value}
       />
       <KebabModal
         visible={kebabvisible}
@@ -221,6 +254,7 @@ const Album = ({ navigation }) => {
         visible={editvisible}
         onClose={() => setEditVisible(false)}
         checkedAlbumId={checkedAlbumId}
+        dropdownValue={value}
       />
       <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
       <DeleteWarnModal
@@ -266,6 +300,7 @@ const Album = ({ navigation }) => {
               setKebabVisible={setKebabVisible}
               AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
               setAlbumId={setcheckedAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
+              dropdownValue={value}
             />
           )}
           onEndReached={fetchMoreAlbums} // 끝에 도달하면 추가 데이터 요청
