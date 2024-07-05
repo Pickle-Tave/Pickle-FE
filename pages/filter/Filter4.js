@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,54 +9,12 @@ import {
   ScrollView,
   Modal,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchHashTags} from '../../src/actions/ImageHashTagAction';
-import {HashTagListCheck} from '../../api/HashTagListCheck';
-
-const HashtagList = ({visible, onClose}) => {
-  const dispatch = useDispatch();
-  const hashtagList = useSelector(state => state.HashTagReducer.hashtagList);
-
-  useEffect(() => {
-    if (visible) {
-      dispatch(HashTagListCheck());
-    }
-  }, [dispatch, visible]);
-
-  const renderHashTagItem = item => (
-    <View style={styles.hashItem} key={item.id.toString()}>
-      <Text style={styles.hashText}>{`#${item.text}`}</Text>
-    </View>
-  );
-
-  return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalBackground}>
-          <TouchableWithoutFeedback>
-            <View style={styles.modalContainer}>
-              <ScrollView
-                horizontal={true}
-                contentContainerStyle={styles.hashList}
-                showsHorizontalScrollIndicator={false}>
-                {hashtagList.map(renderHashTagItem)}
-              </ScrollView>
-              <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  onPress={onClose}
-                  style={styles.modalButtonContainer1}>
-                  <Text style={styles.modalButton}>닫기</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
-  );
-};
+import {addHashTag} from '../../src/actions/ImageHashTagAction';
+import {assignHashTag} from '../../api/HashTagAssign';
 
 const Filter4 = () => {
   const navigation = useNavigation();
@@ -66,11 +24,8 @@ const Filter4 = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentGroupImages, setCurrentGroupImages] = useState([]); // 현재 그룹의 모든 이미지 저장
-  const hashTags = useSelector(state => state.imageHashTag?.hashTags || {});
-
-  useEffect(() => {
-    dispatch(fetchHashTags()); // 해시태그 가져오기
-  }, [dispatch]);
+  const [selectedTags, setSelectedTags] = useState({}); // 각 그룹의 선택된 해시태그 저장
+  const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
 
   const handleNavigation = () => {
     navigation.navigate('Filter5');
@@ -82,19 +37,38 @@ const Filter4 = () => {
     setModalVisible(true);
   };
 
-  const handleOptionPress = option => {
-    setGroups(prevGroups =>
-      prevGroups.map(group =>
-        group.id === currentGroupId
-          ? {
-              ...group,
-              selectedOptions: group.selectedOptions.includes(option)
-                ? group.selectedOptions.filter(item => item !== option)
-                : [...group.selectedOptions, option],
-            }
-          : group,
-      ),
-    );
+  const handleSelectTag = async tag => {
+    const newSelectedTags = {...selectedTags};
+    if (newSelectedTags[currentGroupId] === tag.text) {
+      // 해시태그 제거
+      delete newSelectedTags[currentGroupId];
+      setSelectedTags(newSelectedTags);
+      dispatch(removeHashTag(currentGroupId, tag.text));
+    } else {
+      // 해시태그 추가
+      newSelectedTags[currentGroupId] = tag.text;
+      setSelectedTags(newSelectedTags);
+      dispatch(addHashTag(currentGroupId, tag.text));
+
+      try {
+        const requestBody = {
+          imageUrls: currentGroupImages.map(url => url.split('?')[0]),
+          hashtagId: tag.id,
+        };
+        console.log('Request Body:', requestBody);
+
+        // API 호출
+        const data = await assignHashTag(requestBody);
+
+        console.log('해시태그 저장 성공:', data);
+      } catch (error) {
+        console.error('해시태그 저장 중 오류 발생:', error);
+        Alert.alert(
+          'Error',
+          `해시태그 저장 중 오류가 발생했습니다: ${error.message}`,
+        );
+      }
+    }
   };
 
   return (
@@ -128,10 +102,44 @@ const Filter4 = () => {
         ))}
       </View>
       {modalVisible && (
-        <HashtagList
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-        />
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalBackground}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContainer}>
+                  <ScrollView contentContainerStyle={styles.hashList}>
+                    {hashtagList.map(item => (
+                      <TouchableOpacity
+                        key={item.id.toString()}
+                        style={[
+                          styles.hashItem,
+                          selectedTags[currentGroupId] === item.text &&
+                            styles.selectedHashItem,
+                        ]}
+                        onPress={() => handleSelectTag(item)}>
+                        <Text
+                          style={[
+                            styles.hashText,
+                            selectedTags[currentGroupId] === item.text &&
+                              styles.selectedHashText,
+                          ]}>
+                          {`#${item.text}`}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity
+                      onPress={() => setModalVisible(false)}
+                      style={styles.modalButtonContainer1}>
+                      <Text style={styles.modalButton}>닫기</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       )}
       <TouchableOpacity onPress={handleNavigation}>
         <Image
@@ -192,10 +200,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '85%', // 모달 너비 설정
+    width: '85%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
@@ -208,54 +216,33 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    alignItems: 'center',
-    color: 'black',
-  },
   hashList: {
-    flexDirection: 'row', // 가로로 배치
+    flexDirection: 'column',
     paddingVertical: 15,
-    justifyContent: 'flex-start', // 가로축 기준 왼쪽 정렬
-    alignItems: 'center', // 세로축 기준 중앙 정렬
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   hashItem: {
-    marginHorizontal: 8, // 해시태그 간 간격 추가
-    marginVertical: 4, // 세로 간격 추가
-    alignItems: 'center', // 중앙 정렬
+    marginVertical: 10,
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  selectedHashItem: {
+    backgroundColor: '#F7F8CB',
+    borderRadius: 8,
   },
   hashText: {
-    fontSize: 14,
+    fontSize: 18,
   },
-  emptyMessageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  emptyMessageText: {
-    fontSize: 16,
-    color: 'gray',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    width: '100%',
-    marginTop: 20,
-  },
-  modalButtonContainer1: {
-    alignItems: 'center', // 중앙 정렬
-  },
-  modalButton: {
-    fontSize: 16,
-    color: 'black',
+  selectedHashText: {
+    color: 'white',
   },
   next: {
     width: 120,
     marginTop: 20,
   },
-  closeButtonText: {
+  modalButton: {
     fontSize: 16,
     color: 'black',
   },

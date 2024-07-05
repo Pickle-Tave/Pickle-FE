@@ -39,7 +39,6 @@ const Filter1 = ({route}) => {
   const handleNavigation = async () => {
     setLoading(true); // 로딩 상태 시작
     try {
-      // API 요청 본문 생성
       const requestBody = {
         imageUrls: imageUrls.map(url => url.split('?')[0]), // Presigned URL에서 파라미터 제거
         strongClustering,
