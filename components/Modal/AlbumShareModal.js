@@ -7,9 +7,12 @@ import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
 import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
+import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../../api/SearchAlbumName';
 import { useDispatch } from 'react-redux';
 
-const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue }) => {
+
+const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, searchQuery }) => {
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +28,12 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue }) =>
             dispatch(GetAlbumList(null, 10));
 
             dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike());
+            dispatch(SearchAlbumLike(null, 10));
+
+            if (searchQuery) {
+                dispatch(InitializeSearchedAlbum());
+                dispatch(SearchAlbumName(searchQuery, null, 10));
+            }
 
             if (dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
@@ -63,11 +71,11 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue }) =>
                             <Text style={styles.modalTitle}>앨범 공유하기</Text>
                             <Text style={styles.textLeftAlign}>Password를 입력하세요.</Text>
                             <View style={styles.password_section}>
-                                <TextInput 
-                                    style={styles.textinput} 
+                                <TextInput
+                                    style={styles.textinput}
                                     value={password}
                                     onChangeText={setPassword}
-                                    //secureTextEntry={true} // 비밀번호 입력 시 텍스트 가리기
+                                //secureTextEntry={true} // 비밀번호 입력 시 텍스트 가리기
                                 />
                                 <TouchableOpacity style={styles.done_btn} onPress={handleShare}>
                                     <Text style={styles.done_text}>완료</Text>

@@ -31,7 +31,7 @@ const SearchedAlbum = ({ route, navigation }) => {
 
     useEffect(() => {
         handleAlbumSearch();
-    }, []); 
+    }, []);
 
     const handleAlbumSearch = () => {
         if (searchQuery.trim() && !isLoading) {
@@ -104,6 +104,7 @@ const SearchedAlbum = ({ route, navigation }) => {
             <AlbumPlus
                 visible={plusvisible}
                 onClose={() => setPlusVisible(false)}
+                searchQuery={searchQuery}
             />
             <KebabModal
                 visible={kebabvisible}
@@ -112,14 +113,21 @@ const SearchedAlbum = ({ route, navigation }) => {
                 ShareModal={ShareModal}
                 DeleteWarn={DeleteWarn}
                 CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
+                searchQuery={searchQuery}
             />
             <AlbumEditModal
                 visible={editvisible}
                 onClose={() => setEditVisible(false)}
                 checkedAlbumId={checkedAlbumId}
-                onUpdate={handleUpdate} 
+                onUpdate={handleUpdate}
+                searchQuery={searchQuery}
             />
-            <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
+            <AlbumShareModal
+                visible={sharevisible}
+                onClose={() => setShareVisible(false)}
+                searchQuery={searchQuery}
+                checkedAlbumId={checkedAlbumId}           
+                />
             <DeleteWarnModal
                 visible={deletewarnvisible}
                 onClose={() => setDeleteWarnVisible(false)}
@@ -140,6 +148,7 @@ const SearchedAlbum = ({ route, navigation }) => {
                                     setKebabVisible={setKebabVisible}
                                     AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
                                     setAlbumId={setcheckedAlbumId}
+                                    searchQuery={searchQuery}
                                 />
                             )}
                             ListEmptyComponent={<Text>앨범을 찾을 수 없습니다!!</Text>}
