@@ -9,9 +9,12 @@ import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 import { SearchAlbumLike } from '../api/SearchAlbumLike';
 import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
+import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../api/SearchAlbumName';
 
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
+
 
     // 즐겨찾기 설정
     const handleLikeApply = async () => {
@@ -19,9 +22,15 @@ const AlbumItem = (props) => {
             await LikeApply(props.albumId);
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+
             dispatch(InitializeLikeList());
             dispatch(SearchAlbumLike(null, 10));
-            console.log("dropdown",props.dropdownValue)
+
+            if (props.searchQuery) {
+                dispatch(InitializeSearchedAlbum());
+                dispatch(SearchAlbumName(props.searchQuery, null, 10));
+            }
+
             if (props.dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
@@ -38,10 +47,19 @@ const AlbumItem = (props) => {
     const handleLikeUnApply = async () => {
         try {
             await LikeUnApply(props.albumId);
+
+            //여기 주석
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+
             dispatch(InitializeLikeList());
             dispatch(SearchAlbumLike(null, 10));
+
+            if (props.searchQuery) {
+                dispatch(InitializeSearchedAlbum());
+                dispatch(SearchAlbumName(props.searchQuery, null, 10));
+            }
+
             if (props.dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
@@ -156,7 +174,8 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 5,
         paddingVertical: 4,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold'
     },
     type_text2: {
         backgroundColor: '#E2DD8D',
@@ -165,7 +184,8 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 5,
         paddingVertical: 4,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: 'bold'
     },
     kebab_image: {
         width: 16,

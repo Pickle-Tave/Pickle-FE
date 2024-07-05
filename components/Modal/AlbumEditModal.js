@@ -14,8 +14,10 @@ import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
+import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue, searchQuery }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
@@ -40,8 +42,14 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
         .then(() => {
           dispatch(InitializeAlbumList());
           dispatch(GetAlbumList(null, 10));
+
+          if (searchQuery) {
+            dispatch(InitializeSearchedAlbum());
+            dispatch(SearchAlbumName(searchQuery, null, 10));
+          }
+
           // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
-          console.log("dropdownValue",dropdownValue)
+          console.log("dropdownValue", dropdownValue)
           if (dropdownValue === 2) {
             dispatch(InitializeAlbumStatus());
             dispatch(SearchAlbumStatus('PRIVATE', null, 10));

@@ -65,7 +65,7 @@ const Album = ({ navigation }) => {
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
 
-  // 기본값을 설정할 수 있는 defaultValue 속성이 없어져 value를 초기화할 때 기본값을 지정해주었다.
+  // 드롭다운 값
   const [value, setValue] = useState(1);
 
   const [items, setItems] = useState([
@@ -78,8 +78,11 @@ const Album = ({ navigation }) => {
   // 현재 선택된 값
   const [currentValue, setCurrentValue] = useState(1);
 
-  //처음 마운트될때 앨범목록을 얻기 위한 첫번째 요청 부분
   useEffect(() => {
+    fetchAlbumData(value);
+  }, [value]);
+
+  const fetchAlbumData = (value) => {
     if (value === 1) {
       dispatch(InitializeAlbumList());
       if (!AlbumList.last && AlbumList.first) {
@@ -90,15 +93,13 @@ const Album = ({ navigation }) => {
       dispatch(InitializeAlbumStatus());
       if (!StatusList.last && StatusList.first) {
         console.log("개인앨범 검색이 들어가는 중");
-        dispatch(SearchAlbumStatus('PRIVATE', null, 10))
-
+        dispatch(SearchAlbumStatus('PRIVATE', null, 10));
       }
     } else if (value === 3) {
       dispatch(InitializeAlbumStatus());
       if (!StatusList.last && StatusList.first) {
         console.log("공유앨범 검색이 들어가는 중");
-        dispatch(SearchAlbumStatus('PUBLIC', null, 10))
-
+        dispatch(SearchAlbumStatus('PUBLIC', null, 10));
       }
     } else if (value === 4) {
       dispatch(InitializeLikeList());
@@ -107,29 +108,28 @@ const Album = ({ navigation }) => {
         dispatch(SearchAlbumLike(null, 10));
       }
     }
+  };
 
-  }, [value]);
-
+  //드롭다운 값에 따라 렌더링할 데이터
   const renderData = () => {
-    if (value == 1) {
+    if (value === 1) {
       return AlbumList.albumList;
     } else if (value === 2 || value === 3) {
       return StatusList.statusList;
     } else if (value === 4) {
       return LikeList.likeList;
     }
-  }
+  };
 
   const currentList = () => {
     if (value === 1) {
       return AlbumList;
     } else if (value === 2 || value === 3) {
-      return StatusList
+      return StatusList;
     } else {
-      return LikeList
+      return LikeList;
     }
   };
-
 
   // 추가 데이터 요청 함수
   const fetchMoreAlbums = () => {
@@ -162,10 +162,6 @@ const Album = ({ navigation }) => {
         console.error('앨범 목록 추가 요청 에러:', error);
       });
   };
-
-  useEffect(() => {
-    setNewAlbumId(maxAlbumId + 1);
-  }, [albumList]);
 
   // 드롭다운 메뉴를 선택할 때마다 값 변경
   const onChange = (value) => {
@@ -258,7 +254,12 @@ const Album = ({ navigation }) => {
         checkedAlbumId={checkedAlbumId}
         dropdownValue={value}
       />
-      <AlbumShareModal visible={sharevisible} onClose={() => setShareVisible(false)} />
+      <AlbumShareModal
+        visible={sharevisible}
+        onClose={() => setShareVisible(false)}
+        checkedAlbumId={checkedAlbumId}
+        dropdownValue={value}
+      />
       <DeleteWarnModal
         visible={deletewarnvisible}
         onClose={() => setDeleteWarnVisible(false)}
