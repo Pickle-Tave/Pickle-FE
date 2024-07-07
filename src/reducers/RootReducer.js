@@ -13,8 +13,8 @@ const RootReducer = combineReducers({
   AlbumImageReducer,
   AlbumLikeReducer,
   AlbumListReducer,
-  ImageHashTagReducer,
   SearchedAlbumReducer,
+  ImageHashTagReducer,
 });
 
 export default RootReducer;

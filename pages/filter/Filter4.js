@@ -23,7 +23,7 @@ const Filter4 = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentGroupImages, setCurrentGroupImages] = useState([]); // 현재 그룹의 모든 이미지 저장
-  const [selectedTags, setSelectedTags] = useState({}); // 각 그룹의 선택된 해시태그 저장
+  const [selectedTags, setSelectedTags] = useState([]); // 각 그룹의 선택된 해시태그 저장
   const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
 
   const handleNavigation = () => {
@@ -39,30 +39,19 @@ const Filter4 = () => {
 
   // 해시태그를 선택할 때 호출 -> 선택한 해시태그 저장 및 API 호출
   const handleSelectTag = async tag => {
-    const newSelectedTags = {...selectedTags};
-    newSelectedTags[currentGroupId] = tag.text; // 선택한 해시태그 저장
+    const newSelectedTags = [...selectedTags];
+    newSelectedTags[currentGroupId] = tag.text;
     setSelectedTags(newSelectedTags);
 
-    const imageUrls = currentGroupImages.map(url => url.split('?')[0]); // 현재 그룹의 이미지 URL 배열 생성
-
-    // 디버깅 로그 추가
-    console.log('Dispatching addHashTag action with imageUrls:', imageUrls);
-    console.log('Dispatching addHashTag action with hashtagId:', tag.id);
-
-    dispatch(addHashTag(imageUrls, tag.id)); // 선택한 해시태그를 디스패치
-
+    const imageUrls = currentGroupImages.map(url => url.split('?')[0]);
     try {
       const requestBody = {
-        imageUrls, // 이미지 URL 배열 생성
-        hashtagId: tag.id, // 해시태그 ID
+        imageUrls,
+        hashtagId: tag.id,
       };
-      console.log('Request Body:', requestBody);
-
-      // API 호출
       const data = await assignHashTag(requestBody);
-
       console.log('해시태그 저장 성공:', data);
-      setModalVisible(false); // API 호출이 성공하면 모달을 닫음
+      setModalVisible(false);
     } catch (error) {
       console.error('해시태그 저장 중 오류 발생:', error);
       Alert.alert(
