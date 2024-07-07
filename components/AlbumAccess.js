@@ -2,22 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ImgDeleteModal from './Modal/ImgDeleteModal';
+import ImgEnlargeModal from './Modal/ImgEnlargeModal';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
-import { addAlbumImage, deleteAlbumImage } from '../src/actions/AlbumImageAction';
-import { selectAlbumImagesByAlbumId } from '../src/selectors/selectors';
 import { getPresignedUrls } from '../api/ImageUpload';
-import ImgEnlargeModal from './Modal/ImgEnlargeModal';
 import { ImageAddAlbum } from '../api/ImageAddAlbum';
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
 import { ImageDelete } from '../api/ImageDelete';
+import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     const dispatch = useDispatch();
-
-    //현재 이미지 리스트
+    //현재 조회된 앨범의 이미지 리스트
     const currentImageList = useSelector((state) => state.AlbumImageReducer)
-    console.log("현재 이미지 리스트", currentImageList);
 
     // 모달 visible 상태
     const [deleteVisible, setDeleteVisible] = useState(false);
@@ -29,17 +26,9 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     // 현재 선택된 이미지 정보 저장(이미지를 크게 보기 위해서)
     const [selectedImageSrc, setSelectedImageSrc] = useState(null);
 
-
-    // 갤러리에서 선택된 이미지 리스트
-    const [selectedImageList, setSelectedImageList] = useState([]);
-
     // 로딩 상태를 나타내기 위한 변수
     const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-    const getNextImageId = (images) => {
-        const maxId = images.reduce((max, image) => Math.max(max, image.image_id), 12);
-        return maxId + 1;
-    };
+    const [isReloading, setIsReloading] = useState(false);
 
     //갤러리 이미지 선택
     const onSelectImage = () => {
@@ -73,7 +62,16 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                     );
 
                     //앨범에 이미지 추가하기
-                    ImageAddAlbum(albumId, imageUrls);
+                    ImageAddAlbum(albumId, imageUrls)
+                        .then(() => {
+                            dispatch(InitializeAlbumImages());
+                            setIsReloading(true);
+                            dispatch(GetAlbumInquiry(null, 50, albumId))
+                                .then(() => {
+                                    setIsReloading(false);
+                                })
+
+                        })
                     console.log("이미지추가 앨범 id", albumId)
 
                     console.log('Uploaded image URLs:', imageUrls);
@@ -118,17 +116,24 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
 
     //선택된 이미지 삭제하기
     const handleDeleteImages = () => {
-        ImageDelete(selectedImages);
+        ImageDelete(selectedImages)
+            .then(() => {
+                //삭제하고나서 사진 목록 다시 처음부터 조회하기
+                dispatch(InitializeAlbumImages());
+                setIsReloading(true);
+                console.log("삭제하고나서 새로운 이미지 리스트 요청 보내는중")
+                dispatch(GetAlbumInquiry(null, 50, albumId))
+                    .then(() => {
+                        setIsReloading(false);
+                    })
 
+            })
         setSelectedImages([]);
         setCheck(false);
         setDeleteVisible(false);
-
-        //삭제하고나서 사진 목록 다시 처음부터 조회하기
-
     };
 
-
+    //이미지 무한스크롤 구현
     const fetchMorImages = () => {
         if (isLoadingMore) {
             return; //이미 로딩 중인 경우 추가 요청 방지
@@ -140,13 +145,15 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
 
         setIsLoadingMore(true); //로딩 시작
 
-        dispatch(GetAlbumInquiry(currentImageList.lastImageId, 50, albumId))
-            .then(() => setIsLoadingMore(false)) //로딩완료
-            .catch((error) => {
-                setIsLoadingMore(false); //에러 발생시 로딩 해제
-                console.log("사진 목록 추가 요청 에러:", error);
-            })
-
+        if (!isReloading) {
+            console.log("사진 추가 요청 들어가는중...")
+            dispatch(GetAlbumInquiry(currentImageList.lastImageId, 50, albumId))
+                .then(() => setIsLoadingMore(false)) //로딩완료
+                .catch((error) => {
+                    setIsLoadingMore(false); //에러 발생시 로딩 해제
+                    console.log("사진 목록 추가 요청 에러:", error);
+                })
+        }
     }
 
     const handleCancel = () => {
@@ -158,11 +165,12 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
         setCheck(true);
     }
 
+    //선택된 이미지 갯수
     const selectedImageNum = selectedImages.length;
 
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
-            <Text style={styles.hash_text}>{item.tagName}</Text>
+            <Text style={styles.hash_text}>{item.tagName ? `#${item.tagName}` : '#해시태그'}</Text>
             {check &&
                 <BouncyCheckbox
                     style={styles.checkbox}
@@ -187,7 +195,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
             </TouchableOpacity>
         </View>
     );
-    
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -201,7 +209,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
             <View style={styles.upper_section}>
                 <Text style={styles.title}>{searchedAlbumName}</Text>
                 <TouchableOpacity onPress={
-                    check ?  handleCancel : handleCheck 
+                    check ? handleCancel : handleCheck
                 }>
                     {check ?
                         <Text style={styles.check_btn}>취소</Text>
@@ -209,38 +217,29 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                         <Text style={styles.check_btn}>선택</Text>}
                 </TouchableOpacity>
             </View>
-            <FlatList
-                data={currentImageList.imageList}
-                renderItem={renderItem}
-                keyExtractor={item => item.imageId.toString()}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                contentContainerStyle={styles.image_list}
-                onEndReached={fetchMorImages} // 끝에 도달하면 추가 데이터 요청
-                onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
-                ListFooterComponent={() => ( // 로딩 중임을 나타내는 컴포넌트
-                    isLoadingMore && (
-                        <View style={styles.loadingContainer}>
-                            <ActivityIndicator size="small" color="gray" />
-                        </View>
-                    )
-                )}
-
-            />
-            <View style={check ? styles.lower_section1 : styles.lower_section2}>
-                {check &&
-                    <TouchableOpacity onPress={() => setDeleteVisible(true)}>
-                        <Image style={{ width: 36, height: 36 }} source={require('../assets/icon/bin.png')} />
+            <View style={styles.listContainer}>
+                <FlatList
+                    data={currentImageList.imageList}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.imageId.toString()}
+                    numColumns={2}
+                    columnWrapperStyle={styles.row}
+                    contentContainerStyle={styles.image_list}
+                    onEndReached={fetchMorImages} // 끝에 도달하면 추가 데이터 요청
+                    onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
+                />
+                <View style={styles.iconContainer}>
+                    {/* bin.png 아이콘을 왼쪽 끝으로 이동 */}
+                    {check && (
+                        <TouchableOpacity style={styles.iconButtonLeft} onPress={() => setDeleteVisible(true)}>
+                            <Image style={styles.iconImage} source={require('../assets/icon/bin.png')} />
+                        </TouchableOpacity>
+                    )}
+                    {/* pic_plus 아이콘을 오른쪽에 배치 */}
+                    <TouchableOpacity style={styles.iconButtonRight} onPress={onSelectImage}>
+                        <Image style={styles.iconImage1} source={require('../assets/icon/pic_plus.png')} />
                     </TouchableOpacity>
-                }
-                {/* {selectedImageList.length > 0 && (
-                    <TouchableOpacity onPress={handleAddSelectedImages}>
-                        <Text style={styles.add_btn}>추가 {selectedImageList.length}개</Text>
-                    </TouchableOpacity>
-                )} */}
-                <TouchableOpacity style={styles.pic_plus} onPress={onSelectImage}>
-                    <Image style={{ width: 41, height: 41 }} source={require('../assets/icon/pic_plus.png')} />
-                </TouchableOpacity>
+                </View>
             </View>
         </KeyboardAvoidingView>
     );
@@ -251,10 +250,14 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
     },
+    listContainer: {
+        flex: 1,
+        position: 'relative',
+    },
     checkbox: {
         position: 'absolute',
-        top: 35,
-        left: 10,
+        top: 25,
+        left: 6,
         zIndex: 1,
     },
     upper_section: {
@@ -262,10 +265,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         justifyContent: 'space-between',
         marginHorizontal: 15,
-        marginBottom: 8,
+        marginBottom: 5,
     },
     title: {
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: 'bold',
         color: 'black'
     },
@@ -278,44 +281,49 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
     },
     image_list: {
-        paddingLeft: 10,
-        paddingTop: 10,
+        paddingLeft: 8,
     },
     row: {
         justifyContent: 'space-between',
     },
-    lower_section1: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 20,
-        marginTop: 5,
-    },
-    lower_section2: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginHorizontal: 20,
-        marginTop: 5,
-    },
     picture_container: {
         flex: 1,
-        position: 'relative',  // 자식 요소의 절대 위치 설정을 위해 필요
+        position: 'relative',
     },
     hash_text: {
-        fontSize: 14,
+        fontSize: 15,
         color: 'black',
         marginLeft: 5,
-        marginBottom: 2,
+        marginBottom: 3,
     },
     picture: {
-        width: 190,
-        height: 155,
-        resizeMode: 'contain',
-        borderRadius: 10,
-        marginBottom: 8
+        width: 193,
+        height: 153,
+        borderRadius: 3,
+        marginBottom: 7,
     },
-    pic_plus: {
-        marginBottom: 25,
-    }
+    iconContainer: {
+        flexDirection: 'row',
+        position: 'absolute',
+        bottom: 25,
+        right: 15,
+        zIndex: 1,
+    },
+    iconButtonLeft: {
+        marginRight: 'auto', // 왼쪽 끝으로 이동
+    },
+    iconButtonRight: {
+        marginLeft: 297, // 오른쪽 아이콘과의 간격
+    },
+    iconImage: {
+        width: 41,
+        height: 41,
+
+    },
+    iconImage1: {
+        width: 41,
+        height: 41,
+    },
 });
 
 export default AlbumAccess;

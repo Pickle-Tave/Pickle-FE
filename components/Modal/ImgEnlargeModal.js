@@ -11,11 +11,11 @@ const ImgDeleteModal = ({ visible, onClose, imageSrc }) => {
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContainer}>
-                        <TouchableOpacity style={{alignItems: 'flex-end', marginRight: 20}} onPress={onClose}>
-                            <Text style={{fontSize: 18, marginTop: 10,}}>x</Text>
+                        <TouchableOpacity style={{ alignItems: 'flex-end', marginRight: 20 }} onPress={onClose}>
+                            <Image style={{ width: 15, height: 15, marginTop: 9, }} source={require('../../assets/icon/cancel2.png')} />
                         </TouchableOpacity>
                         {/* 이미지띄우기 */}
-                        {imageSrc && <Image style={styles.enlargedImage} source={imageSrc} />}
+                        {imageSrc && <Image style={styles.enlargedImage} source={{ uri: imageSrc }} />}
                     </View>
                 </View>
             </TouchableWithoutFeedback>
@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 2,
         elevation: 5,
+        paddingVertical: 5,
     },
     enlargedImage: {
         width: '100%',
         height: '85%',
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        marginVertical: 10,
     },
 });
 

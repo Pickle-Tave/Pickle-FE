@@ -28,7 +28,7 @@ export const deleteAlbumImage = (image_id) => ({
 //API연동 action객체
 export const InitializeAlbumImages = () => ({
     type: INITIALIZE_ALBUM_IMAGES,
-})
+  });
 
 export const fetchImagesRequest = () => ({
     type: FETCH_IMAGES_REQUEST,
