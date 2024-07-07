@@ -14,6 +14,7 @@ import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
 import DropDownPicker from 'react-native-dropdown-picker';
 import KebabModal from '../components/Modal/KebabModal';
+import AlbumPasswordModal from '../components/Modal/AlbumPasswordModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
 import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
@@ -45,6 +46,7 @@ const Album = ({ navigation }) => {
   const [editvisible, setEditVisible] = useState(false);
   const [sharevisible, setShareVisible] = useState(false);
   const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
+  const [passwordvisible, setPasswordVisible] = useState(false);
 
   // 로딩 상태를 나타내기 위한 변수
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -232,6 +234,7 @@ const Album = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <AlbumPasswordModal visible={passwordvisible}/>
       <AlbumPlus
         visible={plusvisible}
         onClose={() => setPlusVisible(false)}

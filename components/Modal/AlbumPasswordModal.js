@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
-        marginTop: 7,
+        marginTop: 10,
         alignItems: 'center',
         color: 'black'
     },
@@ -61,12 +61,14 @@ const styles = StyleSheet.create({
         width: '100%', 
         textAlign: 'left', 
         marginTop: 10,
+        marginLeft: 5,
+        fontWeight: 'bold',
     },
     password_section: {
         width: '90%',
         flexDirection: 'row',
         gap: 10,
-        marginTop: 12,
+        marginTop: 20,
         justifyContent: 'center'
 
     },
