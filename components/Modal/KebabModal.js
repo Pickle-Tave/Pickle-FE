@@ -10,7 +10,7 @@ import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 import { useDispatch } from 'react-redux';
 
 
-const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum, DeleteWarn, CopyAlbum, checkedAlbumId }) => {
+const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, DeleteWarn, CopyAlbum, checkedAlbumId }) => {
     const dispatch = useDispatch();
 
     const pressCopy = () => {
@@ -25,8 +25,7 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum, Dele
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10));
 
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike());
+
 
             if (dropdownValue === 2) {
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
@@ -34,7 +33,11 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, DeleteAlbum, Dele
             } else if (dropdownValue === 3) {
                 dispatch(SearchAlbumStatus('PUBLIC', null, 10));
                 dispatch(InitializeAlbumStatus());
+            } else if (dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10));
             }
+            
             onClose();
         } catch (error) {
             console.error('앨범 생성 중 오류:', error);

@@ -15,7 +15,6 @@ import { SearchAlbumName } from '../api/SearchAlbumName';
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
 
-
     // 즐겨찾기 설정
     const handleLikeApply = async () => {
         try {
@@ -72,6 +71,7 @@ const AlbumItem = (props) => {
         }
     };
 
+
     const handleLike = () => {
         if (props.searchedAlbumMarkedStatus === "MARKED") {
             handleLikeUnApply();
@@ -79,7 +79,6 @@ const AlbumItem = (props) => {
             handleLikeApply();
         }
     }
-
 
     return (
         <View style={styles.container}>
