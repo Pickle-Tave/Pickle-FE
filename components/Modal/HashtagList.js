@@ -41,11 +41,16 @@ const HashtagList = ({ visible, onClose }) => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>해시태그 목록</Text>
               <ScrollView
-                horizontal={true}
                 contentContainerStyle={styles.hashList}
-                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
               >
-                {hashtagList.map(renderHashTagItem)}
+                {hashtagList.length === 0 ? (
+                  <View style={styles.emptyMessageContainer}>
+                    <Text style={styles.emptyMessageText}>설정된 해시태그가 없습니다</Text>
+                  </View>
+                ) : (
+                  hashtagList.map(renderHashTagItem)
+                )}
               </ScrollView>
               <View style={styles.modalButtons}>
                 <TouchableOpacity
@@ -87,14 +92,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    marginTop: 7,
     alignItems: 'center',
     color: 'black',
   },
   hashList: {
-    flexDirection: 'row', // 가로로 배치
-    paddingVertical: 15,
-    justifyContent: 'flex-start', // 가로축 기준 왼쪽 정렬
+    flexDirection: 'row',
+    flexWrap: 'wrap', // 해시태그가 너비를 넘어가면 다음 줄로 이동하도록 설정
+    justifyContent: 'center', // 가로축 기준 중앙 정렬
     alignItems: 'center', // 세로축 기준 중앙 정렬
+    paddingVertical: 15,
   },
   hashItem: {
     marginHorizontal: 8, // 해시태그 간 간격 추가
@@ -102,7 +109,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', // 중앙 정렬
   },
   hashText: {
-    fontSize: 14,
+    fontSize: 15,
+    flexShrink: 1, // 텍스트가 컨테이너 너비를 넘지 않도록 설정
   },
   emptyMessageContainer: {
     justifyContent: 'center',
@@ -110,14 +118,14 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   emptyMessageText: {
-    fontSize: 16,
+    fontSize: 15,
     color: 'gray',
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     width: '100%',
-    marginTop: 20,
+    marginTop: 16,
   },
   modalButtonContainer1: {
     alignItems: 'center', // 중앙 정렬

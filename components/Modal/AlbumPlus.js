@@ -15,8 +15,10 @@ import { addAlbum } from '../../src/actions/AlbumAction';
 import { AlbumCreate } from '../../api/AlbumCreate';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
+import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
+import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 
-const AlbumPlus = ({ visible, onClose }) => {
+const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
   const dispatch = useDispatch();
   const albumList = useSelector((state) => state.AlbumReducer);
   const [newAlbumName, setNewAlbumName] = useState('');
@@ -27,6 +29,14 @@ const AlbumPlus = ({ visible, onClose }) => {
       setNewAlbumName('');
       dispatch(InitializeAlbumList());
       dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
+
+      if (dropdownValue === 2) {
+        dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+        dispatch(InitializeAlbumStatus());
+      } else if (dropdownValue === 3) {
+        dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+        dispatch(InitializeAlbumStatus());
+      }
       onClose();
     } catch (error) {
       console.error('앨범 생성 중 오류:', error);
@@ -97,13 +107,14 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 17,
     alignItems: 'center',
     color: 'black',
+    marginTop: 7,
   },
   modalSubTitle: {
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 16,
     alignItems: 'center',
     color: 'black',
   },
@@ -115,7 +126,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     marginTop: 6,
     fontSize: 13,
-    marginBottom: 10,
+    marginBottom: 16,
   },
   modalButtons: {
     flexDirection: 'row',

@@ -1,17 +1,46 @@
-import "react-native-gesture-handler";
-
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import AlbumAccess from "../components/AlbumAccess";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
+import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const AlbumInquiry = ({ route }) => {
-  const { id } = route.params;
+  const dispatch = useDispatch();
+  const { id } = route.params; // 현재 앨범의 id값
+  const albumImages = useSelector((state) => state.AlbumImageReducer)
+
+  // useSelector를 사용하여 AlbumListReducer에서 상태 가져오기
+  const albumList = useSelector((state) => state.AlbumListReducer.albumList);
+
+  // 현재 조회하고 있는 앨범 정보(id, 이름, type 등..)
+  const currentAlbum = albumList.find((album) => album.albumId === id);
+
+  // 현재 조회된 앨범의 이미지 정보(확인할 것)(이미지리스트-id, 해시태그, url)
+  const currentimageList = useSelector(state => state.AlbumImageReducer.imageList);
+
+  // 로딩 상태 관리
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    dispatch(InitializeAlbumImages());
+    console.log("이미지 첫 요청이 들어가는 중")
+    if (!albumImages.last && albumImages.first) {
+      dispatch(GetAlbumInquiry(null, 50, id)) // 액션 크리에이터로 호출
+        .then(() => {
+          setLoading(false); // 액션 완료 후 로딩 상태 변경
+          if (albumImages.imageList.length === 0) {
+            setLoading(false); // 이미지 리스트가 빈 배열인 경우 로딩 멈춤
+          }
+        })
+        .catch(() => setLoading(false)); // 에러 발생 시도 로딩 상태 변경
+    } else {
+      setLoading(false); // 이미지 리스트가 이미 로딩된 경우 로딩 멈춤
+    }
+  }, []);
+
+  // 선택버튼이 눌렸는지 여부
   const [check, setCheck] = useState(false);
-  
-  const album = useSelector((state) =>
-    state.AlbumReducer.find((album) => album.album_id === id)
-  );
 
   return (
     <View style={styles.container}>
@@ -24,7 +53,12 @@ const AlbumInquiry = ({ route }) => {
           />
         </TouchableOpacity>
       </View>
-      <AlbumAccess check={check} setCheck={setCheck} {...album} />
+      {/* 로딩 중일 때 표시될 컴포넌트 */}
+      {loading ? (
+        <ActivityIndicator style={styles.loadingContainer} size="large" color="#769370" />
+      ) : (
+        <AlbumAccess check={check} setCheck={setCheck} {...currentAlbum} albumId={id} {...currentimageList} />
+      )}
     </View>
   );
 }
@@ -54,6 +88,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
 });
 
 export default AlbumInquiry;

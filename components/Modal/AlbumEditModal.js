@@ -12,8 +12,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AlbumEdit } from '../../api/AlbumEdit';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
+import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
+import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
+import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue, searchQuery }) => {
   const dispatch = useDispatch();
 
   const album = useSelector((state) =>
@@ -22,7 +26,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
 
   const editedAlbum = useSelector((state) =>
     state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
- 
+
   //새로 수정할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
@@ -38,7 +42,22 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate }) => {
         .then(() => {
           dispatch(InitializeAlbumList());
           dispatch(GetAlbumList(null, 10));
-          onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
+
+          if (searchQuery) {
+            dispatch(InitializeSearchedAlbum());
+            dispatch(SearchAlbumName(searchQuery, null, 10));
+          }
+
+          // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
+          console.log("dropdownValue", dropdownValue)
+          if (dropdownValue === 2) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+          } else if (dropdownValue === 3) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+          }
+
           onClose();
         })
         .catch((error) => console.error('앨범 수정 오류:', error));
@@ -111,13 +130,14 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 13,
+    marginTop: 7,
     alignItems: 'center',
     color: 'black',
   },
   modalSubTitle: {
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 17,
     alignItems: 'center',
     color: 'black',
     marginTop: 3,
@@ -130,7 +150,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     marginTop: 6,
     fontSize: 13,
-    marginBottom: 10,
+    marginBottom: 16,
   },
   modalButtons: {
     flexDirection: 'row',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
 
-const ImgDeleteModal = ({ visible, onClose, onDelete }) => {
+const ImgDeleteModal = ({ visible, onClose, onDelete, selectedImageNum }) => {
     return (
         <Modal
             visible={visible}
@@ -13,7 +13,7 @@ const ImgDeleteModal = ({ visible, onClose, onDelete }) => {
                     <TouchableWithoutFeedback>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>사진 삭제하기</Text>
-                            <Text style={styles.modalSubTitle}>선택한 사진을 삭제하시겠습니까?</Text>
+                            <Text style={styles.modalSubTitle}>선택한 {selectedImageNum}개의 사진을 삭제하시겠습니까?</Text>
                             <View style={styles.modalButtons}>
                                 <TouchableOpacity onPress={onClose} style={styles.modalButtonContainer1}>
                                     <Text style={styles.modalButton}>취소</Text>
@@ -54,13 +54,14 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 16,
         alignItems: 'center',
-        color: 'black'
+        color: 'black',
+        marginTop: 7,
     },
     modalSubTitle: {
         fontSize: 16,
-        marginBottom: 10,
+        marginBottom: 13,
         alignItems: 'center',
         color: 'black',
         

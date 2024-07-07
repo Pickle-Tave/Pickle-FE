@@ -1,90 +1,54 @@
-import { ADD_ALBUM_IMAGE, DELETE_ALBUM_IMAGE } from "../actions/AlbumImageAction";
+// reducers/AlbumImageReducer.js
+import {
+  ADD_ALBUM_IMAGE,
+  DELETE_ALBUM_IMAGE,
+  INITIALIZE_ALBUM_IMAGES,
+  FETCH_IMAGES_REQUEST,
+  FETCH_IMAGES_SUCCESS,
+  FETCH_IMAGES_ERROR,
+} from "../actions/AlbumImageAction";
 
-const initialState = [
-  {
-    image_id: 1,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo1.png')
-  },
-  {
-    image_id: 2,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo1.png')
-  },
-  {
-    image_id: 3,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo2.png')
-  },
-  {
-    image_id: 4,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo3.png')
-  },
-  {
-    image_id: 5,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo4.png')
-  },
-  {
-    image_id: 6,
-    user_id: "jina",
-    album_id: 1,
-    src: require('../../assets/icon/photo5.png')
-  },
-  {
-    image_id: 7,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo1.png')
-  },
-  {
-    image_id: 8,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo1.png')
-  },
-  {
-    image_id: 9,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo2.png')
-  },
-  {
-    image_id: 10,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo3.png')
-  },
-  {
-    image_id: 11,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo4.png')
-  },
-  {
-    image_id: 12,
-    user_id: "jina",
-    album_id: 2,
-    src: require('../../assets/icon/photo5.png')
-  }
-]
+const initialState = {
+  imageList: [],
+  lastImageId: null,
+  first: true,
+  last: false,
+  error: null,
+};
 
 const AlbumImageReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case ADD_ALBUM_IMAGE:
-            return [...state, action.payload]
-        case DELETE_ALBUM_IMAGE:
-            return state.filter((item) =>
-                String(item.image_id) !== String(action.image_id))
-        default:
-            return state;
-    }
-}
+  switch (action.type) {
+    case ADD_ALBUM_IMAGE:
+      return {
+        ...state,
+        imageList: [...state.imageList, action.payload],
+      };
+    case DELETE_ALBUM_IMAGE:
+      return {
+        ...state,
+        imageList: state.imageList.filter(item => String(item.image_id) !== String(action.image_id)),
+      };
+    case INITIALIZE_ALBUM_IMAGES:
+      return {
+        ...initialState
+      };
+    case FETCH_IMAGES_REQUEST:
+      return { ...state };
+    case FETCH_IMAGES_SUCCESS:
+      const newImageList = [...state.imageList, ...action.payload.content];
+      const lastImageId = action.payload.content[action.payload.content.length - 1].imageId;
+      return {
+        ...state,
+        imageList: newImageList,
+        lastImageId,
+        first: false,
+        last: action.payload.last,
+      };
+    case FETCH_IMAGES_ERROR:
+      return { ...state, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 export default AlbumImageReducer;
