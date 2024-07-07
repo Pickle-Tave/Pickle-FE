@@ -107,13 +107,14 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 17,
     alignItems: 'center',
     color: 'black',
+    marginTop: 7,
   },
   modalSubTitle: {
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 16,
     alignItems: 'center',
     color: 'black',
   },
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     marginTop: 6,
     fontSize: 13,
-    marginBottom: 10,
+    marginBottom: 16,
   },
   modalButtons: {
     flexDirection: 'row',

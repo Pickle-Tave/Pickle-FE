@@ -304,6 +304,7 @@ const Album = ({ navigation }) => {
               AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
               setAlbumId={setcheckedAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
               dropdownValue={value}
+              albumName={item.searchedAlbumName}
             />
           )}
           onEndReached={fetchMoreAlbums} // 끝에 도달하면 추가 데이터 요청

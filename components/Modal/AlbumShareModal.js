@@ -86,7 +86,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
                                     {isLoading ? '링크를 생성중입니다...' : `${shareLink}`}
                                 </Text>
                                 <TouchableOpacity onPress={handleCopyLink}>
-                                    <Image style={{ width: 25, height: 25 }} source={require('../../assets/icon/copy.png')} />
+                                    <Image style={{ width: 23, height: 23 }} source={require('../../assets/icon/copy.png')} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.modalButtons}>
@@ -126,9 +126,10 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 16,
         alignItems: 'center',
-        color: 'black'
+        color: 'black',
+        marginTop: 7,
     },
     textLeftAlign: {
         width: '100%',
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         justifyContent: 'center',
-        marginTop: 7,
+        marginTop: 12,
     },
     modalButtons: {
         flexDirection: 'row',
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', // 중앙 정렬
     },
     modalButton: {
-        fontSize: 16,
+        fontSize: 15,
         color: 'black',
     },
 });
