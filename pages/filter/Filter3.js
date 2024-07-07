@@ -29,7 +29,7 @@ const Filter3 = () => {
         selected.includes(`${groupIndex}-${imgIndex}`),
       ),
     );
-    console.log('Selected Groups:', selectedGroups); // 필터링된 그룹 확인
+    // console.log('Selected Groups:', selectedGroups); // 필터링된 그룹 확인
     navigation.navigate('Filter4', {groupedImages: selectedGroups});
   };
 

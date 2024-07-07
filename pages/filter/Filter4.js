@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import React, {useState} from 'react';
 import {
   View,
@@ -19,7 +18,7 @@ import {assignHashTag} from '../../api/HashTagAssign';
 const Filter4 = () => {
   const navigation = useNavigation();
   const route = useRoute(); // useRoute 훅을 사용하여 경로 정보 가져오기
-  const {groupedImages} = route.params; // Filter3에서 전달된 데이터
+  const {groupedImages} = route.params; // Filter3에서 전달된 데이터(여러 그룹 이미지들)
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
@@ -31,43 +30,45 @@ const Filter4 = () => {
     navigation.navigate('Filter5');
   };
 
+  // 이미지 그룹 클릭할 때 호출 -> 현재 그룹 id, 이미지 저장
   const handleGroupPress = groupId => {
     setCurrentGroupId(groupId); // 선택한 그룹 ID 저장
     setCurrentGroupImages(groupedImages[groupId]); // 현재 그룹의 모든 이미지 저장
     setModalVisible(true);
   };
 
+  // 해시태그를 선택할 때 호출 -> 선택한 해시태그 저장 및 API 호출
   const handleSelectTag = async tag => {
     const newSelectedTags = {...selectedTags};
-    if (newSelectedTags[currentGroupId] === tag.text) {
-      // 해시태그 제거
-      delete newSelectedTags[currentGroupId];
-      setSelectedTags(newSelectedTags);
-      dispatch(removeHashTag(currentGroupId, tag.text));
-    } else {
-      // 해시태그 추가
-      newSelectedTags[currentGroupId] = tag.text;
-      setSelectedTags(newSelectedTags);
-      dispatch(addHashTag(currentGroupId, tag.text));
+    newSelectedTags[currentGroupId] = tag.text; // 선택한 해시태그 저장
+    setSelectedTags(newSelectedTags);
 
-      try {
-        const requestBody = {
-          imageUrls: currentGroupImages.map(url => url.split('?')[0]),
-          hashtagId: tag.id,
-        };
-        console.log('Request Body:', requestBody);
+    const imageUrls = currentGroupImages.map(url => url.split('?')[0]); // 현재 그룹의 이미지 URL 배열 생성
 
-        // API 호출
-        const data = await assignHashTag(requestBody);
+    // 디버깅 로그 추가
+    console.log('Dispatching addHashTag action with imageUrls:', imageUrls);
+    console.log('Dispatching addHashTag action with hashtagId:', tag.id);
 
-        console.log('해시태그 저장 성공:', data);
-      } catch (error) {
-        console.error('해시태그 저장 중 오류 발생:', error);
-        Alert.alert(
-          'Error',
-          `해시태그 저장 중 오류가 발생했습니다: ${error.message}`,
-        );
-      }
+    dispatch(addHashTag(imageUrls, tag.id)); // 선택한 해시태그를 디스패치
+
+    try {
+      const requestBody = {
+        imageUrls, // 이미지 URL 배열 생성
+        hashtagId: tag.id, // 해시태그 ID
+      };
+      console.log('Request Body:', requestBody);
+
+      // API 호출
+      const data = await assignHashTag(requestBody);
+
+      console.log('해시태그 저장 성공:', data);
+      setModalVisible(false); // API 호출이 성공하면 모달을 닫음
+    } catch (error) {
+      console.error('해시태그 저장 중 오류 발생:', error);
+      Alert.alert(
+        'Error',
+        `해시태그 저장 중 오류가 발생했습니다: ${error.message}`,
+      );
     }
   };
 
