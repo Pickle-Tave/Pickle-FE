@@ -3,10 +3,12 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Scro
 import AlbumAccess from "../components/AlbumAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
+import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const AlbumInquiry = ({ route }) => {
   const dispatch = useDispatch();
   const { id } = route.params; // 현재 앨범의 id값
+  const albumImages = useSelector((state) => state.AlbumImageReducer)
 
   // useSelector를 사용하여 AlbumListReducer에서 상태 가져오기
   const albumList = useSelector((state) => state.AlbumListReducer.albumList);
@@ -21,9 +23,20 @@ const AlbumInquiry = ({ route }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(GetAlbumInquiry(null, 50, id)) // 액션 크리에이터로 호출
-      .then(() => setLoading(false)) // 액션 완료 후 로딩 상태 변경
-      .catch(() => setLoading(false)); // 에러 발생 시도 로딩 상태 변경
+    dispatch(InitializeAlbumImages());
+    console.log("이미지 첫 요청이 들어가는 중")
+    if (!albumImages.last && albumImages.first) {
+      dispatch(GetAlbumInquiry(null, 50, id)) // 액션 크리에이터로 호출
+        .then(() => {
+          setLoading(false); // 액션 완료 후 로딩 상태 변경
+          if (albumImages.imageList.length === 0) {
+            setLoading(false); // 이미지 리스트가 빈 배열인 경우 로딩 멈춤
+          }
+        })
+        .catch(() => setLoading(false)); // 에러 발생 시도 로딩 상태 변경
+    } else {
+      setLoading(false); // 이미지 리스트가 이미 로딩된 경우 로딩 멈춤
+    }
   }, []);
 
   // 선택버튼이 눌렸는지 여부
@@ -42,7 +55,7 @@ const AlbumInquiry = ({ route }) => {
       </View>
       {/* 로딩 중일 때 표시될 컴포넌트 */}
       {loading ? (
-        <ActivityIndicator size="large" color="black" />
+        <ActivityIndicator style={styles.loadingContainer} size="large" color="#769370" />
       ) : (
         <AlbumAccess check={check} setCheck={setCheck} {...currentAlbum} albumId={id} {...currentimageList} />
       )}
@@ -75,6 +88,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
 });
 
 export default AlbumInquiry;
