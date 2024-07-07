@@ -5,16 +5,17 @@ export const ImageDelete = async (imageIds) => {
     try {
         const accessToken = await AsyncStorage.getItem('accessToken');
         const response = await instance.delete(
-            '/images/delete',
-            { 
-                imageIds: imageIds, //삭제할 이미지id 배열
-             },
+            '/images/delete-image',
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
+                },
+                data: {
+                    imageIds: imageIds
                 }
             }
         );
+        
         console.log('이미지 삭제 응답:', response.data); // 백엔드 응답 로그 출력
         return response.data;
     } catch (error) {

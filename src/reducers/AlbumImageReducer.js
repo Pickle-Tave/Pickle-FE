@@ -1,5 +1,4 @@
 import { ADD_ALBUM_IMAGE, DELETE_ALBUM_IMAGE, INITIALIZE_ALBUM_IMAGES, FETCH_IMAGES_REQUEST, FETCH_IMAGES_SUCCESS, FETCH_IMAGES_ERROR } from "../actions/AlbumImageAction";
-import { FETCH_ALBUM_ERROR } from "../actions/AlbumListAction";
 
 const initialState = {
   imageList: [],
@@ -38,7 +37,7 @@ const AlbumImageReducer = (state = initialState, action) => {
         first: first,
         last: last,
       };
-    case FETCH_ALBUM_ERROR:
+    case FETCH_IMAGES_ERROR:
       return { ...state, error: action.payload }
     default:
       return state;
