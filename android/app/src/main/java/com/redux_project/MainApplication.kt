@@ -1,4 +1,4 @@
-package com.redux_project
+package com.tave.pickle
 
 import android.app.Application
 import com.facebook.react.PackageList

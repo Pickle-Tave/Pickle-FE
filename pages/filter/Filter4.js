@@ -1,5 +1,4 @@
-import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,53 +7,59 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  FlatList,
+  TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchHashTags} from '../../src/actions/ImageHashTagAction';
+import {addHashTag} from '../../src/actions/ImageHashTagAction';
+import {assignHashTag} from '../../api/HashTagAssign';
 
-// 해시태그 연동하면서 오류 해결
 const Filter4 = () => {
   const navigation = useNavigation();
   const route = useRoute(); // useRoute 훅을 사용하여 경로 정보 가져오기
-  const {groupedImages} = route.params; // Filter3에서 전달된 데이터
+  const {groupedImages} = route.params; // Filter3에서 전달된 데이터(여러 그룹 이미지들)
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentGroupImages, setCurrentGroupImages] = useState([]); // 현재 그룹의 모든 이미지 저장
-  const hashTags = useSelector(state => state.imageHashTag?.hashTags || {});
-
-  useEffect(() => {
-    dispatch(fetchHashTags()); // 해시태그 가져오기
-  }, [dispatch]);
+  const [selectedTags, setSelectedTags] = useState([]); // 각 그룹의 선택된 해시태그 저장
+  const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
 
   const handleNavigation = () => {
     navigation.navigate('Filter5');
   };
 
+  // 이미지 그룹 클릭할 때 호출 -> 현재 그룹 id, 이미지 저장
   const handleGroupPress = groupId => {
     setCurrentGroupId(groupId); // 선택한 그룹 ID 저장
     setCurrentGroupImages(groupedImages[groupId]); // 현재 그룹의 모든 이미지 저장
     setModalVisible(true);
   };
 
-  const handleOptionPress = option => {
-    setGroups(prevGroups =>
-      prevGroups.map(group =>
-        group.id === currentGroupId
-          ? {
-              ...group,
-              selectedOptions: group.selectedOptions.includes(option)
-                ? group.selectedOptions.filter(item => item !== option)
-                : [...group.selectedOptions, option],
-            }
-          : group,
-      ),
-    );
-  };
+  // 해시태그를 선택할 때 호출 -> 선택한 해시태그 저장 및 API 호출
+  const handleSelectTag = async tag => {
+    const newSelectedTags = [...selectedTags];
+    newSelectedTags[currentGroupId] = tag.text;
+    setSelectedTags(newSelectedTags);
 
-  const currentGroup = groupedImages[currentGroupId];
+    const imageUrls = currentGroupImages.map(url => url.split('?')[0]);
+    try {
+      const requestBody = {
+        imageUrls,
+        hashtagId: tag.id,
+      };
+      const data = await assignHashTag(requestBody);
+      console.log('해시태그 저장 성공:', data);
+      setModalVisible(false);
+    } catch (error) {
+      console.error('해시태그 저장 중 오류 발생:', error);
+      Alert.alert(
+        'Error',
+        `해시태그 저장 중 오류가 발생했습니다: ${error.message}`,
+      );
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -76,7 +81,7 @@ const Filter4 = () => {
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 style={styles.imageWrapper}
-                onLongPress={() => handleGroupPress(index)}>
+                onPress={() => handleGroupPress(index)}>
                 <Image
                   source={{uri: group[0]}} // 첫 번째 이미지를 썸네일로 사용
                   style={styles.image}
@@ -86,40 +91,44 @@ const Filter4 = () => {
           </React.Fragment>
         ))}
       </View>
-      {currentGroup && (
-        <Modal visible={modalVisible} transparent={true} animationType="fade">
-          <TouchableOpacity
-            style={styles.modalBackground}
-            activeOpacity={1}
-            onPressOut={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>그룹의 모든 이미지</Text>
-              <View style={styles.imagesWrapper}>
-                {currentGroupImages.map((item, index) => (
-                  <Image
-                    key={index}
-                    source={{uri: item}}
-                    style={styles.fullImage}
-                  />
-                ))}
-              </View>
-              <FlatList
-                data={hashTags[currentGroupId] || []} // 현재 그룹의 해시태그 가져오기
-                renderItem={({item}) => (
-                  <View style={styles.hashTagItem}>
-                    <Text style={styles.hashTagText}>#{item}</Text>
-                    <TouchableOpacity onPress={() => handleOptionPress(item)}>
-                      <Text style={styles.optionText}>추가/제거</Text>
+      {modalVisible && (
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalBackground}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalContainer}>
+                  <ScrollView contentContainerStyle={styles.hashList}>
+                    {hashtagList.map(item => (
+                      <TouchableOpacity
+                        key={item.id.toString()}
+                        style={[
+                          styles.hashItem,
+                          selectedTags[currentGroupId] === item.text &&
+                            styles.selectedHashItem,
+                        ]}
+                        onPress={() => handleSelectTag(item)}>
+                        <Text
+                          style={[
+                            styles.hashText,
+                            selectedTags[currentGroupId] === item.text &&
+                              styles.selectedHashText,
+                          ]}>
+                          {`#${item.text}`}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <View style={styles.modalButtons}>
+                    <TouchableOpacity
+                      onPress={() => setModalVisible(false)}
+                      style={styles.modalButtonContainer1}>
+                      <Text style={styles.modalButton}>닫기</Text>
                     </TouchableOpacity>
                   </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButtonText}>닫기</Text>
-              </TouchableOpacity>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         </Modal>
       )}
       <TouchableOpacity onPress={handleNavigation}>
@@ -179,61 +188,53 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '80%',
+    width: '85%',
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 10,
+    padding: 20,
     alignItems: 'center',
-    borderWidth: 8,
     borderColor: '#F7F8CB',
+    borderWidth: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
-  imagesWrapper: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'black',
-  },
-  hashTagItem: {
-    flexDirection: 'row',
+  hashList: {
+    flexDirection: 'column',
+    paddingVertical: 15,
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
-  hashTagText: {
-    fontSize: 16,
-    color: 'black',
+  hashItem: {
+    marginVertical: 10,
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
-  optionText: {
-    fontSize: 14,
-    color: 'blue',
+  selectedHashItem: {
+    backgroundColor: '#F7F8CB',
+    borderRadius: 8,
+  },
+  hashText: {
+    fontSize: 18,
+  },
+  selectedHashText: {
+    color: 'white',
   },
   next: {
     width: 120,
     marginTop: 20,
   },
-  fullImage: {
-    width: 100,
-    height: 100,
-    margin: 5,
-  },
-  closeButtonText: {
+  modalButton: {
     fontSize: 16,
     color: 'black',
-    marginTop: 10,
-    left: 125,
   },
 });
 
