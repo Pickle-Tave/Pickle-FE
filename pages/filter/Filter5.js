@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import {useSelector} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AlbumPlus from '../../components/Modal/AlbumPlus';
 
@@ -19,6 +20,8 @@ const Filter5 = () => {
 
   const route = useRoute();
   const {groupedImages} = route.params; // Filter4에서 전달된 groupedImages
+
+  const albumList = useSelector(state => state.AlbumReducer); // 앨범 목록 가져오기
 
   const items = [
     {label: '동물', value: '동물'},
@@ -112,7 +115,6 @@ const Filter5 = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',

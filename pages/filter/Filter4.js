@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,24 +11,29 @@ import {
   Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {addHashTag} from '../../src/actions/ImageHashTagAction';
+import {useSelector, useDispatch} from 'react-redux';
 import {assignHashTag} from '../../api/HashTagAssign';
+import {HashTagListCheck} from '../../api/HashTagListCheck';
 
 const Filter4 = () => {
   const navigation = useNavigation();
   const route = useRoute(); // useRoute 훅을 사용하여 경로 정보 가져오기
   const {groupedImages} = route.params; // Filter3에서 전달된 데이터(여러 그룹 이미지들)
-  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentGroupImages, setCurrentGroupImages] = useState([]); // 현재 그룹의 모든 이미지 저장
   const [selectedTags, setSelectedTags] = useState([]); // 각 그룹의 선택된 해시태그 저장
   const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
+  const dispatch = useDispatch();
 
   const handleNavigation = () => {
     navigation.navigate('Filter5', {groupedImages});
   };
+
+  // 해시태그 목록 요청
+  useEffect(() => {
+    dispatch(HashTagListCheck());
+  }, [dispatch]);
 
   // 이미지 그룹 클릭할 때 호출 -> 현재 그룹 id, 이미지 저장
   const handleGroupPress = groupId => {
@@ -117,9 +122,7 @@ const Filter4 = () => {
                   <View style={styles.modalButtons}>
                     <TouchableOpacity
                       onPress={() => setModalVisible(false)}
-                      style={styles.modalButtonContainer1}>
-                      <Text style={styles.modalButton}>닫기</Text>
-                    </TouchableOpacity>
+                      style={styles.modalButtonContainer1}></TouchableOpacity>
                   </View>
                 </View>
               </TouchableWithoutFeedback>
