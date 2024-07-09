@@ -25,7 +25,6 @@ export const SearchAlbumLike = (lastAlbumId, size) => {
             console.log('즐겨찾기 응답:', response.data); // 백엔드 응답 로그 출력
             return response.data;
         } catch (error) {
-            console.error('즐겨찾기 에러:', error);
             dispatch(fetchLikeError(error));
 
             const status = error.response.status;

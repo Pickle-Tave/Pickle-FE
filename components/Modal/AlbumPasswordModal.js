@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { ShareParticipants } from '../../api/ShareParticipants';
 
-const AlbumPasswordModal = ({ visible, onClose }) => {
+const AlbumPasswordModal = ({ visible, onClose, link }) => {
+    const [password, setPassword] = useState('');
+    
+    //공유앨범 참여 요청 코드
+    const handleSubmit = () => {
+        console.log(`링크: ${link}, 비밀번호: ${password}`);
+        ShareParticipants(link, password);
+    }
+
     return (
         <Modal
             visible={visible}
@@ -15,8 +24,13 @@ const AlbumPasswordModal = ({ visible, onClose }) => {
                             <Text style={styles.modalTitle}>비밀번호 입력하기</Text>
                             <Text style={styles.textLeftAlign}>Password를 입력하세요.</Text>
                             <View style={styles.password_section}>
-                                <TextInput style={styles.textinput} />
-                                <TouchableOpacity style={styles.done_btn}>
+                                <TextInput 
+                                style={styles.textinput}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={true}
+                                />
+                                <TouchableOpacity style={styles.done_btn} onPress={handleSubmit}>
                                     <Text style={styles.done_text}>완료</Text>
                                 </TouchableOpacity>
                             </View>

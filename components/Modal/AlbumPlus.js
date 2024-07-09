@@ -27,10 +27,12 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
     try {
       await AlbumCreate(newAlbumName);
       setNewAlbumName('');
-      dispatch(InitializeAlbumList());
-      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
 
-      if (dropdownValue === 2) {
+      if (dropdownValue === 1) {
+        dispatch(InitializeAlbumList());
+        dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
+
+      } else if (dropdownValue === 2) {
         dispatch(SearchAlbumStatus('PRIVATE', null, 10));
         dispatch(InitializeAlbumStatus());
       } else if (dropdownValue === 3) {

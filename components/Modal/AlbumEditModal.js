@@ -40,9 +40,6 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
     if (newAlbumName.trim() !== '') {
       AlbumEdit(editedAlbum.albumId, newAlbumName)
         .then(() => {
-          dispatch(InitializeAlbumList());
-          dispatch(GetAlbumList(null, 10));
-
           if (searchQuery) {
             dispatch(InitializeSearchedAlbum());
             dispatch(SearchAlbumName(searchQuery, null, 10));
@@ -50,7 +47,11 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
 
           // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
           console.log("dropdownValue", dropdownValue)
-          if (dropdownValue === 2) {
+
+          if (dropdownValue === 1) {
+            dispatch(InitializeAlbumList());
+            dispatch(GetAlbumList(null, 10));
+          } else if (dropdownValue === 2) {
             dispatch(InitializeAlbumStatus());
             dispatch(SearchAlbumStatus('PRIVATE', null, 10));
           } else if (dropdownValue === 3) {

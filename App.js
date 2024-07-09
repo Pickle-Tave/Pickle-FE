@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './pages/Home';
 import Album from './pages/Album';
 import Filter from './pages/filter/Filter';
@@ -25,7 +25,17 @@ import SearchedAlbum from './pages/SearchedAlbum';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const CustomHeader = ({navigation, title, canGoBack}) => {
+//딥링크 설정
+const linking = {
+  prefixes: ['pickle://'], // 딥링크의 URL 스킴
+  config: { //URL경로와 화면간의 매핑 설정
+    screens: {
+      Album: 'pickle.com/path/:link', 
+    },
+  },
+}
+
+const CustomHeader = ({ navigation, title, canGoBack }) => {
   const [alram, setAlram] = useState(false);
 
   return (
@@ -81,7 +91,7 @@ const MainScreen = () => {
           borderTopRightRadius: 20,
           borderTopWidth: 2,
           borderColor: '#4C5A49',
-          borderWidth: 2   ,
+          borderWidth: 2,
           position: 'absolute',
         },
         tabBarItemStyle: {
@@ -94,7 +104,7 @@ const MainScreen = () => {
         component={Filter}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -111,7 +121,7 @@ const MainScreen = () => {
         component={Home}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -128,7 +138,7 @@ const MainScreen = () => {
         component={Album}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <Image
               source={
                 focused
@@ -155,14 +165,14 @@ function App() {
   };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator initialRouteName={isLogged ? 'Main' : 'Onboarding_1'}>
         {isLogged ? (
           <>
             <Stack.Screen
               name="Main"
               component={MainScreen}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="Pickle" />
                 ),
@@ -170,7 +180,7 @@ function App() {
             />
             <Stack.Screen
               name="MyPage"
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader
                     navigation={navigation}
@@ -187,7 +197,7 @@ function App() {
             <Stack.Screen
               name="AlbumInquiry"
               component={AlbumInquiry}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader
                     navigation={navigation}
@@ -201,7 +211,7 @@ function App() {
             <Stack.Screen
               name="Filter1"
               component={Filter1}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="옵션 설정" />
                 ),
@@ -211,7 +221,7 @@ function App() {
             <Stack.Screen
               name="Filter2"
               component={Filter2}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="로딩 중" />
                 ),
@@ -221,7 +231,7 @@ function App() {
             <Stack.Screen
               name="Filter3"
               component={Filter3}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="사진 선택" />
                 ),
@@ -231,7 +241,7 @@ function App() {
             <Stack.Screen
               name="Filter4"
               component={Filter4}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="해시태그 설정" />
                 ),
@@ -241,7 +251,7 @@ function App() {
             <Stack.Screen
               name="Filter5"
               component={Filter5}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader navigation={navigation} title="앨범에 추가" />
                 ),
@@ -251,7 +261,7 @@ function App() {
             <Stack.Screen
               name="SearchedAlbum"
               component={SearchedAlbum}
-              options={({navigation}) => ({
+              options={({ navigation }) => ({
                 header: () => (
                   <CustomHeader
                     navigation={navigation}
@@ -268,31 +278,31 @@ function App() {
             <Stack.Screen
               name="Onboarding_1"
               component={Onboarding_1}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Onboarding_2"
               component={Onboarding_2}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Onboarding_3"
               component={Onboarding_3}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Onboarding_4"
               component={Onboarding_4}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="Onboarding_5"
               component={Onboarding_5}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="KakaoLoginWebview"
-              options={{headerShown: false}}>
+              options={{ headerShown: false }}>
               {props => (
                 <KakaoLoginWebview
                   {...props}
@@ -302,7 +312,7 @@ function App() {
             </Stack.Screen>
             <Stack.Screen
               name="KakaoLoginRedirect"
-              options={{headerShown: false}}>
+              options={{ headerShown: false }}>
               {props => (
                 <KakaoLoginRedirect
                   {...props}
@@ -339,7 +349,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     top: '50%',
-    transform: [{translateY: -10}],
+    transform: [{ translateY: -10 }],
     zIndex: 1,
   },
   headerLeftImage: {

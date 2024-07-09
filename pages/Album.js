@@ -29,7 +29,7 @@ import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
 
-const Album = ({ navigation }) => {
+const Album = ({ navigation, route }) => {
   const albumList = useSelector((state) => state.AlbumReducer);
 
   //API연동부분
@@ -64,6 +64,9 @@ const Album = ({ navigation }) => {
   // 검색 중인지 여부를 나타내는 상태 변수
   const [isSearching, setIsSearching] = useState(false);
 
+  //딥링크의 link값 
+  const [link, setLink] = useState('');
+
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
 
@@ -83,6 +86,15 @@ const Album = ({ navigation }) => {
   useEffect(() => {
     fetchAlbumData(value);
   }, [value]);
+
+
+  //딥링크를 통해 접속할시 비밀번호 입력 모달 띄우기
+  useEffect(() => {
+    if (route.params?.link) {
+      setLink(route.params.link); // 딥링크 URL에서 link 파라미터 추출
+      setModalVisible(true); // 모달 열기
+    }
+  }, [route.params?.link]);
 
   const fetchAlbumData = (value) => {
     if (value === 1) {
@@ -234,7 +246,10 @@ const Album = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <AlbumPasswordModal visible={passwordvisible}/>
+      <AlbumPasswordModal 
+      visible={passwordvisible}
+      link={link}
+      />
       <AlbumPlus
         visible={plusvisible}
         onClose={() => setPlusVisible(false)}

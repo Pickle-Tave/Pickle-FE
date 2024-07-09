@@ -22,18 +22,18 @@ export const LikeApply = async (albumId) => {
 
         if (status === 404) {
             if (error.response.data.data.errorClassName === 'ALBUM_NOT_FOUND') {
-                Alert.alert('앨범을 찾을 수 없음 ' + errorMessage);
+                alert('앨범을 찾을 수 없음 ' + errorMessage);
             } else {
-                Alert.alert('에러', '오류가 발생했습니다: ' + errorMessage);
+                alert('에러', '오류가 발생했습니다: ' + errorMessage);
             }
         } else if (status === 400) {
             if (error.response.data.data.errorClassName === 'NOT_ALBUM_OWNER') {
-                Alert.alert('해당 앨범 소유주 아님 ' + errorMessage);
+                alert('해당 앨범 소유주 아님 ' + errorMessage);
             } else {
-                Alert.alert('에러', '오류가 발생했습니다: ' + errorMessage);
+                alert('에러', '오류가 발생했습니다: ' + errorMessage);
             }
         } else {
-            Alert.alert('에러', '오류가 발생했습니다: ' + errorMessage);
+            alert('에러', '오류가 발생했습니다: ' + errorMessage);
         }
         throw error;
     }

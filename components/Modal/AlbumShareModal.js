@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback, Clipboard, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback, Clipboard, Alert, Linking } from 'react-native';
 import { ShareAlbumChange } from '../../api/ShareAlbumChange';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
@@ -11,7 +11,6 @@ import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
 import { SearchAlbumName } from '../../api/SearchAlbumName';
 import { useDispatch } from 'react-redux';
 
-
 const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, searchQuery }) => {
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
@@ -22,22 +21,27 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
         setIsLoading(true);
         try {
             const response = await ShareAlbumChange(checkedAlbumId, password);
-            setShareLink(response.data.link);
+            const link = response.data.link;
 
-            dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10));
-
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10));
+            //딥링크 생성하기
+            const deepLink = `pickle://pickle.com/path/${link}`;
+            setShareLink(deepLink);
 
             if (searchQuery) {
                 dispatch(InitializeSearchedAlbum());
                 dispatch(SearchAlbumName(searchQuery, null, 10));
             }
 
-            if (dropdownValue === 2) {
+            if (dropdownValue === 1) {
+                dispatch(InitializeAlbumList());
+                dispatch(GetAlbumList(null, 10));
+            } else if (dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+            } else if (dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10))
+
             }
         } catch (error) {
             console.error(error);

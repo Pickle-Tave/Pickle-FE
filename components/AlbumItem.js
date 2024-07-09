@@ -14,28 +14,31 @@ import { SearchAlbumName } from '../api/SearchAlbumName';
 
 const AlbumItem = (props) => {
     const dispatch = useDispatch();
+    const likeList = useSelector((state) => state.AlbumLikeReducer);
 
     // 즐겨찾기 설정
     const handleLikeApply = async () => {
         try {
             await LikeApply(props.albumId);
-            dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
-
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10));
 
             if (props.searchQuery) {
                 dispatch(InitializeSearchedAlbum());
                 dispatch(SearchAlbumName(props.searchQuery, null, 10));
             }
 
-            if (props.dropdownValue === 2) {
+            if (props.dropdownValue === 1) {
+                dispatch(InitializeAlbumList());
+                dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+
+            } else if (props.dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
             } else if (props.dropdownValue === 3) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+            } else if (props.dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10));
             }
         } catch (error) {
             console.error('좋아요 설정 에러:', error);
@@ -51,9 +54,6 @@ const AlbumItem = (props) => {
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
 
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10));
-
             if (props.searchQuery) {
                 dispatch(InitializeSearchedAlbum());
                 dispatch(SearchAlbumName(props.searchQuery, null, 10));
@@ -65,6 +65,10 @@ const AlbumItem = (props) => {
             } else if (props.dropdownValue === 3) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+            } else if (props.dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10));
+
             }
         } catch (error) {
             console.error('좋아요 해제 에러:', error);
