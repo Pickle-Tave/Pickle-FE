@@ -24,11 +24,13 @@ const Filter3 = () => {
 
   const handleNavigation = () => {
     // 선택된 이미지 그룹만 필터링하여 넘기기
-    const selectedGroups = groupedImages.filter((group, groupIndex) =>
-      group.some((_, imgIndex) =>
-        selected.includes(`${groupIndex}-${imgIndex}`),
-      ),
-    );
+    const selectedGroups = groupedImages
+      .map((group, groupIndex) =>
+        group.filter((_, imgIndex) =>
+          selected.includes(`${groupIndex}-${imgIndex}`),
+        ),
+      )
+      .filter(group => group.length > 0); // 빈 그룹 제거
     // console.log('Selected Groups:', selectedGroups); // 필터링된 그룹 확인
     navigation.navigate('Filter4', {groupedImages: selectedGroups});
   };

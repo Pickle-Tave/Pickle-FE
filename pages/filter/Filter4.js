@@ -39,10 +39,6 @@ const Filter4 = () => {
 
   // 해시태그를 선택할 때 호출 -> 선택한 해시태그 저장 및 API 호출
   const handleSelectTag = async tag => {
-    const newSelectedTags = [...selectedTags];
-    newSelectedTags[currentGroupId] = tag.text;
-    setSelectedTags(newSelectedTags);
-
     const imageUrls = currentGroupImages.map(url => url.split('?')[0]);
     try {
       const requestBody = {
