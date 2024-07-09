@@ -87,6 +87,9 @@ const Filter4 = () => {
                   source={{uri: group[0]}} // 첫 번째 이미지를 썸네일로 사용
                   style={styles.image}
                 />
+                <Text style={styles.imageCount}>
+                  {`${group.length}장`} {/* 이미지 개수*/}
+                </Text>
               </TouchableOpacity>
             </View>
           </React.Fragment>
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   image: {
-    width: '100%',
+    width: '95%',
     height: 150,
     borderRadius: 10,
   },
@@ -234,6 +237,16 @@ const styles = StyleSheet.create({
   modalButton: {
     fontSize: 16,
     color: 'black',
+  },
+  imageCount: {
+    position: 'absolute',
+    bottom: 5,
+    right: 13,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    fontSize: 12,
+    padding: 5,
+    borderRadius: 5,
   },
 });
 

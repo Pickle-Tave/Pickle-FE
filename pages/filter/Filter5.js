@@ -91,8 +91,11 @@ const Filter5 = () => {
               <View style={styles.separator} />
             )}
             <View style={styles.imageContainer}>
-              <TouchableOpacity style={styles.imageWrapper}>
+              <TouchableOpacity
+                style={styles.imageWrapper}
+                onPress={() => handleImageSelect(index)}>
                 <Image source={{uri: group[0]}} style={styles.image} />
+                <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
               </TouchableOpacity>
             </View>
           </React.Fragment>
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginBottom: 20,
+    margin: 10,
   },
   step_4: {
     width: 300,
@@ -140,13 +144,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  imageWrapper: {
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
   imageContainer: {
     width: '48%',
     marginBottom: 20,
+  },
+  imageWrapper: {
+    position: 'relative',
+    height: 150,
   },
   selectContainer: {
     width: '90%',
@@ -157,12 +161,23 @@ const styles = StyleSheet.create({
     height: 20,
   },
   image: {
-    width: '100%',
+    width: '95%',
     height: 150,
+    borderRadius: 10,
   },
   next: {
     width: 120,
     marginTop: 20,
+  },
+  imageCount: {
+    position: 'absolute',
+    bottom: 5,
+    right: 13,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    fontSize: 12,
+    padding: 5,
+    borderRadius: 5,
   },
 });
 
@@ -186,6 +201,16 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 8,
     color: 'black',
     paddingRight: 30,
+  },
+  imageCount: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    fontSize: 12,
+    padding: 5,
+    borderRadius: 5,
   },
 });
 
