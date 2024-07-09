@@ -27,7 +27,7 @@ const Filter4 = () => {
   const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
 
   const handleNavigation = () => {
-    navigation.navigate('Filter5');
+    navigation.navigate('Filter5', {groupedImages});
   };
 
   // 이미지 그룹 클릭할 때 호출 -> 현재 그룹 id, 이미지 저장

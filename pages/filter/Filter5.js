@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import React, {useState} from 'react';
 import {
   View,
@@ -9,14 +8,17 @@ import {
   ScrollView,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import AlbumPlus from '../../components/Modal/AlbumPlus';
 
 const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
   const [plusVisible, setPlusVisible] = useState(false);
-  const [selectedImageIds, setSelectedImageIds] = useState([]); // 선택된 이미지 ID 배열
+  const [selectedImageIds, setSelectedImageIds] = useState([]);
+
+  const route = useRoute();
+  const {groupedImages} = route.params; // Filter4에서 전달된 groupedImages
 
   const items = [
     {label: '동물', value: '동물'},
@@ -26,14 +28,6 @@ const Filter5 = () => {
     {label: '행복', value: '행복'},
     {label: '새 앨범 추가하기', value: 'add_new_album'},
   ];
-
-  const [images] = useState([
-    {id: 1, src: require('../../assets/icon/photo1.png')},
-    {id: 2, src: require('../../assets/icon/photo2.png')},
-    {id: 3, src: require('../../assets/icon/photo3.png')},
-    {id: 4, src: require('../../assets/icon/photo4.png')},
-    {id: 5, src: require('../../assets/icon/photo5.png')},
-  ]);
 
   const handleNavigation = () => {
     navigation.navigate('Filter');
@@ -57,10 +51,8 @@ const Filter5 = () => {
 
   const handleImageSelect = id => {
     if (selectedImageIds.includes(id)) {
-      // 이미 선택된 이미지라면 선택 해제
       setSelectedImageIds(selectedImageIds.filter(imageId => imageId !== id));
     } else {
-      // 선택되지 않은 이미지라면 추가
       setSelectedImageIds([...selectedImageIds, id]);
     }
   };
@@ -85,31 +77,22 @@ const Filter5 = () => {
           items={items}
           placeholder={{label: '앨범을 선택하세요', value: null}}
           style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false} // 임시
+          useNativeAndroidPickerStyle={false}
         />
       </View>
 
       <View style={styles.gridContainer}>
-        {images.map((image, index) => (
-          <TouchableOpacity
-            key={image.id}
-            onPress={() => handleImageSelect(image.id)}
-            style={styles.imageWrapper}>
-            <View
-              style={[
-                styles.imageContainer,
-                selectedImageIds.includes(image.id) &&
-                  styles.selectedImageContainer, // 다중 선택 -> includes
-              ]}>
-              <Image
-                source={image.src}
-                style={[
-                  styles.image,
-                  selectedImageIds.includes(image.id) && styles.selectedImage, // 선택된 이미지 스타일 적용
-                ]}
-              />
+        {groupedImages.map((group, index) => (
+          <React.Fragment key={index}>
+            {index % 2 === 0 && index !== 0 && (
+              <View style={styles.separator} />
+            )}
+            <View style={styles.imageContainer}>
+              <TouchableOpacity style={styles.imageWrapper}>
+                <Image source={{uri: group[0]}} style={styles.image} />
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </React.Fragment>
         ))}
       </View>
 
@@ -156,36 +139,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   imageWrapper: {
-    width: '48%',
-    marginBottom: 20,
-  },
-  imageContainer: {
-    position: 'relative',
     borderRadius: 10,
     overflow: 'hidden',
   },
-  selectedImageContainer: {
-    borderWidth: 5,
-    borderColor: '#769370',
-    borderRadius: 15,
-  },
-  image: {
-    width: '100%',
-    height: 150,
-    borderRadius: 10,
-  },
-  selectedImage: {
-    opacity: 0.5,
-  },
-  separator: {
-    width: '100%',
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 10,
+  imageContainer: {
+    width: '48%',
+    marginBottom: 20,
   },
   selectContainer: {
     width: '90%',
     margin: 20,
+  },
+  separator: {
+    width: '100%',
+    height: 20,
+  },
+  image: {
+    width: '100%',
+    height: 150,
   },
   next: {
     width: 120,
@@ -193,7 +164,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const pickerSelectStyles = {
+const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
     paddingVertical: 12,
@@ -203,19 +174,17 @@ const pickerSelectStyles = {
     borderRadius: 4,
     color: 'black',
     paddingRight: 30,
-    backgroundColor: 'white',
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: 'gray',
     borderRadius: 8,
     color: 'black',
     paddingRight: 30,
-    backgroundColor: 'white',
   },
-};
+});
 
 export default Filter5;
