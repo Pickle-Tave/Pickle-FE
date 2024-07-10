@@ -67,8 +67,8 @@ const Filter3 = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        style={styles.step_3}
-        source={require('../../assets/icon/step_3.png')}
+        style={styles.step_2}
+        source={require('../../assets/icon/step_2.png')}
         resizeMode="contain"
       />
       <Text style={styles.text}>마음에 드는 사진을 선택하세요!</Text>
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  step_3: {
+  step_2: {
     width: 300,
     margin: 10,
   },

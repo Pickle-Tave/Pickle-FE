@@ -23,18 +23,17 @@ const Filter5 = () => {
 
   const albumList = useSelector(state => state.AlbumReducer); // 앨범 목록 가져오기
 
-  const items = [
-    {label: '동물', value: '동물'},
-    {label: '여행', value: '여행'},
-    {label: '일상', value: '일상'},
-    {label: '청춘', value: '청춘'},
-    {label: '행복', value: '행복'},
-    {label: '새 앨범 추가하기', value: 'add_new_album'},
-  ];
-
   const handleNavigation = () => {
     navigation.navigate('Filter');
   };
+
+  // 앨범 목록을 드롭다운 아이템 형태로 변환
+  const items = albumList.map(album => ({
+    label: album.album_name,
+    value: album.album_id,
+  }));
+
+  items.push({label: '새 앨범 추가하기', value: 'add_new_album'});
 
   const handleValueChange = value => {
     if (value === 'add_new_album') {
@@ -91,9 +90,7 @@ const Filter5 = () => {
               <View style={styles.separator} />
             )}
             <View style={styles.imageContainer}>
-              <TouchableOpacity
-                style={styles.imageWrapper}
-                onPress={() => handleImageSelect(index)}>
+              <TouchableOpacity style={styles.imageWrapper}>
                 <Image source={{uri: group[0]}} style={styles.image} />
                 <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
               </TouchableOpacity>
@@ -118,6 +115,7 @@ const Filter5 = () => {
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
