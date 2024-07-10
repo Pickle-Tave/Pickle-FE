@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback, Clipboard, Alert, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback, Clipboard, Alert } from 'react-native';
 import { ShareAlbumChange } from '../../api/ShareAlbumChange';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { GetAlbumList } from '../../api/GetAlbumList';
@@ -22,10 +22,8 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
         try {
             const response = await ShareAlbumChange(checkedAlbumId, password);
             const link = response.data.link;
+            setShareLink(link);
 
-            //딥링크 생성하기
-            const deepLink = `pickle://pickle.com/path/${link}`;
-            setShareLink(deepLink);
 
             if (searchQuery) {
                 dispatch(InitializeSearchedAlbum());
@@ -54,6 +52,58 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
         Clipboard.setString(shareLink);
         Alert.alert("링크 복사", "링크가 클립보드에 복사되었습니다.");
     };
+
+    // const handleKakaoShare = async () => {
+    //     if (!shareLink) {
+    //         Alert.alert("링크 오류", "링크가 생성되지 않았습니다.");
+    //         return;
+    //     }
+
+    //     try {
+    //         await KakaoShareLink.sendCommerce({
+    //             content: {
+    //                 title: '앨범 공유',
+    //                 // imageUrl: require('../../assets/icon/pickle_ready.png'),  // 로컬 이미지 URL
+    //                 link: {
+    //                     webUrl: 'https://developers.kakao.com/',
+    //                     mobileWebUrl: 'https://developers.kakao.com/',
+    //                 },
+    //                 description: '앨범을 공유합니다.',
+    //             },
+    //             commerce: {
+    //                 regularPrice: 100000,
+    //                 discountPrice: 80000,
+    //                 discountRate: 20,
+    //             },
+    //             buttons: [
+    //                 {
+    //                     title: '앱에서 보기',
+    //                     link: {
+    //                         androidExecutionParams: [
+    //                             { key: 'screen', value: 'Album' },
+    //                             { key: 'shareLink', value: `${shareLink}` }
+    //                         ],
+    //                         iosExecutionParams: [
+    //                             { key: 'screen', value: 'Album' },
+    //                             { key: 'shareLink', value: `${shareLink}` }
+    //                         ],
+    //                     },
+    //                 },
+    //                 {
+    //                     title: '웹에서 보기',
+    //                     link: {
+    //                         webUrl: shareLink,
+    //                         mobileWebUrl: shareLink,
+    //                     },
+    //                 },
+    //             ],
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //         Alert.alert("공유 실패", "카카오톡 공유에 실패했습니다.");
+    //     }
+    // };
+
 
     const handleClose = () => {
         // 모달을 닫기 전에 상태를 초기화합니다.
@@ -111,10 +161,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
-        width: '85%', 
+        width: '85%',
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,
@@ -152,12 +202,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: '90%',
         height: 35,
-        paddingHorizontal: 10, 
+        paddingHorizontal: 10,
     },
     done_btn: {
         backgroundColor: 'black',
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        alignItems: 'center',
         color: 'white',
         borderRadius: 20,
         paddingLeft: 15,
@@ -182,7 +232,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     modalButtonContainer1: {
-        alignItems: 'center', 
+        alignItems: 'center',
     },
     modalButton: {
         fontSize: 15,

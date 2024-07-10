@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ImgDeleteModal from './Modal/ImgDeleteModal';
 import ImgEnlargeModal from './Modal/ImgEnlargeModal';
@@ -225,17 +225,15 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                     numColumns={2}
                     columnWrapperStyle={styles.row}
                     contentContainerStyle={styles.image_list}
-                    onEndReached={fetchMorImages} // 끝에 도달하면 추가 데이터 요청
-                    onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
+                    onEndReached={fetchMorImages} 
+                    onEndReachedThreshold={0.1} 
                 />
                 <View style={styles.iconContainer}>
-                    {/* bin.png 아이콘을 왼쪽 끝으로 이동 */}
                     {check && (
                         <TouchableOpacity style={styles.iconButtonLeft} onPress={() => setDeleteVisible(true)}>
                             <Image style={styles.iconImage} source={require('../assets/icon/bin.png')} />
                         </TouchableOpacity>
                     )}
-                    {/* pic_plus 아이콘을 오른쪽에 배치 */}
                     <TouchableOpacity style={styles.iconButtonRight} onPress={onSelectImage}>
                         <Image style={styles.iconImage1} source={require('../assets/icon/pic_plus.png')} />
                     </TouchableOpacity>

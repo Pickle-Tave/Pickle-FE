@@ -1,37 +1,74 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { ShareParticipants } from '../../api/ShareParticipants';
+import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
+import { GetAlbumList } from '../../api/GetAlbumList';
+import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
+import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
+import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
+import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 
-const AlbumPasswordModal = ({ visible, onClose, link }) => {
+const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
+    const dispatch = useDispatch();
     const [password, setPassword] = useState('');
-    
+    const [sharecode, setShareCode] = useState('');
+
     //공유앨범 참여 요청 코드
     const handleSubmit = () => {
-        console.log(`링크: ${link}, 비밀번호: ${password}`);
-        ShareParticipants(link, password);
-    }
+        ShareParticipants(sharecode, password);
+        if (dropdownValue === 1) {
+            dispatch(InitializeAlbumList());
+            dispatch(GetAlbumList(null, 10));
+        } else if (dropdownValue === 2) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+        } else if (dropdownValue === 3) {
+            dispatch(InitializeAlbumStatus());
+            dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+        } else if (dropdownValue === 4) {
+            dispatch(InitializeLikeList());
+            dispatch(SearchAlbumLike(null, 10));
+        }
+        onClose();
+        setPassword('');
+        setShareCode('');
+    };
 
     return (
         <Modal
             visible={visible}
             animationType="slide"
-            transparent={true} // 배경을 투명하게 설정
+            transparent={true}
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
                     <TouchableWithoutFeedback>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>비밀번호 입력하기</Text>
-                            <Text style={styles.textLeftAlign}>Password를 입력하세요.</Text>
-                            <View style={styles.password_section}>
-                                <TextInput 
-                                style={styles.textinput}
+                            <Text style={styles.modalTitle}>공유앨범 참여하기</Text>
+                            <Text style={styles.modalSubTitle}>참여코드를 입력하세요</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                value={sharecode}
+                                onChangeText={setShareCode}
+                            />
+                            <Text style={styles.modalSubTitle}>Password를 입력하세요</Text>
+                            <TextInput
+                                style={styles.textInput}
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={true}
-                                />
-                                <TouchableOpacity style={styles.done_btn} onPress={handleSubmit}>
-                                    <Text style={styles.done_text}>완료</Text>
+                            />
+                            <View style={styles.modalButtons}>
+                                <TouchableOpacity
+                                    onPress={onClose}
+                                    style={styles.modalButtonContainer1}>
+                                    <Text style={styles.modalButton}>취소</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={handleSubmit}
+                                    style={styles.modalButtonContainer2}>
+                                    <Text style={styles.modalButton}>완료</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -47,13 +84,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
-        width: '85%', // 모달 너비 설정
+        width: '85%',
         backgroundColor: 'white',
         borderRadius: 10,
-        padding: 20,
+        paddingVertical: 20,
         alignItems: 'center',
         borderColor: '#F7F8CB',
         borderWidth: 5,
@@ -66,61 +103,49 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
-        marginTop: 10,
+        marginBottom: 13,
+        marginTop: 9,
         alignItems: 'center',
-        color: 'black'
+        color: 'black',
     },
-    textLeftAlign: {
-        width: '100%', 
-        textAlign: 'left', 
-        marginTop: 10,
-        marginLeft: 5,
-        fontWeight: 'bold',
+    modalSubTitle: {
+        fontSize: 15,
+        marginBottom: 10,
+        alignItems: 'center',
+        color: 'black',
+        marginTop: 12,
     },
-    password_section: {
-        width: '90%',
-        flexDirection: 'row',
-        gap: 10,
-        marginTop: 20,
-        justifyContent: 'center'
-
-    },
-    textinput: {
+    textInput: {
+        height: 35,
         borderWidth: 1,
-        borderRadius: 20,
-        width: '90%',
-        height: 35,
-    },
-    done_btn: {
-        backgroundColor: 'black',
-        justifyContent: 'center', // 추가: 세로축 중앙 정렬
-        alignItems: 'center', // 추가: 세로축 중앙 정렬
-        color: 'white',
-        borderRadius: 20,
+        width: '85%',
+        borderRadius: 30,
         paddingLeft: 15,
-        paddingRight: 15,
-        height: 35,
-        marginBottom: 20,
-    },
-    done_text: {
-        color: 'white',
-    },
-    link_section: {
-        width: '90%',
-        flexDirection: 'row',
-        gap: 10,
-        justifyContent: 'center',
-        marginTop: 7,
+        marginTop: 6,
+        fontSize: 13,
+        marginBottom: 16,
     },
     modalButtons: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         width: '100%',
-        marginTop: 30,
+        marginTop: 15,
+        borderTopColor: '#CCCCCC',
+        borderTopWidth: 1,
     },
     modalButtonContainer1: {
-        alignItems: 'center', // 중앙 정렬
+        width: '50%',
+        height: '100%',
+        alignItems: 'center',
+        marginTop: 10,
+        paddingTop: 5,
+        borderRightColor: '#CCCCCC',
+        borderRightWidth: 1,
+    },
+    modalButtonContainer2: {
+        width: '50%',
+        alignItems: 'center',
+        paddingTop: 15,
     },
     modalButton: {
         fontSize: 16,

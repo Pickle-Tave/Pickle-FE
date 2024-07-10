@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import AlbumAccess from "../components/AlbumAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
@@ -37,7 +37,7 @@ const AlbumInquiry = ({ route }) => {
     } else {
       setLoading(false); // 이미지 리스트가 이미 로딩된 경우 로딩 멈춤
     }
-  }, []);
+  }, [id]);
 
   // 선택버튼이 눌렸는지 여부
   const [check, setCheck] = useState(false);

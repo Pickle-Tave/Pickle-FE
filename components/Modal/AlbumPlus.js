@@ -8,12 +8,15 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { AlbumCreate } from '../../api/AlbumCreate';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
 import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
+import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
+import { SearchAlbumLike } from '../../api/SearchAlbumLike';
+
 
 const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
   const dispatch = useDispatch();
@@ -35,7 +38,10 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
       } else if (dropdownValue === 3) {
         dispatch(SearchAlbumStatus('PUBLIC', null, 10));
         dispatch(InitializeAlbumStatus());
-      }
+      } else if (dropdownValue === 4) {
+        dispatch(InitializeLikeList());
+        dispatch(SearchAlbumLike(null, 10))
+    }
       onClose();
     } catch (error) {
       console.error('앨범 생성 중 오류:', error);

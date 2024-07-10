@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import { AlbumDelete } from '../../api/AlbumDelete';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';

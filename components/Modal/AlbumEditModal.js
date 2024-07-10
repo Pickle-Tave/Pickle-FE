@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
 import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
 import { SearchAlbumName } from '../../api/SearchAlbumName';
+import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
+import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 
 const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue, searchQuery }) => {
   const dispatch = useDispatch();
@@ -48,6 +50,9 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
           } else if (dropdownValue === 3) {
             dispatch(InitializeAlbumStatus());
             dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+          } else if (dropdownValue === 4) {
+            dispatch(InitializeLikeList());
+            dispatch(SearchAlbumLike(null, 10))
           }
           onClose();
         })
@@ -102,10 +107,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '85%', 
+    width: '85%',
     backgroundColor: 'white',
     borderRadius: 10,
     paddingVertical: 20,
@@ -154,15 +159,15 @@ const styles = StyleSheet.create({
   modalButtonContainer1: {
     width: '50%',
     height: '100%',
-    alignItems: 'center', 
+    alignItems: 'center',
     marginTop: 10,
     paddingTop: 5,
     borderRightColor: '#CCCCCC',
     borderRightWidth: 1,
   },
   modalButtonContainer2: {
-    width: '50%', 
-    alignItems: 'center', 
+    width: '50%',
+    alignItems: 'center',
     paddingTop: 15,
   },
   modalButton: {

@@ -25,18 +25,15 @@ import SearchedAlbum from './pages/SearchedAlbum';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-//딥링크 설정
-const linking = {
-  prefixes: ['pickle://'], // 딥링크의 URL 스킴
-  config: { //URL경로와 화면간의 매핑 설정
-    screens: {
-      Album: 'pickle.com/path/:link',
-    },
-  },
-}
-
-
-
+// //딥링크 설정
+// const linking = {
+//   prefixes: ['kakaokakaof2fb8dc2987896193205c5a07c24c75e://'], // 딥링크의 URL 스킴
+//   config: { //URL경로와 화면간의 매핑 설정
+//     screens: {
+//       Album: 'kakaolink/:link',
+//     },
+//   },
+// }
 
 const CustomHeader = ({ navigation, title, canGoBack }) => {
   const [alram, setAlram] = useState(false);
@@ -158,7 +155,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   const handleLoginSuccess = () => {
     setIsLogged(true);
   };
@@ -168,7 +165,7 @@ function App() {
   };
 
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer>
       <Stack.Navigator initialRouteName={isLogged ? 'Main' : 'Onboarding_1'}>
         {isLogged ? (
           <>

@@ -1,5 +1,4 @@
 import 'react-native-gesture-handler';
-
 import React from 'react';
 import {
   View,
@@ -8,12 +7,9 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  ScrollView,
 } from 'react-native';
 import PoseRCMD from '../components/PoseRCMD';
 import PlaceRCMD from '../components/PlaceRCMD';
-
-const { width } = Dimensions.get('window');
 
 const Home = ({ navigation }) => {
   return (
