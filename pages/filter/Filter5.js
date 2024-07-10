@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,24 +8,27 @@ import {
   ScrollView,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AlbumPlus from '../../components/Modal/AlbumPlus';
+import {GetAlbumList} from '../../api/GetAlbumList';
 
 const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
   const [plusVisible, setPlusVisible] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState([]);
-
   const route = useRoute();
   const {groupedImages} = route.params; // Filter4에서 전달된 groupedImages
-
-  const albumList = useSelector(state => state.AlbumReducer); // 앨범 목록 가져오기
-
+  const albumList = useSelector(state => state.AlbumListReducer.albumList); // 앨범 목록 가져오기
+  const dispatch = useDispatch();
   const handleNavigation = () => {
     navigation.navigate('Filter');
   };
+
+  useEffect(() => {
+    dispatch(GetAlbumList(null, 10));
+  }, [dispatch]);
 
   // 앨범 목록을 드롭다운 아이템 형태로 변환
   const items = albumList.map(album => ({
