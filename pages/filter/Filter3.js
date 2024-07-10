@@ -24,11 +24,13 @@ const Filter3 = () => {
 
   const handleNavigation = () => {
     // 선택된 이미지 그룹만 필터링하여 넘기기
-    const selectedGroups = groupedImages.filter((group, groupIndex) =>
-      group.some((_, imgIndex) =>
-        selected.includes(`${groupIndex}-${imgIndex}`),
-      ),
-    );
+    const selectedGroups = groupedImages
+      .map((group, groupIndex) =>
+        group.filter((_, imgIndex) =>
+          selected.includes(`${groupIndex}-${imgIndex}`),
+        ),
+      )
+      .filter(group => group.length > 0); // 빈 그룹 제거
     // console.log('Selected Groups:', selectedGroups); // 필터링된 그룹 확인
     navigation.navigate('Filter4', {groupedImages: selectedGroups});
   };
@@ -65,8 +67,8 @@ const Filter3 = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        style={styles.step_3}
-        source={require('../../assets/icon/step_3.png')}
+        style={styles.step_2}
+        source={require('../../assets/icon/step_2.png')}
         resizeMode="contain"
       />
       <Text style={styles.text}>마음에 드는 사진을 선택하세요!</Text>
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  step_3: {
+  step_2: {
     width: 300,
     margin: 10,
   },

@@ -17,6 +17,19 @@ export const assignHashTag = async requestBody => {
 
     if (response.status === 200) {
       return response.data.data;
+    } else if (response.status === 404) {
+      if (
+        response.data &&
+        response.data.data.errorClassName === 'TAG_NOT_FOUND'
+      ) {
+        console.error(
+          '해시태그가 존재하지 않습니다.',
+          response.data.data.message,
+        );
+        throw new Error(response.data.data.message);
+      } else {
+        throw new Error(`Resource not found: ${response.status}`);
+      }
     } else {
       throw new Error(`Failed to assign hashtag: ${response.status}`);
     }
@@ -28,7 +41,6 @@ export const assignHashTag = async requestBody => {
       console.error('Response status:', error.response.status);
       console.error('Response data:', error.response.data);
     }
-
     throw error;
   }
 };
