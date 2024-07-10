@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 
 const ImgDeleteModal = ({ visible, onClose, onDelete, selectedImageNum }) => {
     return (
         <Modal
             visible={visible}
             animationType="slide"
-            transparent={true} // 배경을 투명하게 설정
+            transparent={true} 
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
@@ -35,10 +35,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalContainer: {
-        width: '85%', // 모달 너비 설정
+        width: '85%', 
         backgroundColor: 'white',
         borderRadius: 10,
         paddingVertical: 20,
@@ -85,17 +85,17 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     modalButtonContainer1: {
-        width: '50%', // 너비를 50%로 설정
+        width: '50%', 
         height: '100%',
-        alignItems: 'center', // 중앙 정렬
+        alignItems: 'center', 
         marginTop: 10,
         paddingTop: 5,
         borderRightColor: '#CCCCCC',
         borderRightWidth: 1,
     },
     modalButtonContainer2: {
-        width: '50%', // 너비를 50%로 설정
-        alignItems: 'center', // 중앙 정렬
+        width: '50%', 
+        alignItems: 'center', 
         paddingTop: 15,
     },
     modalButton: {

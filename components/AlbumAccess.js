@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         position: 'absolute',
-        top: 25,
+        top: 27,
         left: 6,
         zIndex: 1,
     },

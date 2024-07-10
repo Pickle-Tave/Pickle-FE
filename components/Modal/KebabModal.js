@@ -25,8 +25,6 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, De
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10));
 
-
-
             if (dropdownValue === 2) {
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
                 dispatch(InitializeAlbumStatus());
@@ -48,7 +46,7 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, De
         <Modal
             visible={visible}
             animationType="slide"
-            transparent={true} // 배경을 투명하게 설정
+            transparent={true}
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
@@ -84,10 +82,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
-        width: '90%', // 모달 너비 설정
+        width: '90%', 
         marginTop: 440,
         alignItems: 'center',
         backgroundColor: 'white',

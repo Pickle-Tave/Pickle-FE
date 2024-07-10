@@ -168,12 +168,10 @@ const Album = ({ navigation, route }) => {
         return dispatch(SearchAlbumLike(currentList().lastAlbumId, 10));
       }
     };
-
     action()
       .then(() => setIsLoadingMore(false)) // 로딩 완료
       .catch((error) => {
         setIsLoadingMore(false); // 에러 발생 시 로딩 해제
-        console.error('앨범 목록 추가 요청 에러:', error);
       });
   };
 

@@ -111,10 +111,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalContainer: {
-        width: '85%', // 모달 너비 설정
+        width: '85%', 
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,
@@ -152,12 +152,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: '90%',
         height: 35,
-        paddingHorizontal: 10, // 텍스트 입력 패딩
+        paddingHorizontal: 10, 
     },
     done_btn: {
         backgroundColor: 'black',
-        justifyContent: 'center', // 세로축 중앙 정렬
-        alignItems: 'center', // 가로축 중앙 정렬
+        justifyContent: 'center', 
+        alignItems: 'center', 
         color: 'white',
         borderRadius: 20,
         paddingLeft: 15,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     modalButtonContainer1: {
-        alignItems: 'center', // 중앙 정렬
+        alignItems: 'center', 
     },
     modalButton: {
         fontSize: 15,

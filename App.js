@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -30,10 +30,13 @@ const linking = {
   prefixes: ['pickle://'], // 딥링크의 URL 스킴
   config: { //URL경로와 화면간의 매핑 설정
     screens: {
-      Album: 'pickle.com/path/:link', 
+      Album: 'pickle.com/path/:link',
     },
   },
 }
+
+
+
 
 const CustomHeader = ({ navigation, title, canGoBack }) => {
   const [alram, setAlram] = useState(false);
@@ -155,7 +158,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
   const handleLoginSuccess = () => {
     setIsLogged(true);
   };

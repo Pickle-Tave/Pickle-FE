@@ -3,15 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Modal,
   TextInput,
-  ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { addAlbum } from '../../src/actions/AlbumAction';
 import { AlbumCreate } from '../../api/AlbumCreate';
 import { GetAlbumList } from '../../api/GetAlbumList';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
@@ -20,7 +17,8 @@ import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 
 const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
   const dispatch = useDispatch();
-  const albumList = useSelector((state) => state.AlbumReducer);
+
+  //새로 추가할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
   const handleAddAlbum = async () => {
@@ -31,7 +29,6 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
       if (dropdownValue === 1) {
         dispatch(InitializeAlbumList());
         dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
-
       } else if (dropdownValue === 2) {
         dispatch(SearchAlbumStatus('PRIVATE', null, 10));
         dispatch(InitializeAlbumStatus());
@@ -90,10 +87,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalContainer: {
-    width: '85%', // 모달 너비 설정
+    width: '85%',
     backgroundColor: 'white',
     borderRadius: 10,
     paddingVertical: 20,
@@ -139,17 +136,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   modalButtonContainer1: {
-    width: '50%', // 너비를 50%로 설정
+    width: '50%', 
     height: '100%',
-    alignItems: 'center', // 중앙 정렬
+    alignItems: 'center', 
     marginTop: 10,
     paddingTop: 5,
     borderRightColor: '#CCCCCC',
     borderRightWidth: 1,
   },
   modalButtonContainer2: {
-    width: '50%', // 너비를 50%로 설정
-    alignItems: 'center', // 중앙 정렬
+    width: '50%', 
+    alignItems: 'center',
     paddingTop: 15,
   },
   modalButton: {
