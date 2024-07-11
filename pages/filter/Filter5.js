@@ -6,12 +6,14 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {useSelector, useDispatch} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AlbumPlus from '../../components/Modal/AlbumPlus';
 import {GetAlbumList} from '../../api/GetAlbumList';
+import {AlbumSave} from '../../api/AlbumSave';
 
 const Filter5 = () => {
   const navigation = useNavigation();
@@ -19,46 +21,97 @@ const Filter5 = () => {
   const [plusVisible, setPlusVisible] = useState(false);
   const [selectedImageIds, setSelectedImageIds] = useState([]);
   const route = useRoute();
-  const {groupedImages} = route.params; // Filter4에서 전달된 groupedImages
-  const albumList = useSelector(state => state.AlbumListReducer.albumList); // 앨범 목록 가져오기
+  const {groupedImages} = route.params;
+  const [items, setItems] = useState([]);
+  const albumList = useSelector(state => state.AlbumListReducer.albumList);
   const dispatch = useDispatch();
+
   const handleNavigation = () => {
     navigation.navigate('Filter');
   };
 
   useEffect(() => {
-    dispatch(GetAlbumList(null, 10));
-  }, [dispatch]);
+    if (!albumList.last && albumList.first) dispatch(GetAlbumList(null, 50));
+  }, [albumList]); // 앨범 목록 조회 요청을 한 번만 실행
 
-  // 앨범 목록을 드롭다운 아이템 형태로 변환
-  const items = albumList.map(album => ({
-    label: album.album_name,
-    value: album.album_id,
-  }));
+  useEffect(() => {
+    const newItems = albumList.map(album => ({
+      label: album.searchedAlbumName,
+      value: album.albumId,
+    }));
 
-  items.push({label: '새 앨범 추가하기', value: 'add_new_album'});
+    // '새 앨범 추가하기'가 이미 목록에 있는지 확인하고 없으면 추가
+    const addNewAlbumItem = {label: '새 앨범 추가하기', value: 'add_new_album'};
+    if (!newItems.some(item => item.value === 'add_new_album')) {
+      newItems.push(addNewAlbumItem);
+    }
+    setItems(newItems);
+  }, [albumList]); // albumList가 변경될 때만 실행
 
-  const handleValueChange = value => {
+  const handleValueChange = async value => {
     if (value === 'add_new_album') {
       setPlusVisible(true);
-    } else {
+    } else if (value) {
       setSelectedOption(value);
+      await handleAlbumSelection(value, selectedImageIds); // 선택된 이미지 ID들과 함께 앨범 선택 함수를 호출
     }
   };
 
   const handleAddNewAlbum = albumName => {
     if (albumName) {
-      items.push({label: albumName, value: albumName});
+      setItems(prevItems => {
+        const newAlbumItem = {label: albumName, value: albumName};
+        return [
+          ...prevItems.filter(item => item.value !== 'add_new_album'),
+          newAlbumItem,
+          {label: '새 앨범 추가하기', value: 'add_new_album'},
+        ];
+      });
       setSelectedOption(albumName);
     }
     setPlusVisible(false);
   };
 
   const handleImageSelect = id => {
-    if (selectedImageIds.includes(id)) {
+    const isSelected = selectedImageIds.includes(id);
+    if (isSelected) {
       setSelectedImageIds(selectedImageIds.filter(imageId => imageId !== id));
     } else {
       setSelectedImageIds([...selectedImageIds, id]);
+    }
+  };
+
+  // 이미지 컨테이너 스타일 변경
+  const getImageContainerStyle = id => {
+    const isSelected = selectedImageIds.includes(id);
+    return {
+      ...styles.imageContainer,
+      borderColor: isSelected ? 'green' : 'transparent',
+      borderWidth: isSelected ? 2 : 0,
+      opacity: isSelected ? 0.7 : 1,
+    };
+  };
+
+  // 이미지 그룹 선택할 때 호출 -> API 호출
+  const handleAlbumSelection = async (albumId, imageIds) => {
+    try {
+      const requestBody = {
+        updateAlbumIdRequestList: [
+          {
+            albumId: albumId,
+            imageIds: imageIds,
+          },
+        ],
+      };
+
+      const data = await AlbumSave(requestBody); // 이미지 저장 API 호출
+      console.log('앨범에 이미지 저장 성공', data);
+    } catch (error) {
+      console.error('Failed to save images:', error);
+      Alert.alert(
+        'Error',
+        `앨범에 이미지 저장 중 오류가 발생했습니다: ${error.message}`,
+      );
     }
   };
 
@@ -88,12 +141,14 @@ const Filter5 = () => {
 
       <View style={styles.gridContainer}>
         {groupedImages.map((group, index) => (
-          <React.Fragment key={index}>
+          <React.Fragment>
             {index % 2 === 0 && index !== 0 && (
               <View style={styles.separator} />
             )}
-            <View style={styles.imageContainer}>
-              <TouchableOpacity style={styles.imageWrapper}>
+            <View style={getImageContainerStyle(group.id)}>
+              <TouchableOpacity
+                style={styles.imageWrapper}
+                onPress={() => handleImageSelect(group.id)}>
                 <Image source={{uri: group[0]}} style={styles.image} />
                 <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
               </TouchableOpacity>

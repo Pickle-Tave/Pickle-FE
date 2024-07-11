@@ -27,7 +27,9 @@ const Filter4 = () => {
   const dispatch = useDispatch();
 
   const handleNavigation = () => {
-    navigation.navigate('Filter5', {groupedImages});
+    navigation.navigate('Filter5', {
+      groupedImages,
+    });
   };
 
   // 해시태그 목록 요청

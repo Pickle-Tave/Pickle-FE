@@ -36,28 +36,29 @@ instance.interceptors.response.use(
     console.error('Response interceptor error:', error);
 
     if (
-      error.response &&
-      (error.response.status === 500 || error.response.status === 401) &&
-      (!originalRequest._retry ||
-        (error.response.data &&
-          error.response.data.errorClassName === 'AUTH_NOT_FOUND'))
+      error.response ||
+      (error.response.status === 401 && !originalRequest._retryCount)
     ) {
-      originalRequest._retry = true; // 요청 재시도 플래그 설정
-
-      try {
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+      if (originalRequest._retryCount < 2) {
+        originalRequest._retryCount += 1;
         console.log('Attempting to refresh token...');
-        const newTokens = await refreshAccessToken();
-        await AsyncStorage.setItem('accessToken', newTokens.accessToken);
-        await AsyncStorage.setItem('refreshToken', newTokens.refreshToken);
-        console.log('New tokens saved to AsyncStorage');
 
-        // 새로운 토큰을 사용하여 원래 요청 다시 시도
-        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-        return instance(originalRequest); 
-      } catch (e) {
-        console.error('Token refresh failed:', e);
-        // 토큰 갱신 실패
-        return Promise.reject(e);
+        try {
+          const newTokens = await refreshAccessToken();
+          await AsyncStorage.setItem('accessToken', newTokens.accessToken);
+          await AsyncStorage.setItem('refreshToken', newTokens.refreshToken);
+
+          console.log('New tokens saved to AsyncStorage');
+
+          // 새로운 토큰을 사용하여 원래 요청 다시 시도
+          originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+          return instance(originalRequest);
+        } catch (e) {
+          console.error('Token refresh failed:', e);
+          // 토큰 갱신 실패
+          return Promise.reject(e);
+        }
       }
     }
     return Promise.reject(error);
