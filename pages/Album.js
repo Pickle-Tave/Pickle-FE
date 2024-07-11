@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
   FlatList,
-  KeyboardAvoidingView,
+  KeyboardAvoidingView,  
   Platform,
   ActivityIndicator
 } from 'react-native';
@@ -28,7 +28,6 @@ import { SearchAlbumLike } from '../api/SearchAlbumLike';
 import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
-
 
 const Album = ({ navigation }) => {
   //API연동부분

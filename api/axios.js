@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {refreshAccessToken} from './tokenService';
+import { refreshAccessToken } from './tokenService';
 
 const instance = axios.create({
   baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
@@ -38,7 +38,7 @@ instance.interceptors.response.use(
     if (
       error.response &&
       (error.response.status === 500 || error.response.status === 401) &&
-      !originalRequest._retryd
+      !originalRequest._retry
     ) {
       originalRequest._retry = true; // 요청 재시도 플래그 설정
 
@@ -47,11 +47,16 @@ instance.interceptors.response.use(
         const newTokens = await refreshAccessToken();
         await AsyncStorage.setItem('accessToken', newTokens.accessToken);
         await AsyncStorage.setItem('refreshToken', newTokens.refreshToken);
+
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+        console.log('refreshToken in request interceptor:', refreshToken);
         console.log('New tokens saved to AsyncStorage');
+
+
 
         // 새로운 토큰을 사용하여 원래 요청 다시 시도
         originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-        return instance(originalRequest); 
+        return instance(originalRequest);
       } catch (e) {
         console.error('Token refresh failed:', e);
         // 토큰 갱신 실패

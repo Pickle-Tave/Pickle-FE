@@ -1,9 +1,16 @@
-import instance from './axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const instance = axios.create({
+    baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+  });
 
 export const ShareParticipants = async (albumLink, albumPassword) => {
     try {
+        console.log("공유앨범 참여 링크",albumLink)
+        console.log("공유앨범 참여 비번",albumPassword)
         const accessToken = await AsyncStorage.getItem('accessToken');
+        console.log("액세스 토큰", accessToken)
         const response = await instance.post(
             `/albums/share/participants`,
             {

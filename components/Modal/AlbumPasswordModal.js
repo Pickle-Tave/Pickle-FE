@@ -17,6 +17,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     //공유앨범 참여 요청 코드
     const handleSubmit = async () => {
         try {
+            console.log("공유코드 비번",sharecode, password);
             await ShareParticipants(sharecode, password);
             
             if (dropdownValue === 1) {
