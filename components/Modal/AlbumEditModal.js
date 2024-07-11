@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,48 +16,44 @@ import { SearchAlbumStatus } from '../../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
 import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
 import { SearchAlbumName } from '../../api/SearchAlbumName';
+import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
+import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 
 const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue, searchQuery }) => {
   const dispatch = useDispatch();
 
-  const album = useSelector((state) =>
-    state.AlbumReducer.find((album) => album.album_id === checkedAlbumId)
-  );
-
+  //수정할 앨범 정보
   const editedAlbum = useSelector((state) =>
     state.AlbumListReducer.albumList.find((item) => item.albumId === checkedAlbumId));
 
   //새로 수정할 앨범명
   const [newAlbumName, setNewAlbumName] = useState('');
 
-  useEffect(() => {
-    if (album) {
-      setNewAlbumName(album.album_name);
-    }
-  }, [album]);
-
   const handleUpdateAlbumName = () => {
     if (newAlbumName.trim() !== '') {
       AlbumEdit(editedAlbum.albumId, newAlbumName)
         .then(() => {
-          dispatch(InitializeAlbumList());
-          dispatch(GetAlbumList(null, 10));
-
+          setNewAlbumName('');
           if (searchQuery) {
             dispatch(InitializeSearchedAlbum());
             dispatch(SearchAlbumName(searchQuery, null, 10));
           }
-
           // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
           console.log("dropdownValue", dropdownValue)
-          if (dropdownValue === 2) {
+
+          if (dropdownValue === 1) {
+            dispatch(InitializeAlbumList());
+            dispatch(GetAlbumList(null, 10));
+          } else if (dropdownValue === 2) {
             dispatch(InitializeAlbumStatus());
             dispatch(SearchAlbumStatus('PRIVATE', null, 10));
           } else if (dropdownValue === 3) {
             dispatch(InitializeAlbumStatus());
             dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+          } else if (dropdownValue === 4) {
+            dispatch(InitializeLikeList());
+            dispatch(SearchAlbumLike(null, 10))
           }
-
           onClose();
         })
         .catch((error) => console.error('앨범 수정 오류:', error));
@@ -111,10 +107,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '85%', // 모달 너비 설정
+    width: '85%',
     backgroundColor: 'white',
     borderRadius: 10,
     paddingVertical: 20,
@@ -161,17 +157,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   modalButtonContainer1: {
-    width: '50%', // 너비를 50%로 설정
+    width: '50%',
     height: '100%',
-    alignItems: 'center', // 중앙 정렬
+    alignItems: 'center',
     marginTop: 10,
     paddingTop: 5,
     borderRightColor: '#CCCCCC',
     borderRightWidth: 1,
   },
   modalButtonContainer2: {
-    width: '50%', // 너비를 50%로 설정
-    alignItems: 'center', // 중앙 정렬
+    width: '50%',
+    alignItems: 'center',
     paddingTop: 15,
   },
   modalButton: {

@@ -11,33 +11,35 @@ import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
 import { SearchAlbumName } from '../../api/SearchAlbumName';
 import { useDispatch } from 'react-redux';
 
-
 const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, searchQuery }) => {
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [shareLink, setShareLink] = useState('링크');
+    const [shareLink, setShareLink] = useState('참여');
 
     const handleShare = async () => {
         setIsLoading(true);
         try {
             const response = await ShareAlbumChange(checkedAlbumId, password);
-            setShareLink(response.data.link);
+            const link = response.data.link;
+            setShareLink(link);
 
-            dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10));
-
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10));
 
             if (searchQuery) {
                 dispatch(InitializeSearchedAlbum());
                 dispatch(SearchAlbumName(searchQuery, null, 10));
             }
 
-            if (dropdownValue === 2) {
+            if (dropdownValue === 1) {
+                dispatch(InitializeAlbumList());
+                dispatch(GetAlbumList(null, 10));
+            } else if (dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+            } else if (dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10))
+
             }
         } catch (error) {
             console.error(error);
@@ -48,13 +50,65 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
 
     const handleCopyLink = () => {
         Clipboard.setString(shareLink);
-        Alert.alert("링크 복사", "링크가 클립보드에 복사되었습니다.");
+        Alert.alert("코드 복사", "참여코드가 클립보드에 복사되었습니다.");
     };
+
+    // const handleKakaoShare = async () => {
+    //     if (!shareLink) {
+    //         Alert.alert("링크 오류", "링크가 생성되지 않았습니다.");
+    //         return;
+    //     }
+
+    //     try {
+    //         await KakaoShareLink.sendCommerce({
+    //             content: {
+    //                 title: '앨범 공유',
+    //                 // imageUrl: require('../../assets/icon/pickle_ready.png'),  // 로컬 이미지 URL
+    //                 link: {
+    //                     webUrl: 'https://developers.kakao.com/',
+    //                     mobileWebUrl: 'https://developers.kakao.com/',
+    //                 },
+    //                 description: '앨범을 공유합니다.',
+    //             },
+    //             commerce: {
+    //                 regularPrice: 100000,
+    //                 discountPrice: 80000,
+    //                 discountRate: 20,
+    //             },
+    //             buttons: [
+    //                 {
+    //                     title: '앱에서 보기',
+    //                     link: {
+    //                         androidExecutionParams: [
+    //                             { key: 'screen', value: 'Album' },
+    //                             { key: 'shareLink', value: `${shareLink}` }
+    //                         ],
+    //                         iosExecutionParams: [
+    //                             { key: 'screen', value: 'Album' },
+    //                             { key: 'shareLink', value: `${shareLink}` }
+    //                         ],
+    //                     },
+    //                 },
+    //                 {
+    //                     title: '웹에서 보기',
+    //                     link: {
+    //                         webUrl: shareLink,
+    //                         mobileWebUrl: shareLink,
+    //                     },
+    //                 },
+    //             ],
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //         Alert.alert("공유 실패", "카카오톡 공유에 실패했습니다.");
+    //     }
+    // };
+
 
     const handleClose = () => {
         // 모달을 닫기 전에 상태를 초기화합니다.
         setPassword('');  // 비밀번호 초기화
-        setShareLink('링크');  // 링크를 "링크"로 초기화
+        setShareLink('참여코드');  
         onClose();  // 모달 닫기
     };
 
@@ -83,7 +137,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
                             </View>
                             <View style={styles.link_section}>
                                 <Text style={{ width: '100%', borderBottomWidth: 1 }}>
-                                    {isLoading ? '링크를 생성중입니다...' : `${shareLink}`}
+                                    {isLoading ? '참여코드를 생성중입니다...' : `${shareLink}`}
                                 </Text>
                                 <TouchableOpacity onPress={handleCopyLink}>
                                     <Image style={{ width: 23, height: 23 }} source={require('../../assets/icon/copy.png')} />
@@ -107,10 +161,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
-        width: '85%', // 모달 너비 설정
+        width: '85%',
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,
@@ -148,12 +202,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: '90%',
         height: 35,
-        paddingHorizontal: 10, // 텍스트 입력 패딩
+        paddingHorizontal: 10,
     },
     done_btn: {
         backgroundColor: 'black',
-        justifyContent: 'center', // 세로축 중앙 정렬
-        alignItems: 'center', // 가로축 중앙 정렬
+        justifyContent: 'center',
+        alignItems: 'center',
         color: 'white',
         borderRadius: 20,
         paddingLeft: 15,
@@ -178,7 +232,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     modalButtonContainer1: {
-        alignItems: 'center', // 중앙 정렬
+        alignItems: 'center',
     },
     modalButton: {
         fontSize: 15,

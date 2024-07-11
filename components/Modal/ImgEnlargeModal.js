@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 
 const ImgDeleteModal = ({ visible, onClose, imageSrc }) => {
@@ -6,7 +6,7 @@ const ImgDeleteModal = ({ visible, onClose, imageSrc }) => {
         <Modal
             visible={visible}
             animationType="slide"
-            transparent={true} // 배경을 투명하게 설정
+            transparent={true} 
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
@@ -14,7 +14,6 @@ const ImgDeleteModal = ({ visible, onClose, imageSrc }) => {
                         <TouchableOpacity style={{ alignItems: 'flex-end', marginRight: 20 }} onPress={onClose}>
                             <Image style={{ width: 15, height: 15, marginTop: 9, }} source={require('../../assets/icon/cancel2.png')} />
                         </TouchableOpacity>
-                        {/* 이미지띄우기 */}
                         {imageSrc && <Image style={styles.enlargedImage} source={{ uri: imageSrc }} />}
                     </View>
                 </View>
@@ -28,10 +27,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalContainer: {
-        width: '85%', // 모달 너비 설정
+        width: '85%', 
         height: '60%',
         backgroundColor: 'white',
         borderRadius: 10,

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   TextInput,
@@ -6,7 +7,7 @@ import {
   Image,
   StyleSheet,
   FlatList,
-  KeyboardAvoidingView,
+  KeyboardAvoidingView,  
   Platform,
   ActivityIndicator
 } from 'react-native';
@@ -14,12 +15,12 @@ import AlbumItem from '../components/AlbumItem';
 import AlbumPlus from '../components/Modal/AlbumPlus';
 import DropDownPicker from 'react-native-dropdown-picker';
 import KebabModal from '../components/Modal/KebabModal';
+import AlbumPasswordModal from '../components/Modal/AlbumPasswordModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
 import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
+import SelectAlbumStatus from '../components/Modal/SelectAlbumStatus';
 import { useSelector, useDispatch } from 'react-redux';
-import { addAlbum, deleteAlbum } from '../src/actions/AlbumAction';
-import { addAlbumImage } from '../src/actions/AlbumImageAction';
 import { GetAlbumList } from '../api/GetAlbumList';
 import { InitializeAlbumList } from '../src/actions/AlbumListAction';
 import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
@@ -29,15 +30,11 @@ import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
 
 const Album = ({ navigation }) => {
-  const albumList = useSelector((state) => state.AlbumReducer);
-
   //API연동부분
   const dispatch = useDispatch();
   const AlbumList = useSelector((state) => state.AlbumListReducer); //사용자 앨범 목록
   const LikeList = useSelector((state) => state.AlbumLikeReducer); //즐겨찾기 앨범 목록
   const StatusList = useSelector((state) => state.AlbumStatusReducer); //앨범 상태 목록(개인앨범 혹은 공유앨범)
-
-  const albumImages = useSelector((state) => state.AlbumImageReducer);
 
   // 모달 visible state
   const [plusvisible, setPlusVisible] = useState(false);
@@ -45,16 +42,14 @@ const Album = ({ navigation }) => {
   const [editvisible, setEditVisible] = useState(false);
   const [sharevisible, setShareVisible] = useState(false);
   const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
+  const [passwordvisible, setPasswordVisible] = useState(false);
+  const [selectvisible, setSelectVisible] = useState(false);
 
   // 로딩 상태를 나타내기 위한 변수
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // 현재 선택된 앨범 id
   const [checkedAlbumId, setcheckedAlbumId] = useState(null);
-
-  // 새로 생성될 앨범의 id값
-  const maxAlbumId = Math.max(...albumList.map((album) => album.album_id));
-  const [newAlbumId, setNewAlbumId] = useState(maxAlbumId + 1);
 
   // 검색 입력 값을 관리하는 상태 변수
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +63,11 @@ const Album = ({ navigation }) => {
   // 드롭다운 값
   const [value, setValue] = useState(1);
 
+    // 드롭다운 메뉴를 선택할 때마다 값 변경
+    const onChange = (value) => {
+      setValue(value);
+    };
+
   const [items, setItems] = useState([
     { label: '전체', value: 1 },
     { label: '개인앨범', value: 2 },
@@ -75,12 +75,11 @@ const Album = ({ navigation }) => {
     { label: '즐겨찾기', value: 4 },
   ]);
 
-  // 현재 선택된 값
-  const [currentValue, setCurrentValue] = useState(1);
-
-  useEffect(() => {
-    fetchAlbumData(value);
-  }, [value]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAlbumData(value);
+    }, [value])
+  );
 
   const fetchAlbumData = (value) => {
     if (value === 1) {
@@ -154,19 +153,13 @@ const Album = ({ navigation }) => {
         return dispatch(SearchAlbumLike(currentList().lastAlbumId, 10));
       }
     };
-
     action()
       .then(() => setIsLoadingMore(false)) // 로딩 완료
       .catch((error) => {
         setIsLoadingMore(false); // 에러 발생 시 로딩 해제
-        console.error('앨범 목록 추가 요청 에러:', error);
       });
   };
 
-  // 드롭다운 메뉴를 선택할 때마다 값 변경
-  const onChange = (value) => {
-    setCurrentValue(value);
-  };
 
   // 수정 버튼 클릭시 kebab 모달이 사라지고 share 모달이 뜸
   const ShareModal = () => {
@@ -180,35 +173,15 @@ const Album = ({ navigation }) => {
     setEditVisible(true);
   };
 
-  const handleDeleteAlbum = () => {
-    if (checkedAlbumId !== null) {
-      dispatch(deleteAlbum(checkedAlbumId));
-      setKebabVisible(false);
-    }
-  };
+  const PrivateAlbum = () => {
+    setSelectVisible(false);
+    setPlusVisible(true);
+  }
 
-  const handleCopyAlbum = (albumId) => {
-    const album = albumList.find((album) => album.album_id === albumId);
-    if (album) {
-      // 앨범 복제
-      dispatch(addAlbum(newAlbumId, album.album_name, '개인앨범'));
-
-      // 복제된 앨범에 속하는 이미지 복제
-      const imagesToCopy = albumImages.filter((image) => image.album_id === albumId);
-      imagesToCopy.forEach((image) => {
-        dispatch(addAlbumImage(image.image_id, image.user_id, newAlbumId, image.src));
-      });
-
-      console.log('복제된 앨범 ID:', newAlbumId);
-      console.log('복제된 이미지:', imagesToCopy);
-    }
-    setKebabVisible(false);
-  };
-
-  const DeleteWarn = () => {
-    setKebabVisible(false);
-    setDeleteWarnVisible(true);
-  };
+  const PublicAlbum = () => {
+    setSelectVisible(false);
+    setPasswordVisible(true);
+  }
 
   const AlbumItemAccess = (id) => {
     navigation.navigate('AlbumInquiry', { id });
@@ -232,6 +205,17 @@ const Album = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <SelectAlbumStatus 
+      visible={selectvisible}
+      onClose={() => setSelectVisible(false)}
+      PrivateAlbum={PrivateAlbum}
+      PublicAlbum={PublicAlbum}
+      />
+      <AlbumPasswordModal
+        visible={passwordvisible}
+        onClose={() => setPasswordVisible(false)}
+        dropdownValue={value}
+      />
       <AlbumPlus
         visible={plusvisible}
         onClose={() => setPlusVisible(false)}
@@ -242,9 +226,6 @@ const Album = ({ navigation }) => {
         onClose={() => setKebabVisible(false)}
         EditModal={() => EditModal(checkedAlbumId)}
         ShareModal={ShareModal}
-        DeleteAlbum={handleDeleteAlbum}
-        DeleteWarn={DeleteWarn}
-        CopyAlbum={() => handleCopyAlbum(checkedAlbumId)}
         checkedAlbumId={checkedAlbumId}
         dropdownValue={value}
       />
@@ -318,7 +299,7 @@ const Album = ({ navigation }) => {
           )}
         />
       </View>
-      <TouchableOpacity onPress={() => setPlusVisible(true)} style={styles.album_plus}>
+      <TouchableOpacity onPress={() => setSelectVisible(true)} style={styles.album_plus}>
         <Image
           style={styles.album_plus_image}
           source={require('../assets/icon/album_plus.png')}

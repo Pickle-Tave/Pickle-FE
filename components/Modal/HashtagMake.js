@@ -9,7 +9,6 @@ import {
     FlatList
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { addHashTag, deleteHashTag } from '../../src/actions/HashTagAction';
 import { HashTagCreate } from '../../api/HashTagCreate';
 import { HashTagListCheck } from '../../api/HashTagListCheck';
 import { HashTagDelete } from '../../api/HashTagDelete';
