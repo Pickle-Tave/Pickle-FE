@@ -25,6 +25,7 @@ const AlbumItem = (props) => {
                 dispatch(InitializeSearchedAlbum());
                 dispatch(SearchAlbumName(props.searchQuery, null, 10));
             }
+        
 
             if (props.dropdownValue === 1) {
                 dispatch(InitializeAlbumList());

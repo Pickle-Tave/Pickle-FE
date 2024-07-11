@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   TextInput,
@@ -75,9 +76,11 @@ const Album = ({ navigation }) => {
     { label: '즐겨찾기', value: 4 },
   ]);
 
-  useEffect(() => {
-    fetchAlbumData(value);
-  }, [value]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAlbumData(value);
+    }, [value])
+  );
 
   const fetchAlbumData = (value) => {
     if (value === 1) {
