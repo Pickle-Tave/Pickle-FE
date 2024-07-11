@@ -23,11 +23,11 @@ export const ShareParticipants = async (albumLink, albumPassword) => {
         if (error.response) {
             const status = error.response.status;
             const errorMessage = error.response.data.data.message || '알 수 없는 에러가 발생했습니다.';
-
+            console.error('공유앨범 참여 오류',error.response.data);
             if (status === 400) {
                 // 앨범의 링크에 대하여 앨범이 존재하지 않을때 
                 if (error.response.data.data.errorClassName === 'SHARED_ALBUM_NOT_FOUND') {
-                    alert(errorMessage);
+                    alert(errorMessage); 
                 } // 앨범 링크에 대하여 비밀번호가 일치하지 않는 경우
                 else if (error.response.data.data.errorClassName === 'SHARED_ALBUM_PASSWORD_MISMATCH') {
                     alert(errorMessage);

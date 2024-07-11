@@ -8,15 +8,11 @@ import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
 import { InitializeAlbumStatus } from '../../src/actions/AlbumStatusAction';
 import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 import { useDispatch } from 'react-redux';
+import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
+import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-
-const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, DeleteWarn, CopyAlbum, checkedAlbumId }) => {
+const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, CopyAlbum, checkedAlbumId, searchQuery }) => {
     const dispatch = useDispatch();
-
-    const pressCopy = () => {
-        DeleteWarn();
-        CopyAlbum();
-    }
 
     //앨범 삭제 요청
     const handleAlbumDelete = async () => {
@@ -24,6 +20,9 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, De
             await AlbumDelete(checkedAlbumId);
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10));
+
+            dispatch(InitializeSearchedAlbum());
+            dispatch(SearchAlbumName(searchQuery, null, 10))
 
             if (dropdownValue === 2) {
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
@@ -35,10 +34,10 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, De
                 dispatch(InitializeLikeList());
                 dispatch(SearchAlbumLike(null, 10));
             }
-            
+
             onClose();
         } catch (error) {
-            console.error('앨범 생성 중 오류:', error);
+            console.error('앨범 삭제 중 오류:', error);
         }
     }
 
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContainer: {
-        width: '90%', 
+        width: '90%',
         marginTop: 440,
         alignItems: 'center',
         backgroundColor: 'white',

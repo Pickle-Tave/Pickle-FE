@@ -15,7 +15,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [shareLink, setShareLink] = useState('링크');
+    const [shareLink, setShareLink] = useState('참여');
 
     const handleShare = async () => {
         setIsLoading(true);
@@ -50,7 +50,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
 
     const handleCopyLink = () => {
         Clipboard.setString(shareLink);
-        Alert.alert("링크 복사", "링크가 클립보드에 복사되었습니다.");
+        Alert.alert("코드 복사", "참여코드가 클립보드에 복사되었습니다.");
     };
 
     // const handleKakaoShare = async () => {
@@ -108,7 +108,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
     const handleClose = () => {
         // 모달을 닫기 전에 상태를 초기화합니다.
         setPassword('');  // 비밀번호 초기화
-        setShareLink('링크');  // 링크를 "링크"로 초기화
+        setShareLink('참여코드');  
         onClose();  // 모달 닫기
     };
 
@@ -137,7 +137,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
                             </View>
                             <View style={styles.link_section}>
                                 <Text style={{ width: '100%', borderBottomWidth: 1 }}>
-                                    {isLoading ? '링크를 생성중입니다...' : `${shareLink}`}
+                                    {isLoading ? '참여코드를 생성중입니다...' : `${shareLink}`}
                                 </Text>
                                 <TouchableOpacity onPress={handleCopyLink}>
                                     <Image style={{ width: 23, height: 23 }} source={require('../../assets/icon/copy.png')} />

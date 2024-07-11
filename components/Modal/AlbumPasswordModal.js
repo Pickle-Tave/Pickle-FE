@@ -15,24 +15,33 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     const [sharecode, setShareCode] = useState('');
 
     //공유앨범 참여 요청 코드
-    const handleSubmit = () => {
-        ShareParticipants(sharecode, password);
-        if (dropdownValue === 1) {
-            dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10));
-        } else if (dropdownValue === 2) {
-            dispatch(InitializeAlbumStatus());
-            dispatch(SearchAlbumStatus('PRIVATE', null, 10));
-        } else if (dropdownValue === 3) {
-            dispatch(InitializeAlbumStatus());
-            dispatch(SearchAlbumStatus('PUBLIC', null, 10));
-        } else if (dropdownValue === 4) {
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10));
+    const handleSubmit = async () => {
+        try {
+            await ShareParticipants(sharecode, password);
+            
+            if (dropdownValue === 1) {
+                dispatch(InitializeAlbumList());
+                dispatch(GetAlbumList(null, 10));
+            } else if (dropdownValue === 2) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+            } else if (dropdownValue === 3) {
+                dispatch(InitializeAlbumStatus());
+                dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+            } else if (dropdownValue === 4) {
+                dispatch(InitializeLikeList());
+                dispatch(SearchAlbumLike(null, 10));
+            }
+            onClose();
+            setPassword('');
+            setShareCode('');
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                Alert.alert('Error', '잘못된 요청입니다. 입력한 정보를 다시 확인하세요.');
+            } else {
+                Alert.alert('Error', '알 수 없는 오류가 발생했습니다.');
+            }
         }
-        onClose();
-        setPassword('');
-        setShareCode('');
     };
 
     return (

@@ -41,19 +41,18 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
           // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
           console.log("dropdownValue", dropdownValue)
 
-          if (dropdownValue === 1) {
-            dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10));
-          } else if (dropdownValue === 2) {
-            dispatch(InitializeAlbumStatus());
-            dispatch(SearchAlbumStatus('PRIVATE', null, 10));
-          } else if (dropdownValue === 3) {
-            dispatch(InitializeAlbumStatus());
-            dispatch(SearchAlbumStatus('PUBLIC', null, 10));
-          } else if (dropdownValue === 4) {
-            dispatch(InitializeLikeList());
-            dispatch(SearchAlbumLike(null, 10))
-          }
+          dispatch(InitializeAlbumList());
+          dispatch(GetAlbumList(null, 10));
+
+          dispatch(InitializeAlbumStatus());
+          dispatch(SearchAlbumStatus('PRIVATE', null, 10));
+
+          dispatch(InitializeAlbumStatus());
+          dispatch(SearchAlbumStatus('PUBLIC', null, 10));
+
+          dispatch(InitializeLikeList());
+          dispatch(SearchAlbumLike(null, 10))
+
           onClose();
         })
         .catch((error) => console.error('앨범 수정 오류:', error));
