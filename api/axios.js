@@ -38,7 +38,9 @@ instance.interceptors.response.use(
     if (
       error.response &&
       (error.response.status === 500 || error.response.status === 401) &&
-      !originalRequest._retry
+      (!originalRequest._retry ||
+        (error.response.data &&
+          error.response.data.errorClassName === 'AUTH_NOT_FOUND'))
     ) {
       originalRequest._retry = true; // 요청 재시도 플래그 설정
 

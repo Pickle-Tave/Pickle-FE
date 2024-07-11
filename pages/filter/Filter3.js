@@ -23,16 +23,27 @@ const Filter3 = () => {
   const [currentImage, setCurrentImage] = useState(null);
 
   const handleNavigation = () => {
-    navigation.navigate('Filter4', {groupedImages});
+    // 선택된 이미지 그룹만 필터링하여 넘기기
+    const selectedGroups = groupedImages
+      .map((group, groupIndex) =>
+        group.filter((_, imgIndex) =>
+          selected.includes(`${groupIndex}-${imgIndex}`),
+        ),
+      )
+      .filter(group => group.length > 0); // 빈 그룹 제거
+    // console.log('Selected Groups:', selectedGroups); // 필터링된 그룹 확인
+    navigation.navigate('Filter4', {groupedImages: selectedGroups});
   };
 
   // 개별 이미지 선택 및 해제
-  const handleSelect = id => {
+  const handleSelect = (groupIndex, imgIndex) => {
+    const id = `${groupIndex}-${imgIndex}`;
     if (selected.includes(id)) {
       setSelected(selected.filter(item => item !== id));
     } else {
       setSelected([...selected, id]);
     }
+    console.log('Selected Images:', selected); // 선택된 이미지 확인
   };
 
   // 전체 이미지 선택 및 해제
@@ -40,7 +51,9 @@ const Filter3 = () => {
     if (selectAll) {
       setSelected([]);
     } else {
-      const allImageIds = groupedImages.flat().map((imageUrl, index) => index);
+      const allImageIds = groupedImages.flatMap((group, groupIndex) =>
+        group.map((_, imgIndex) => `${groupIndex}-${imgIndex}`),
+      );
       setSelected(allImageIds);
     }
     setSelectAll(!selectAll);
@@ -54,8 +67,8 @@ const Filter3 = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        style={styles.step_3}
-        source={require('../../assets/icon/step_3.png')}
+        style={styles.step_2}
+        source={require('../../assets/icon/step_2.png')}
         resizeMode="contain"
       />
       <Text style={styles.text}>마음에 드는 사진을 선택하세요!</Text>
@@ -68,26 +81,28 @@ const Filter3 = () => {
         <Text style={styles.selectAllText}>전체선택</Text>
       </View>
       <View style={styles.gridContainer}>
-        {groupedImages.flat().map((image, index) => (
-          <React.Fragment key={index}>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
-            <View style={styles.imageContainer}>
-              <TouchableOpacity
-                style={styles.imageWrapper}
-                onPress={() => handleImagePress(image)}>
-                <Image source={{uri: image}} style={styles.image} />
-                <CheckBox
-                  value={selected.includes(index)}
-                  onValueChange={() => handleSelect(index)}
-                  style={styles.checkbox}
-                  tintColors={{true: '#017AFF', false: '#000000'}}
-                />
-              </TouchableOpacity>
-            </View>
-          </React.Fragment>
-        ))}
+        {groupedImages.map((group, groupIndex) =>
+          group.map((image, imgIndex) => (
+            <React.Fragment key={`${groupIndex}-${imgIndex}`}>
+              {imgIndex % 2 === 0 && imgIndex !== 0 && (
+                <View style={styles.separator} />
+              )}
+              <View style={styles.imageContainer}>
+                <TouchableOpacity
+                  style={styles.imageWrapper}
+                  onPress={() => handleImagePress(image)}>
+                  <Image source={{uri: image}} style={styles.image} />
+                  <CheckBox
+                    value={selected.includes(`${groupIndex}-${imgIndex}`)}
+                    onValueChange={() => handleSelect(groupIndex, imgIndex)}
+                    style={styles.checkbox}
+                    tintColors={{true: '#017AFF', false: '#000000'}}
+                  />
+                </TouchableOpacity>
+              </View>
+            </React.Fragment>
+          )),
+        )}
       </View>
       {currentImage && (
         <Modal
@@ -127,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  step_3: {
+  step_2: {
     width: 300,
     margin: 10,
   },

@@ -1,8 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 const Onboarding_5 = () => {
   const navigation = useNavigation();
@@ -13,9 +12,16 @@ const Onboarding_5 = () => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.PickleLogo} source={require('../../assets/icon/logo_small.png')} />
+      <Image
+        style={styles.PickleLogo}
+        source={require('../../assets/icon/logo_small.png')}
+      />
       <View style={styles.imageContainer}>
         <Text style={styles.Ment}>그럼, 준비됐나요?</Text>
+        <Text style={styles.Ment}>
+          먼저, <Text style={{color: '#A6AC61'}}>#해시태그</Text>를
+          만들어주세요!
+        </Text>
         <Image
           style={styles.PickleImage}
           source={require('../../assets/icon/pickle_ready.png')}
@@ -24,7 +30,10 @@ const Onboarding_5 = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Image style={styles.kakaoIcon} source={require('../../assets/icon/kakao.png')} />
+          <Image
+            style={styles.kakaoIcon}
+            source={require('../../assets/icon/kakao.png')}
+          />
           <Text style={styles.buttonText}>로그인</Text>
         </TouchableOpacity>
       </View>
@@ -76,6 +85,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 2,
     fontWeight: 'bold',
+    top: 40,
   },
   PickleLogo: {
     width: 120,

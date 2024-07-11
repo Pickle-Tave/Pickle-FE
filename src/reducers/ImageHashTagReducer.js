@@ -1,41 +1,28 @@
-import {
-  SET_HASHTAGS,
-  ADD_HASHTAG,
-  REMOVE_HASHTAG,
-} from '../actions/ImageHashTagAction';
+import {ADD_HASHTAG} from '../actions/ImageHashTagAction';
 
 const initialState = {
-  hashTags: {},
-  error: null,
+  hashTags: [], // 각 이미지 URL에 할당된 해시태그를 저장하는 객체
 };
 
-const ImageHashTagReducer = (state = initialState, action) => {
+const ImageHashTagReducer = (state = [initialState], action) => {
+  // console.log('Reducer called with action:', action);
+
   switch (action.type) {
-    case SET_HASHTAGS:
-      return {...state, hashTags: action.payload};
     case ADD_HASHTAG:
-      const {imageId, hashTag} = action.payload;
-      if (!state.hashTags[imageId]) {
-        state.hashTags[imageId] = [];
+      const {imageUrls, hashtagId} = action.payload;
+      if (!Array.isArray(imageUrls)) {
+        console.error('imageUrls must be an array, got:', typeof imageUrls);
+        return state; // 오류 방지를 위해 초기 상태 반환
       }
+
+      const newHashTags = {...state.hashTags};
+      imageUrls.forEach(url => {
+        newHashTags[url] = hashtagId;
+      });
       return {
         ...state,
-        hashTags: {
-          ...state.hashTags,
-          [imageId]: [...state.hashTags[imageId], hashTag],
-        },
+        hashTags: newHashTags,
       };
-    case REMOVE_HASHTAG:
-      const {imageId: removeId, hashTag: removeTag} = action.payload;
-      return {
-        ...state,
-        hashTags: {
-          ...state.hashTags,
-          [removeId]: state.hashTags[removeId].filter(tag => tag !== removeTag),
-        },
-      };
-    default:
-      return state;
   }
 };
 
