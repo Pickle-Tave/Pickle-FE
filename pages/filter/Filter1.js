@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   step_1: {
     width: 300,
-    margin: 10,
   },
   option1: {
     width: 200,
@@ -162,8 +162,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   option2: {
-    width: 184,
+    width: 180,
     top: -10,
+    left: -3,
   },
   separator: {
     width: '80%',
@@ -174,10 +175,12 @@ const styles = StyleSheet.create({
   checkboxes: {
     marginTop: 10,
     width: '55%',
+    alignItems: 'center',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 20,
   },
   textButton: {
@@ -203,6 +206,7 @@ const styles = StyleSheet.create({
   },
   checkedLabel: {
     color: 'white',
+    width: 190,
   },
   label: {
     fontSize: 18,
@@ -210,8 +214,7 @@ const styles = StyleSheet.create({
   },
   next: {
     width: 120,
-    marginTop: 30,
-    left: 55,
+    top: 15,
   },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,

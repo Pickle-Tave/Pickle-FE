@@ -116,68 +116,73 @@ const Filter5 = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.step_4}
-          source={require('../../assets/icon/step_4.png')}
-          resizeMode="contain"
+    <View style={styles.outerContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Image
+            style={styles.step_4}
+            source={require('../../assets/icon/step_4.png')}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.text}>
+            사진을 선택하고 원하는 앨범에 넣어보세요!
+          </Text>
+        </View>
+
+        <View style={styles.selectContainer}>
+          <RNPickerSelect
+            onValueChange={handleValueChange}
+            items={items}
+            placeholder={{label: '앨범을 선택하세요', value: null}}
+            style={pickerSelectStyles}
+            useNativeAndroidPickerStyle={false}
+          />
+        </View>
+
+        <View style={styles.gridContainer}>
+          {groupedImages.map((group, index) => (
+            <React.Fragment key={index}>
+              {index % 2 === 0 && index !== 0 && (
+                <View style={styles.separator} />
+              )}
+              <View style={getImageContainerStyle(group.id)}>
+                <TouchableOpacity
+                  style={styles.imageWrapper}
+                  onPress={() => handleImageSelect(group.id)}>
+                  <Image source={{uri: group[0]}} style={styles.image} />
+                  <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
+                </TouchableOpacity>
+              </View>
+            </React.Fragment>
+          ))}
+        </View>
+
+        <AlbumPlus
+          visible={plusVisible}
+          onClose={() => setPlusVisible(false)}
+          onAddAlbum={handleAddNewAlbum}
         />
-
-        <Text style={styles.text}>
-          사진을 선택하고 원하는 앨범에 넣어보세요!
-        </Text>
+      </ScrollView>
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity onPress={handleNavigation}>
+          <Image
+            style={styles.done}
+            source={require('../../assets/icon/done2.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.selectContainer}>
-        <RNPickerSelect
-          onValueChange={handleValueChange}
-          items={items}
-          placeholder={{label: '앨범을 선택하세요', value: null}}
-          style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false}
-        />
-      </View>
-
-      <View style={styles.gridContainer}>
-        {groupedImages.map((group, index) => (
-          <React.Fragment>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
-            <View style={getImageContainerStyle(group.id)}>
-              <TouchableOpacity
-                style={styles.imageWrapper}
-                onPress={() => handleImageSelect(group.id)}>
-                <Image source={{uri: group[0]}} style={styles.image} />
-                <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
-              </TouchableOpacity>
-            </View>
-          </React.Fragment>
-        ))}
-      </View>
-
-      <TouchableOpacity onPress={handleNavigation}>
-        <Image
-          style={styles.next}
-          source={require('../../assets/icon/done2.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-
-      <AlbumPlus
-        visible={plusVisible}
-        onClose={() => setPlusVisible(false)}
-        onAddAlbum={handleAddNewAlbum}
-      />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    flex: 1,
     backgroundColor: 'white',
-    flexGrow: 1,
+  },
+  container: {
     alignItems: 'center',
     padding: 20,
   },
@@ -185,10 +190,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginBottom: 20,
-    margin: 10,
   },
   step_4: {
     width: 300,
+    margin: 10,
   },
   text: {
     fontSize: 18,
@@ -221,9 +226,15 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 10,
   },
-  next: {
+  done: {
     width: 120,
-    marginTop: 20,
+    top: 15,
+  },
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   imageCount: {
     position: 'absolute',

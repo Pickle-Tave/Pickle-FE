@@ -36,8 +36,9 @@ instance.interceptors.response.use(
     console.error('Response interceptor error:', error);
 
     if (
-      error.response ||
-      (error.response.status === 401 && !originalRequest._retryCount)
+      error.response &&
+      (error.response.status === 401 || error.response.status === 500) &&
+      !originalRequest._retryCount
     ) {
       originalRequest._retryCount = originalRequest._retryCount || 0;
       if (originalRequest._retryCount < 2) {

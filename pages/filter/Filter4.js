@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Alert,
+  Animated,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
@@ -22,9 +23,10 @@ const Filter4 = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupId, setCurrentGroupId] = useState(null);
   const [currentGroupImages, setCurrentGroupImages] = useState([]); // 현재 그룹의 모든 이미지 저장
-  const [selectedTags, setSelectedTags] = useState([]); // 각 그룹의 선택된 해시태그 저장
+  const [selectedTags, setSelectedTags] = useState({}); // 각 그룹의 선택된 해시태그 저장
   const hashtagList = useSelector(state => state.HashTagReducer.hashtagList); // 해시태그 목록을 가져옴
   const dispatch = useDispatch();
+  const animatedValue = useRef(new Animated.Value(0)).current; // 애니메이션 값을 초기화
 
   const handleNavigation = () => {
     navigation.navigate('Filter5', {
@@ -42,6 +44,20 @@ const Filter4 = () => {
     setCurrentGroupId(groupId); // 선택한 그룹 ID 저장
     setCurrentGroupImages(groupedImages[groupId]); // 현재 그룹의 모든 이미지 저장
     setModalVisible(true);
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    Animated.timing(animatedValue, {
+      toValue: 0,
+      duration: 120,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
   };
 
   // 해시태그를 선택할 때 호출 -> 선택한 해시태그 저장 및 API 호출
@@ -54,7 +70,12 @@ const Filter4 = () => {
       };
       const data = await assignHashTag(requestBody);
       console.log('해시태그 저장 성공:', data);
-      setModalVisible(false);
+
+      // 해시태그 선택 상태 업데이트
+      setSelectedTags(prevState => ({
+        ...prevState,
+        [currentGroupId]: tag.text,
+      }));
     } catch (error) {
       console.error('해시태그 저장 중 오류 발생:', error);
       Alert.alert(
@@ -64,45 +85,60 @@ const Filter4 = () => {
     }
   };
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.step_3}
-          source={require('../../assets/icon/step_3.png')}
-          resizeMode="contain"
-        />
-        <Text style={styles.text}>그룹을 클릭하고 해시태그를 지정하세요!</Text>
-      </View>
+  const modalTranslateY = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [300, 0], // 모달이 열릴 때 애니메이션
+  });
 
-      <View style={styles.gridContainer}>
-        {groupedImages.map((group, index) => (
-          <React.Fragment key={index}>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
-            <View style={styles.imageContainer}>
-              <TouchableOpacity
-                style={styles.imageWrapper}
-                onPress={() => handleGroupPress(index)}>
-                <Image
-                  source={{uri: group[0]}} // 첫 번째 이미지를 썸네일로 사용
-                  style={styles.image}
-                />
-                <Text style={styles.imageCount}>
-                  {`${group.length}장`} {/* 이미지 개수*/}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </React.Fragment>
-        ))}
-      </View>
-      {modalVisible && (
-        <Modal visible={modalVisible} animationType="slide" transparent={true}>
-          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+  return (
+    <View style={styles.outerContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Image
+            style={styles.step_3}
+            source={require('../../assets/icon/step_3.png')}
+            resizeMode="contain"
+          />
+          <Text style={styles.text}>
+            그룹을 클릭하고 해시태그를 지정하세요!
+          </Text>
+        </View>
+
+        <View style={styles.gridContainer}>
+          {groupedImages.map((group, index) => (
+            <React.Fragment key={index}>
+              {index % 2 === 0 && index !== 0 && (
+                <View style={styles.separator} />
+              )}
+              <View style={styles.imageContainer}>
+                <TouchableOpacity
+                  style={styles.imageWrapper}
+                  onPress={() => handleGroupPress(index)}>
+                  <Image
+                    source={{uri: group[0]}} // 첫 번째 이미지를 썸네일로 사용
+                    style={styles.image}
+                  />
+                  <Text style={styles.imageCount}>
+                    {`${group.length}장`} {/* 이미지 개수*/}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </React.Fragment>
+          ))}
+        </View>
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="none"
+          onRequestClose={closeModal}>
+          <TouchableWithoutFeedback onPress={closeModal}>
             <View style={styles.modalBackground}>
               <TouchableWithoutFeedback>
-                <View style={styles.modalContainer}>
+                <Animated.View
+                  style={[
+                    styles.modalContainer,
+                    {transform: [{translateY: modalTranslateY}]},
+                  ]}>
                   <ScrollView contentContainerStyle={styles.hashList}>
                     {hashtagList.map(item => (
                       <TouchableOpacity
@@ -116,40 +152,38 @@ const Filter4 = () => {
                         <Text
                           style={[
                             styles.hashText,
-                            selectedTags[currentGroupId] === item.text &&
-                              styles.selectedHashText,
+                            selectedTags[currentGroupId] === item.text,
                           ]}>
                           {`#${item.text}`}
                         </Text>
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
-                  <View style={styles.modalButtons}>
-                    <TouchableOpacity
-                      onPress={() => setModalVisible(false)}
-                      style={styles.modalButtonContainer1}></TouchableOpacity>
-                  </View>
-                </View>
+                </Animated.View>
               </TouchableWithoutFeedback>
             </View>
           </TouchableWithoutFeedback>
         </Modal>
-      )}
-      <TouchableOpacity onPress={handleNavigation}>
-        <Image
-          style={styles.next}
-          source={require('../../assets/icon/next2.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity onPress={handleNavigation}>
+          <Image
+            style={styles.next}
+            source={require('../../assets/icon/next2.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    flex: 1,
     backgroundColor: 'white',
-    flexGrow: 1,
+  },
+  container: {
     alignItems: 'center',
     padding: 20,
   },
@@ -197,11 +231,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '85%',
+    width: '55%',
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
     borderColor: '#F7F8CB',
     borderWidth: 5,
     shadowColor: '#000',
@@ -209,6 +241,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hashList: {
     flexDirection: 'column',
@@ -234,11 +269,13 @@ const styles = StyleSheet.create({
   },
   next: {
     width: 120,
-    marginTop: 20,
+    top: 15,
   },
-  modalButton: {
-    fontSize: 16,
-    color: 'black',
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   imageCount: {
     position: 'absolute',
