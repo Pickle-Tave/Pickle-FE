@@ -27,14 +27,19 @@ const Filter5 = () => {
   const dispatch = useDispatch();
 
   const handleNavigation = () => {
+    console.log('Navigating back to Filter');
     navigation.navigate('Filter');
   };
 
   useEffect(() => {
-    if (!albumList.last && albumList.first) dispatch(GetAlbumList(null, 50));
-  }, [albumList]);
+    console.log('Fetching album list');
+    if (!albumList.last && albumList.first) {
+      dispatch(GetAlbumList(null, 50));
+    }
+  }, [albumList, dispatch]);
 
   useEffect(() => {
+    console.log('Album list updated:', albumList);
     const newItems = albumList.map(album => ({
       label: album.searchedAlbumName,
       value: album.albumId,
@@ -45,17 +50,23 @@ const Filter5 = () => {
       newItems.push(addNewAlbumItem);
     }
     setItems(newItems);
+    console.log('Picker items set:', newItems);
   }, [albumList]);
 
   const handleValueChange = async value => {
+    console.log('Selected value:', value);
     if (value === 'add_new_album') {
       setPlusVisible(true);
     } else if (value) {
       setSelectedOption(value);
-      await handleAlbumSelection(
-        value,
-        selectedGroupId ? imageIds[selectedGroupId] : [],
-      );
+      console.log('Selected Group ID:', selectedGroupId);
+      if (selectedGroupId !== null) {
+        console.log('Selected Image IDs:', imageIds[selectedGroupId]);
+        await handleAlbumSelection(value, imageIds[selectedGroupId] || []);
+      } else {
+        console.log('No group selected');
+        Alert.alert('Error', '그룹을 먼저 선택해주세요.');
+      }
     }
   };
 
@@ -63,11 +74,13 @@ const Filter5 = () => {
     if (albumName) {
       setItems(prevItems => {
         const newAlbumItem = {label: albumName, value: albumName};
-        return [
+        const updatedItems = [
           ...prevItems.filter(item => item.value !== 'add_new_album'),
           newAlbumItem,
           {label: '새 앨범 추가하기', value: 'add_new_album'},
         ];
+        console.log('New album added:', newAlbumItem);
+        return updatedItems;
       });
       setSelectedOption(albumName);
     }
@@ -75,6 +88,7 @@ const Filter5 = () => {
   };
 
   const handleImageSelect = id => {
+    console.log('Image group selected:', id);
     if (selectedGroupId === id) {
       setSelectedGroupId(null);
     } else {
@@ -94,6 +108,12 @@ const Filter5 = () => {
   };
 
   const handleAlbumSelection = async (albumId, imageIds) => {
+    console.log('Album selection started:', {albumId, imageIds});
+    if (!albumId || !imageIds || imageIds.length === 0) {
+      Alert.alert('Error', '앨범 ID와 이미지 ID를 확인해주세요.');
+      return;
+    }
+
     try {
       const requestBody = {
         updateAlbumIdRequestList: [
@@ -103,9 +123,9 @@ const Filter5 = () => {
           },
         ],
       };
-
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
       const data = await AlbumSave(requestBody);
-      console.log('앨범에 이미지 저장 성공', data);
+      console.log('Response from AlbumSave:', data);
       Alert.alert('앨범에 해당 그룹을 저장했습니다');
     } catch (error) {
       console.error('Failed to save images:', error);

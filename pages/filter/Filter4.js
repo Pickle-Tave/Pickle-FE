@@ -66,7 +66,12 @@ const Filter4 = () => {
         imageUrls,
         hashtagId: tag.id,
       };
+      // console.log('Sending request to assign hashtag:', requestBody);
+
       const data = await assignHashTag(requestBody);
+
+      console.log('Response from assignHashTag:', data);
+
       const imageIdList = data.imageIds; // 반환된 이미지 ID 리스트
       setImageIds(prevState => ({
         ...prevState,
