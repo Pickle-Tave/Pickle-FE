@@ -1,6 +1,10 @@
-import instance from './axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchLikeRequest, fetchLikeSuccess, fetchLikeError } from '../src/actions/AlbumLikeAction';
+
+const instance = axios.create({
+    baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+  });
 
 export const SearchAlbumLike = (lastAlbumId, size) => {
     return async (dispatch) => {
@@ -25,7 +29,6 @@ export const SearchAlbumLike = (lastAlbumId, size) => {
             console.log('즐겨찾기 응답:', response.data); // 백엔드 응답 로그 출력
             return response.data;
         } catch (error) {
-            console.error('즐겨찾기 에러:', error);
             dispatch(fetchLikeError(error));
 
             const status = error.response.status;

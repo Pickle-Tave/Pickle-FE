@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {refreshAccessToken} from './tokenService';
+import { refreshAccessToken } from './tokenService';
 
 const instance = axios.create({
   baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소

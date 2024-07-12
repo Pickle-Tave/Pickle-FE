@@ -114,6 +114,7 @@ const SearchedAlbum = ({ route, navigation }) => {
                 DeleteWarn={DeleteWarn}
                 CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
                 searchQuery={searchQuery}
+                checkedAlbumId={checkedAlbumId}
             />
             <AlbumEditModal
                 visible={editvisible}
@@ -149,6 +150,7 @@ const SearchedAlbum = ({ route, navigation }) => {
                                     AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
                                     setAlbumId={setcheckedAlbumId}
                                     searchQuery={searchQuery}
+                          
                                 />
                             )}
                             ListEmptyComponent={<Text>앨범을 찾을 수 없습니다!!</Text>}

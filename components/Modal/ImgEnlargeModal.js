@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginVertical: 10,
   },
+
 });
 
 export default ImgEnlargeModal;

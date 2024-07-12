@@ -19,7 +19,7 @@ const HashtagList = ({ visible, onClose }) => {
 
   useEffect(() => {
     if (visible) {
-      dispatch(HashTagListCheck()); // 액션 크리에이터로 호출
+      dispatch(HashTagListCheck());
     }
   }, [dispatch, visible]);
 
@@ -33,7 +33,7 @@ const HashtagList = ({ visible, onClose }) => {
     <Modal
       visible={visible}
       animationType="slide"
-      transparent={true} // 배경을 투명하게 설정
+      transparent={true} 
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackground}>
@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalContainer: {
-    width: '85%', // 모달 너비 설정
+    width: '85%', 
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
@@ -98,19 +98,19 @@ const styles = StyleSheet.create({
   },
   hashList: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // 해시태그가 너비를 넘어가면 다음 줄로 이동하도록 설정
-    justifyContent: 'center', // 가로축 기준 중앙 정렬
-    alignItems: 'center', // 세로축 기준 중앙 정렬
+    flexWrap: 'wrap', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
     paddingVertical: 15,
   },
   hashItem: {
-    marginHorizontal: 8, // 해시태그 간 간격 추가
-    marginVertical: 4, // 세로 간격 추가
-    alignItems: 'center', // 중앙 정렬
+    marginHorizontal: 8,
+    marginVertical: 4,
+    alignItems: 'center', 
   },
   hashText: {
     fontSize: 15,
-    flexShrink: 1, // 텍스트가 컨테이너 너비를 넘지 않도록 설정
+    flexShrink: 1,
   },
   emptyMessageContainer: {
     justifyContent: 'center',
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   modalButtonContainer1: {
-    alignItems: 'center', // 중앙 정렬
+    alignItems: 'center', 
   },
   modalButton: {
     fontSize: 16,
