@@ -65,92 +65,105 @@ const Filter3 = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        style={styles.step_2}
-        source={require('../../assets/icon/step_2.png')}
-        resizeMode="contain"
-      />
-      <Text style={styles.text}>마음에 드는 사진을 선택하세요!</Text>
-      <View style={styles.selectAllContainer}>
-        <CheckBox
-          value={selectAll}
-          onValueChange={handleSelectAll}
-          tintColors={{true: '#017AFF', false: '#000000'}}
-        />
-        <Text style={styles.selectAllText}>전체선택</Text>
-      </View>
-      <View style={styles.gridContainer}>
-        {groupedImages.map((group, groupIndex) =>
-          group.map((image, imgIndex) => (
-            <React.Fragment key={`${groupIndex}-${imgIndex}`}>
-              {imgIndex % 2 === 0 && imgIndex !== 0 && (
-                <View style={styles.separator} />
-              )}
-              <View style={styles.imageContainer}>
-                <TouchableOpacity
-                  style={styles.imageWrapper}
-                  onPress={() => handleImagePress(image)}>
-                  <Image source={{uri: image}} style={styles.image} />
-                  <CheckBox
-                    value={selected.includes(`${groupIndex}-${imgIndex}`)}
-                    onValueChange={() => handleSelect(groupIndex, imgIndex)}
-                    style={styles.checkbox}
-                    tintColors={{true: '#017AFF', false: '#000000'}}
-                  />
-                </TouchableOpacity>
-              </View>
-            </React.Fragment>
-          )),
-        )}
-      </View>
-      {currentImage && (
-        <Modal
-          isVisible={modalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          useNativeDriver={true}
-          hideModalContentWhileAnimating={true}>
-          <View style={styles.modalContainer}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-            <Image
-              source={{uri: currentImage}}
-              style={styles.fullImage}
-              resizeMode="contain"
-            />
-          </View>
-        </Modal>
-      )}
-      <TouchableOpacity onPress={handleNavigation}>
+    <View style={styles.outerContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Image
-          style={styles.next}
-          source={require('../../assets/icon/next2.png')}
+          style={styles.step_2}
+          source={require('../../assets/icon/step_2.png')}
           resizeMode="contain"
         />
-      </TouchableOpacity>
-    </ScrollView>
+        <Text style={styles.text}>마음에 드는 사진을 선택하세요!</Text>
+        <View style={styles.selectAllContainer}>
+          <CheckBox
+            value={selectAll}
+            onValueChange={handleSelectAll}
+            tintColors={{true: '#017AFF', false: '#000000'}}
+          />
+          <Text style={styles.selectAllText}>전체선택</Text>
+        </View>
+        <View style={styles.gridContainer}>
+          {groupedImages.map((group, groupIndex) => (
+            <React.Fragment key={groupIndex}>
+              {group.map((image, imgIndex) => (
+                <View
+                  key={`${groupIndex}-${imgIndex}`}
+                  style={styles.imageContainer}>
+                  <TouchableOpacity
+                    style={styles.imageWrapper}
+                    onPress={() => handleImagePress(image)}>
+                    <Image source={{uri: image}} style={styles.image} />
+                    <CheckBox
+                      value={selected.includes(`${groupIndex}-${imgIndex}`)}
+                      onValueChange={() => handleSelect(groupIndex, imgIndex)}
+                      style={styles.checkbox}
+                      tintColors={{true: '#017AFF', false: '#000000'}}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              {groupIndex < groupedImages.length - 1 && (
+                <View style={styles.separator} />
+              )}
+            </React.Fragment>
+          ))}
+        </View>
+        {currentImage && (
+          <Modal
+            isVisible={modalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+            useNativeDriver={true}
+            hideModalContentWhileAnimating={true}
+            backdropColor="black"
+            backdropOpacity={0.5}>
+            <View style={styles.modalContainer}>
+              <TouchableOpacity
+                style={{alignItems: 'flex-end', marginRight: 20}}
+                onPress={() => setModalVisible(false)}>
+                <Image
+                  style={{width: 15, height: 15, marginTop: 9}}
+                  source={require('../../assets/icon/cancel2.png')}
+                />
+              </TouchableOpacity>
+              <Image
+                source={{uri: currentImage}}
+                style={styles.fullImage}
+                resizeMode="contain"
+              />
+            </View>
+          </Modal>
+        )}
+      </ScrollView>
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity onPress={handleNavigation}>
+          <Image
+            style={styles.next}
+            source={require('../../assets/icon/next2.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    flex: 1,
     backgroundColor: 'white',
-    flexGrow: 1,
+  },
+  container: {
     alignItems: 'center',
     padding: 20,
   },
   step_2: {
     width: 300,
-    margin: 10,
+    marginTop: 10,
   },
   text: {
     fontSize: 18,
-    textAlign: 'center',
     color: 'black',
-    marginBottom: 20,
+    textAlign: 'center',
+    margin: 14,
   },
   gridContainer: {
     flexDirection: 'row',
@@ -160,12 +173,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '48%',
     marginBottom: 20,
+    alignItems: 'center',
   },
   imageWrapper: {
     position: 'relative',
   },
   image: {
-    left: 10,
     width: 150,
     height: 190,
     borderRadius: 10,
@@ -178,50 +191,42 @@ const styles = StyleSheet.create({
   selectAllContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 20,
     left: 120,
-    margin: 8,
   },
   selectAllText: {
     fontSize: 15,
     color: 'black',
-    top: -2,
   },
   next: {
     width: 120,
-    top: -10,
+    top: 15,
   },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
     alignItems: 'center',
   },
   modalContainer: {
-    width: '90%',
-    height: '80%',
+    width: '100%',
+    height: '60%',
+    padding: 10,
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    left: 20,
+    borderColor: '#F7F8CB',
+    borderWidth: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    paddingVertical: 5,
   },
   fullImage: {
     width: '100%',
-    height: '100%',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#769370',
-    borderRadius: 45,
-    padding: 5,
-    zIndex: 1,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 18,
+    height: '85%',
+    resizeMode: 'contain',
   },
   separator: {
     width: '100%',

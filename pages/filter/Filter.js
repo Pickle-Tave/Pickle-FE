@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
   },
   step_0: {
     width: 300,
-    margin: 10,
+    margin: 20,
   },
   text: {
-    fontSize: 15,
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: 'black',
     textAlign: 'center',
   },
   tip: {
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     top: -15,
   },
   text_tip: {
-    fontSize: 15,
-    fontWeight: 'bold',
+    fontSize: 15.5,
+    color: 'black',
     textAlign: 'center',
     top: 28,
     left: 20,
