@@ -19,9 +19,9 @@ const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
   const [plusVisible, setPlusVisible] = useState(false);
-  const [selectedImageIds, setSelectedImageIds] = useState([]);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
   const route = useRoute();
-  const {groupedImages} = route.params;
+  const {groupedImages, imageIds} = route.params; // imageIds 추가
   const [items, setItems] = useState([]);
   const albumList = useSelector(state => state.AlbumListReducer.albumList);
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const Filter5 = () => {
 
   useEffect(() => {
     if (!albumList.last && albumList.first) dispatch(GetAlbumList(null, 50));
-  }, [albumList]); // 앨범 목록 조회 요청을 한 번만 실행
+  }, [albumList]);
 
   useEffect(() => {
     const newItems = albumList.map(album => ({
@@ -40,20 +40,22 @@ const Filter5 = () => {
       value: album.albumId,
     }));
 
-    // '새 앨범 추가하기'가 이미 목록에 있는지 확인하고 없으면 추가
     const addNewAlbumItem = {label: '새 앨범 추가하기', value: 'add_new_album'};
     if (!newItems.some(item => item.value === 'add_new_album')) {
       newItems.push(addNewAlbumItem);
     }
     setItems(newItems);
-  }, [albumList]); // albumList가 변경될 때만 실행
+  }, [albumList]);
 
   const handleValueChange = async value => {
     if (value === 'add_new_album') {
       setPlusVisible(true);
     } else if (value) {
       setSelectedOption(value);
-      await handleAlbumSelection(value, selectedImageIds); // 선택된 이미지 ID들과 함께 앨범 선택 함수를 호출
+      await handleAlbumSelection(
+        value,
+        selectedGroupId ? imageIds[selectedGroupId] : [],
+      );
     }
   };
 
@@ -73,26 +75,24 @@ const Filter5 = () => {
   };
 
   const handleImageSelect = id => {
-    const isSelected = selectedImageIds.includes(id);
-    if (isSelected) {
-      setSelectedImageIds(selectedImageIds.filter(imageId => imageId !== id));
+    if (selectedGroupId === id) {
+      setSelectedGroupId(null);
     } else {
-      setSelectedImageIds([...selectedImageIds, id]);
+      setSelectedGroupId(id);
     }
   };
 
-  // 이미지 컨테이너 스타일 변경
   const getImageContainerStyle = id => {
-    const isSelected = selectedImageIds.includes(id);
     return {
       ...styles.imageContainer,
-      borderColor: isSelected ? 'green' : 'transparent',
-      borderWidth: isSelected ? 2 : 0,
-      opacity: isSelected ? 0.7 : 1,
+      borderColor: id === selectedGroupId ? '#A9BB89' : 'white',
+      borderWidth: id === selectedGroupId ? 5.5 : 0,
+      opacity: id === selectedGroupId ? 0.5 : 1,
+      borderRadius: 10,
+      backgroundColor: id === selectedGroupId ? 'rgba(0, 0, 0, 0.5)' : 'white', // 모서리 채움
     };
   };
 
-  // 이미지 그룹 선택할 때 호출 -> API 호출
   const handleAlbumSelection = async (albumId, imageIds) => {
     try {
       const requestBody = {
@@ -104,8 +104,9 @@ const Filter5 = () => {
         ],
       };
 
-      const data = await AlbumSave(requestBody); // 이미지 저장 API 호출
+      const data = await AlbumSave(requestBody);
       console.log('앨범에 이미지 저장 성공', data);
+      Alert.alert('앨범에 해당 그룹을 저장했습니다');
     } catch (error) {
       console.error('Failed to save images:', error);
       Alert.alert(
@@ -126,7 +127,7 @@ const Filter5 = () => {
           />
 
           <Text style={styles.text}>
-            사진을 선택하고 원하는 앨범에 넣어보세요!
+            그룹을 선택하고 원하는 앨범에 넣어보세요!
           </Text>
         </View>
 
@@ -146,11 +147,14 @@ const Filter5 = () => {
               {index % 2 === 0 && index !== 0 && (
                 <View style={styles.separator} />
               )}
-              <View style={getImageContainerStyle(group.id)}>
+              <View style={getImageContainerStyle(index)}>
                 <TouchableOpacity
                   style={styles.imageWrapper}
-                  onPress={() => handleImageSelect(group.id)}>
+                  onPress={() => handleImageSelect(index)}>
                   <Image source={{uri: group[0]}} style={styles.image} />
+                  {selectedGroupId === index && (
+                    <View style={styles.imageOverlay} />
+                  )}
                   <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
                 </TouchableOpacity>
               </View>
@@ -208,10 +212,13 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '48%',
     marginBottom: 20,
+    marginHorizontal: '1%', // 좌우 간격 추가
   },
   imageWrapper: {
     position: 'relative',
     height: 150,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   selectContainer: {
     width: '90%',
@@ -222,8 +229,8 @@ const styles = StyleSheet.create({
     height: 20,
   },
   image: {
-    width: '95%',
-    height: 150,
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
   },
   done: {
@@ -245,6 +252,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     padding: 5,
     borderRadius: 5,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 어두운 오버레이
+    borderRadius: 10,
   },
 });
 

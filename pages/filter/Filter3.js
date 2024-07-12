@@ -112,7 +112,9 @@ const Filter3 = () => {
             isVisible={modalVisible}
             onBackdropPress={() => setModalVisible(false)}
             useNativeDriver={true}
-            hideModalContentWhileAnimating={true}>
+            hideModalContentWhileAnimating={true}
+            backdropColor="black"
+            backdropOpacity={0.5}>
             <View style={styles.modalContainer}>
               <TouchableOpacity
                 style={{alignItems: 'flex-end', marginRight: 20}}
@@ -206,15 +208,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   modalContainer: {
     width: '100%',
     height: '60%',
+    padding: 10,
     backgroundColor: 'white',
     borderRadius: 10,
     borderColor: '#F7F8CB',
