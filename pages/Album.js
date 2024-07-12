@@ -187,12 +187,13 @@ const Album = ({ navigation }) => {
     navigation.navigate('AlbumInquiry', { id });
   };
 
+  //앨범 검색시
   const handleAlbumSearch = () => {
     console.log("searchQuery", searchQuery);
     console.log("isSearching", isSearching);
 
     if (searchQuery.trim() && !isSearching) {
-      console.log("검색하는 중");
+      console.log("앨범 검색하는 중");
       dispatch(InitializeSearchedAlbum());
       setIsSearching(true);
       navigation.navigate('SearchedAlbum', { searchQuery, isSearching });

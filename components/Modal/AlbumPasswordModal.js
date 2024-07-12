@@ -18,7 +18,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     const handleSubmit = async () => {
         try {
             console.log("공유코드 비번",sharecode, password);
-            await ShareParticipants(sharecode, password);
+            await ShareParticipants(sharecode.trim(), password.trim());
             
             if (dropdownValue === 1) {
                 dispatch(InitializeAlbumList());
@@ -37,11 +37,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
             setPassword('');
             setShareCode('');
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                Alert.alert('Error', '잘못된 요청입니다. 입력한 정보를 다시 확인하세요.');
-            } else {
-                Alert.alert('Error', '알 수 없는 오류가 발생했습니다.');
-            }
+            console.log("공유앨범 참여 에러", error)
         }
     };
 
