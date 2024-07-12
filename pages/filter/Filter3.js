@@ -82,13 +82,12 @@ const Filter3 = () => {
           <Text style={styles.selectAllText}>전체선택</Text>
         </View>
         <View style={styles.gridContainer}>
-          {groupedImages.map((group, groupIndex) =>
-            group.map((image, imgIndex) => (
-              <React.Fragment key={`${groupIndex}-${imgIndex}`}>
-                {imgIndex % 2 === 0 && imgIndex !== 0 && (
-                  <View style={styles.separator} />
-                )}
-                <View style={styles.imageContainer}>
+          {groupedImages.map((group, groupIndex) => (
+            <React.Fragment key={groupIndex}>
+              {group.map((image, imgIndex) => (
+                <View
+                  key={`${groupIndex}-${imgIndex}`}
+                  style={styles.imageContainer}>
                   <TouchableOpacity
                     style={styles.imageWrapper}
                     onPress={() => handleImagePress(image)}>
@@ -101,9 +100,12 @@ const Filter3 = () => {
                     />
                   </TouchableOpacity>
                 </View>
-              </React.Fragment>
-            )),
-          )}
+              ))}
+              {groupIndex < groupedImages.length - 1 && (
+                <View style={styles.separator} />
+              )}
+            </React.Fragment>
+          ))}
         </View>
         {currentImage && (
           <Modal
