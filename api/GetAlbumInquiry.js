@@ -44,7 +44,7 @@ export const GetAlbumInquiry = (lastImageId, size, albumId,) => {
             return response.data.data;
         } catch (error) {
             // 요청 실패 시 상태 업데이트
-            dispatch(fetchImagesError(error));
+            //dispatch(fetchImagesError(error));
 
             // 예외 처리
             if (error.response) {

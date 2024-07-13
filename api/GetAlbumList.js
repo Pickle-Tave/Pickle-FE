@@ -1,10 +1,15 @@
-import instance from './axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   fetchAlbumRequest,
   fetchAlbumSuccess,
   fetchAlbumError,
 } from '../src/actions/AlbumListAction';
+
+const instance = axios.create({
+  baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+});
+
 
 export const GetAlbumList = (lastAlbumId, size) => {
   return async dispatch => {
@@ -32,13 +37,12 @@ export const GetAlbumList = (lastAlbumId, size) => {
       console.log('앨범 목록 응답 data', response.data.data);
       return response.data.data;
     } catch (error) {
-      dispatch(fetchAlbumError(error));
+      
 
       // 예외 처리하기
       if (error.response) {
         const status = error.response.status;
-        const errorMessage =
-          error.response.data.data.message || '알 수 없는 에러가 발생했습니다.';
+        const errorMessage = error.response.data.data.message;
 
         if (status === 404) {
           //앨범이 존재하지 않을때

@@ -78,6 +78,7 @@ const Album = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("값변경으로 인한 초기화")
       fetchAlbumData(value);
       dispatch(InitializeAlbumList());
       dispatch(InitializeAlbumStatus());
@@ -88,6 +89,7 @@ const Album = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       dispatch(InitializeAlbumImages());
+      dispatch(InitializeAlbumList());
     },[])
   )
 

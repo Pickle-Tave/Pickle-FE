@@ -2,7 +2,6 @@ import instance from './axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchSearchedAlbumRequest, fetchSearchedAlbumSuccess, fetchSearchedAlbumError } from '../src/actions/SearchedAlbumAction';
 
-
 export const SearchAlbumName = (keyword, lastAlbumId, size) => {
     return async (dispatch) => {
         try {

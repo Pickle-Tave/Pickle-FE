@@ -4,7 +4,7 @@ import { refreshAccessToken } from './tokenService';
 import { REACT_APP_BASE_URL } from '@env';
 
 const instance = axios.create({
-  baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+  baseURL: REACT_APP_BASE_URL, // API 서버 주소
 });
 
 // Axios 요청 인터셉터
@@ -34,7 +34,7 @@ instance.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    console.error('Response interceptor error:', error);
+    //console.error('Response interceptor error:', error);
 
     if (
       error.response &&

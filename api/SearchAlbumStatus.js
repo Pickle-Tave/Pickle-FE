@@ -33,6 +33,7 @@ export const SearchAlbumStatus = (albumStatus, lastAlbumId, size) => {
             if (error.response) {
                 const status = error.response.status;
                 const errorMessage = error.response.data.data.message || '알 수 없는 에러가 발생했습니다.';
+
                 if (status === 404) {
                     if (error.response.data.data.errorClassName === 'ALBUM_STATUS_NOT_FOUND') {
                         alert(errorMessage);
