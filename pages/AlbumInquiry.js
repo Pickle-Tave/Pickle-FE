@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import AlbumAccess from "../components/AlbumAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
@@ -30,18 +30,22 @@ const AlbumInquiry = ({ route, navigation }) => {
   const [isSearching, setIsSearching] = useState(false);
 
   //해시태그 검색시
-  const handleHashtagSearch = () => {
+  const handleHashtagSearch = async () => {
     if (searchHashtag.trim() && !isSearching) {
-      dispatch(InitializeSearchedHashtag());
       setIsSearching(true);
+      dispatch(InitializeSearchedHashtag());
       navigation.navigate('SearchHashTag', { searchHashtag, isSearching, id });
+      setSearchHashtag(''); 
+      setIsSearching(false); 
     }
   }
 
   useEffect(() => {
-    dispatch(InitializeAlbumImages());
-    console.log("이미지 첫 요청이 들어가는 중")
+    dispatch(InitializeAlbumImages())
+    
+    console.log('값확인',albumImages.last, albumImages.first)
     if (!albumImages.last && albumImages.first) {
+      console.log("이미지 첫 요청이 들어가는 중")
       dispatch(GetAlbumInquiry(null, 50, id)) // 액션 크리에이터로 호출
         .then(() => {
           setLoading(false); // 액션 완료 후 로딩 상태 변경
@@ -64,7 +68,7 @@ const AlbumInquiry = ({ route, navigation }) => {
         <TextInput
           style={styles.textinput}
           placeholder='#해시태그'
-          searchHashtag={searchHashtag}
+          value={searchHashtag} 
           onChangeText={(text) => setSearchHashtag(text)}
         />
         <TouchableOpacity onPress={handleHashtagSearch}>

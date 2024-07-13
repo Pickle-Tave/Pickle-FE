@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.9.26",
     "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.7.0",
+    "axios-retry": "^4.4.1",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-app-auth": "^7.2.0",

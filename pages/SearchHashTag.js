@@ -33,7 +33,7 @@ const SearchHashTag = ({ route, navigation }) => {
             setIsLoading(true); // 검색 중
             console.log("첫 검색 요청!!");
             dispatch(InitializeSearchedHashtag());
-            dispatch(SearchHashTagImages(null, 10, id, searchHashtag))
+            dispatch(SearchHashTagImages(null, 50, id, searchHashtag))
                 .then(() => {
                     // 빈 배열로 응답받았을 때 로딩 상태를 해제하고 추가 요청 방지
                     if (searchedHashtagList.searchHashtagList.length === 0) {
