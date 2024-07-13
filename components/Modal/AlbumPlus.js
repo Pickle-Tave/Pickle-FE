@@ -48,10 +48,11 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
     }
   };
 
+
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="none"
       transparent={true} // 배경을 투명하게 설정
     >
       <TouchableWithoutFeedback onPress={onClose}>
