@@ -6,123 +6,207 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import {useSelector, useDispatch} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import AlbumPlus from '../../components/Modal/AlbumPlus';
 import {GetAlbumList} from '../../api/GetAlbumList';
+import {AlbumSave} from '../../api/AlbumSave';
 
 const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
   const [plusVisible, setPlusVisible] = useState(false);
-  const [selectedImageIds, setSelectedImageIds] = useState([]);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
   const route = useRoute();
-  const {groupedImages} = route.params; // Filter4에서 전달된 groupedImages
-  const albumList = useSelector(state => state.AlbumListReducer.albumList); // 앨범 목록 가져오기
+  const {groupedImages, imageIds} = route.params; // imageIds 추가
+  const [items, setItems] = useState([]);
+  const albumList = useSelector(state => state.AlbumListReducer.albumList);
   const dispatch = useDispatch();
+
   const handleNavigation = () => {
+    console.log('Navigating back to Filter');
     navigation.navigate('Filter');
   };
 
   useEffect(() => {
-    dispatch(GetAlbumList(null, 10));
-  }, [dispatch]);
+    console.log('Fetching album list');
+    if (!albumList.last && albumList.first) {
+      dispatch(GetAlbumList(null, 50));
+    }
+  }, [albumList, dispatch]);
 
-  // 앨범 목록을 드롭다운 아이템 형태로 변환
-  const items = albumList.map(album => ({
-    label: album.album_name,
-    value: album.album_id,
-  }));
+  useEffect(() => {
+    console.log('Album list updated:', albumList);
+    const newItems = albumList.map(album => ({
+      label: album.searchedAlbumName,
+      value: album.albumId,
+    }));
 
-  items.push({label: '새 앨범 추가하기', value: 'add_new_album'});
+    const addNewAlbumItem = {label: '새 앨범 추가하기', value: 'add_new_album'};
+    if (!newItems.some(item => item.value === 'add_new_album')) {
+      newItems.push(addNewAlbumItem);
+    }
+    setItems(newItems);
+    console.log('Picker items set:', newItems);
+  }, [albumList]);
 
-  const handleValueChange = value => {
+  const handleValueChange = async value => {
+    console.log('Selected value:', value);
     if (value === 'add_new_album') {
       setPlusVisible(true);
-    } else {
+    } else if (value) {
       setSelectedOption(value);
+      console.log('Selected Group ID:', selectedGroupId);
+      if (selectedGroupId !== null) {
+        console.log('Selected Image IDs:', imageIds[selectedGroupId]);
+        await handleAlbumSelection(value, imageIds[selectedGroupId] || []);
+      } else {
+        console.log('No group selected');
+        Alert.alert('Error', '그룹을 먼저 선택해주세요.');
+      }
     }
   };
 
   const handleAddNewAlbum = albumName => {
     if (albumName) {
-      items.push({label: albumName, value: albumName});
+      setItems(prevItems => {
+        const newAlbumItem = {label: albumName, value: albumName};
+        const updatedItems = [
+          ...prevItems.filter(item => item.value !== 'add_new_album'),
+          newAlbumItem,
+          {label: '새 앨범 추가하기', value: 'add_new_album'},
+        ];
+        console.log('New album added:', newAlbumItem);
+        return updatedItems;
+      });
       setSelectedOption(albumName);
     }
     setPlusVisible(false);
   };
 
   const handleImageSelect = id => {
-    if (selectedImageIds.includes(id)) {
-      setSelectedImageIds(selectedImageIds.filter(imageId => imageId !== id));
+    console.log('Image group selected:', id);
+    if (selectedGroupId === id) {
+      setSelectedGroupId(null);
     } else {
-      setSelectedImageIds([...selectedImageIds, id]);
+      setSelectedGroupId(id);
+    }
+  };
+
+  const getImageContainerStyle = id => {
+    return {
+      ...styles.imageContainer,
+      borderColor: id === selectedGroupId ? '#A9BB89' : 'white',
+      borderWidth: id === selectedGroupId ? 5.5 : 0,
+      opacity: id === selectedGroupId ? 0.5 : 1,
+      borderRadius: 10,
+      backgroundColor: id === selectedGroupId ? 'rgba(0, 0, 0, 0.5)' : 'white', // 모서리 채움
+    };
+  };
+
+  const handleAlbumSelection = async (albumId, imageIds) => {
+    console.log('Album selection started:', {albumId, imageIds});
+    if (!albumId || !imageIds || imageIds.length === 0) {
+      Alert.alert('Error', '앨범 ID와 이미지 ID를 확인해주세요.');
+      return;
+    }
+
+    try {
+      const requestBody = {
+        updateAlbumIdRequestList: [
+          {
+            albumId: albumId,
+            imageIds: imageIds,
+          },
+        ],
+      };
+      console.log('Request body:', JSON.stringify(requestBody, null, 2));
+      const data = await AlbumSave(requestBody);
+      console.log('Response from AlbumSave:', data);
+      Alert.alert('앨범에 해당 그룹을 저장했습니다');
+    } catch (error) {
+      console.error('Failed to save images:', error);
+      Alert.alert(
+        'Error',
+        `앨범에 이미지 저장 중 오류가 발생했습니다: ${error.message}`,
+      );
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.step_4}
-          source={require('../../assets/icon/step_4.png')}
-          resizeMode="contain"
+    <View style={styles.outerContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <Image
+            style={styles.step_4}
+            source={require('../../assets/icon/step_4.png')}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.text}>
+            그룹을 선택하고 원하는 앨범에 넣어보세요!
+          </Text>
+        </View>
+
+        <View style={styles.selectContainer}>
+          <RNPickerSelect
+            onValueChange={handleValueChange}
+            items={items}
+            placeholder={{label: '앨범을 선택하세요', value: null}}
+            style={pickerSelectStyles}
+            useNativeAndroidPickerStyle={false}
+          />
+        </View>
+
+        <View style={styles.gridContainer}>
+          {groupedImages.map((group, index) => (
+            <React.Fragment key={index}>
+              {index % 2 === 0 && index !== 0 && (
+                <View style={styles.separator} />
+              )}
+              <View style={getImageContainerStyle(index)}>
+                <TouchableOpacity
+                  style={styles.imageWrapper}
+                  onPress={() => handleImageSelect(index)}>
+                  <Image source={{uri: group[0]}} style={styles.image} />
+                  {selectedGroupId === index && (
+                    <View style={styles.imageOverlay} />
+                  )}
+                  <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
+                </TouchableOpacity>
+              </View>
+            </React.Fragment>
+          ))}
+        </View>
+
+        <AlbumPlus
+          visible={plusVisible}
+          onClose={() => setPlusVisible(false)}
+          onAddAlbum={handleAddNewAlbum}
         />
-
-        <Text style={styles.text}>
-          사진을 선택하고 원하는 앨범에 넣어보세요!
-        </Text>
+      </ScrollView>
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity onPress={handleNavigation}>
+          <Image
+            style={styles.done}
+            source={require('../../assets/icon/done2.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.selectContainer}>
-        <RNPickerSelect
-          onValueChange={handleValueChange}
-          items={items}
-          placeholder={{label: '앨범을 선택하세요', value: null}}
-          style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false}
-        />
-      </View>
-
-      <View style={styles.gridContainer}>
-        {groupedImages.map((group, index) => (
-          <React.Fragment key={index}>
-            {index % 2 === 0 && index !== 0 && (
-              <View style={styles.separator} />
-            )}
-            <View style={styles.imageContainer}>
-              <TouchableOpacity style={styles.imageWrapper}>
-                <Image source={{uri: group[0]}} style={styles.image} />
-                <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
-              </TouchableOpacity>
-            </View>
-          </React.Fragment>
-        ))}
-      </View>
-
-      <TouchableOpacity onPress={handleNavigation}>
-        <Image
-          style={styles.next}
-          source={require('../../assets/icon/done2.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-
-      <AlbumPlus
-        visible={plusVisible}
-        onClose={() => setPlusVisible(false)}
-        onAddAlbum={handleAddNewAlbum}
-      />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    flex: 1,
     backgroundColor: 'white',
-    flexGrow: 1,
+  },
+  container: {
     alignItems: 'center',
     padding: 20,
   },
@@ -130,10 +214,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginBottom: 20,
-    margin: 10,
   },
   step_4: {
     width: 300,
+    margin: 10,
   },
   text: {
     fontSize: 18,
@@ -148,10 +232,13 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '48%',
     marginBottom: 20,
+    marginHorizontal: '1%', // 좌우 간격 추가
   },
   imageWrapper: {
     position: 'relative',
     height: 150,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   selectContainer: {
     width: '90%',
@@ -162,13 +249,19 @@ const styles = StyleSheet.create({
     height: 20,
   },
   image: {
-    width: '95%',
-    height: 150,
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
   },
-  next: {
+  done: {
     width: 120,
-    marginTop: 20,
+    top: 15,
+  },
+  fixedFooter: {
+    position: 'absolute',
+    bottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   imageCount: {
     position: 'absolute',
@@ -179,6 +272,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     padding: 5,
     borderRadius: 5,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 어두운 오버레이
+    borderRadius: 10,
   },
 });
 
