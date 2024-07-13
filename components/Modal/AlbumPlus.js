@@ -29,10 +29,9 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
       await AlbumCreate(newAlbumName);
       setNewAlbumName('');
 
-      if (dropdownValue === 1) {
-        dispatch(InitializeAlbumList());
-        dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
-      } else if (dropdownValue === 2) {
+      dispatch(InitializeAlbumList());
+      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
+      if (dropdownValue === 2) {
         dispatch(SearchAlbumStatus('PRIVATE', null, 10));
         dispatch(InitializeAlbumStatus());
       } else if (dropdownValue === 3) {
@@ -41,7 +40,7 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
       } else if (dropdownValue === 4) {
         dispatch(InitializeLikeList());
         dispatch(SearchAlbumLike(null, 10))
-    }
+      }
       onClose();
     } catch (error) {
       console.error('앨범 생성 중 오류:', error);
@@ -94,7 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
     width: '85%',
@@ -143,16 +142,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   modalButtonContainer1: {
-    width: '50%', 
+    width: '50%',
     height: '100%',
-    alignItems: 'center', 
+    alignItems: 'center',
     marginTop: 10,
     paddingTop: 5,
     borderRightColor: '#CCCCCC',
     borderRightWidth: 1,
   },
   modalButtonContainer2: {
-    width: '50%', 
+    width: '50%',
     alignItems: 'center',
     paddingTop: 15,
   },
