@@ -36,6 +36,7 @@ const ImgEnlargeModal = ({visible, onClose, imageSrc}) => {
       </TouchableWithoutFeedback>
     </Modal>
   );
+
 };
 
 const styles = StyleSheet.create({

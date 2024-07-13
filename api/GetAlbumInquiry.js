@@ -1,9 +1,11 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchImagesRequest, fetchImagesSuccess, fetchImagesError } from '../src/actions/AlbumImageAction';
+import { BASE_URL } from '@env';
+
 
 const instance = axios.create({
-    baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+    baseURL: BASE_URL, // API 서버 주소
 });
 
 export const GetAlbumInquiry = (lastImageId, size, albumId,) => {

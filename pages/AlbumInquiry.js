@@ -4,8 +4,9 @@ import AlbumAccess from "../components/AlbumAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
 import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
+import { InitializeSearchedHashtag } from '../src/actions/SearchHashtagAction';
 
-const AlbumInquiry = ({ route }) => {
+const AlbumInquiry = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const { id } = route.params; // 현재 앨범의 id값
   const albumImages = useSelector((state) => state.AlbumImageReducer)
@@ -19,8 +20,23 @@ const AlbumInquiry = ({ route }) => {
   // 현재 조회된 앨범의 이미지 정보(확인할 것)(이미지리스트-id, 해시태그, url)
   const currentimageList = useSelector(state => state.AlbumImageReducer.imageList);
 
+  //해시태그 검색어
+  const [searchHashtag, setSearchHashtag] = useState('');
+
   // 로딩 상태 관리
   const [loading, setLoading] = useState(true);
+
+  // 검색 중인지 여부를 나타내는 상태 변수
+  const [isSearching, setIsSearching] = useState(false);
+
+  //해시태그 검색시
+  const handleHashtagSearch = () => {
+    if (searchHashtag.trim() && !isSearching) {
+      dispatch(InitializeSearchedHashtag());
+      setIsSearching(true);
+      navigation.navigate('SearchHashTag', { searchHashtag, isSearching, id });
+    }
+  }
 
   useEffect(() => {
     dispatch(InitializeAlbumImages());
@@ -45,8 +61,13 @@ const AlbumInquiry = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.search_section}>
-        <TextInput style={styles.textinput} placeholder='#해시태그' />
-        <TouchableOpacity >
+        <TextInput
+          style={styles.textinput}
+          placeholder='#해시태그'
+          searchHashtag={searchHashtag}
+          onChangeText={(text) => setSearchHashtag(text)}
+        />
+        <TouchableOpacity onPress={handleHashtagSearch}>
           <Image
             style={styles.search_bar}
             source={require('../assets/icon/search.png')}
@@ -92,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-},
+  },
 });
 
 export default AlbumInquiry;

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SearchAlbumName } from '../api/SearchAlbumName';
 import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
 
+
 const SearchedAlbum = ({ route, navigation }) => {
     const { searchQuery } = route.params;
     const searchedAlbumList = useSelector((state) => state.SearchedAlbumReducer);

@@ -14,7 +14,7 @@ import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     const dispatch = useDispatch();
     //현재 조회된 앨범의 이미지 리스트
-    const currentImageList = useSelector((state) => state.AlbumImageReducer)
+    const currentImageList = useSelector((state) => state.AlbumImageReducer);
 
     // 모달 visible 상태
     const [deleteVisible, setDeleteVisible] = useState(false);
@@ -134,7 +134,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     };
 
     //이미지 무한스크롤 구현
-    const fetchMorImages = () => {
+    const fetchMoreImages = () => {
         if (isLoadingMore) {
             return; //이미 로딩 중인 경우 추가 요청 방지
         }
@@ -168,6 +168,16 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     //선택된 이미지 갯수
     const selectedImageNum = selectedImages.length;
 
+    //전체선택 기능
+    const handleSelectAll = (isChecked) => {
+        if (isChecked) {
+            const allImageIds = currentImageList.imageList.map(item => item.imageId);
+            setSelectedImages(allImageIds);
+        } else {
+            setSelectedImages([]);
+        }
+    }
+
     const renderItem = ({ item }) => (
         <View style={styles.picture_container}>
             <Text style={styles.hash_text}>{item.tagName ? `#${item.tagName}` : '#해시태그'}</Text>
@@ -175,9 +185,11 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                 <BouncyCheckbox
                     style={styles.checkbox}
                     size={17}
-                    fillColor='black'
-                    unFillColor='transparent'
-                    iconStyle={{ borderColor: 'black' }}
+                    fillColor="blue"
+                    unFillColor="transparent"
+                    iconStyle={{ borderColor: 'black', borderRadius: 0 }} // 체크되지 않았을 때
+                    innerIconStyle={{ borderColor: 'black', borderRadius: 0 }} // 체크되었을 때
+                    isChecked={selectedImages.includes(item.imageId)}
                     onPress={(isChecked) => {
                         if (isChecked) {
                             setSelectedImages([...selectedImages, item.imageId]);
@@ -207,15 +219,31 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                 onClose={() => setImgEnlargeVisible(false)}
                 imageSrc={selectedImageSrc} />
             <View style={styles.upper_section}>
-                <Text style={styles.title}>{searchedAlbumName}</Text>
-                <TouchableOpacity onPress={
-                    check ? handleCancel : handleCheck
-                }>
-                    {check ?
-                        <Text style={styles.check_btn}>취소</Text>
-                        :
-                        <Text style={styles.check_btn}>선택</Text>}
-                </TouchableOpacity>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.title}>{searchedAlbumName}</Text>
+                    <TouchableOpacity onPress={
+                        check ? handleCancel : handleCheck
+                    }>
+                        {check ?
+                            <Text style={styles.check_btn}>취소</Text>
+                            :
+                            <Text style={styles.check_btn}>선택</Text>}
+                    </TouchableOpacity>
+                </View>
+                {check && (
+                    <View style={styles.selectAllContainer}>
+                        <BouncyCheckbox
+                            size={17}
+                            fillColor="blue"
+                            unFillColor="transparent"
+                            text="전체선택"
+                            textStyle={styles.selectAllText} 
+                            iconStyle={{ borderColor: 'black', borderRadius: 0 }}
+                            innerIconStyle={{ borderColor: 'black', borderRadius: 0 }}
+                            onPress={handleSelectAll}
+                        />
+                    </View>
+                )}
             </View>
             <View style={styles.listContainer}>
                 <FlatList
@@ -225,8 +253,8 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                     numColumns={2}
                     columnWrapperStyle={styles.row}
                     contentContainerStyle={styles.image_list}
-                    onEndReached={fetchMorImages} 
-                    onEndReachedThreshold={0.1} 
+                    onEndReached={fetchMoreImages}
+                    onEndReachedThreshold={0.1}
                 />
                 <View style={styles.iconContainer}>
                     {check && (
@@ -259,16 +287,19 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     upper_section: {
-        flexDirection: 'row',
         marginTop: 20,
-        justifyContent: 'space-between',
         marginHorizontal: 15,
         marginBottom: 5,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'black'
+        color: 'black',
     },
     check_btn: {
         fontSize: 15,
@@ -277,6 +308,17 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 15,
         paddingVertical: 4,
+    },
+    selectAllContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+        marginLeft: 280
+    },
+    selectAllText: {
+        fontSize: 15,
+        color: 'black',
+        textDecorationLine: 'none', 
     },
     image_list: {
         paddingLeft: 8,
@@ -308,15 +350,14 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     iconButtonLeft: {
-        marginRight: 'auto', // 왼쪽 끝으로 이동
+        marginRight: 'auto',
     },
     iconButtonRight: {
-        marginLeft: 297, // 오른쪽 아이콘과의 간격
+        marginLeft: 297,
     },
     iconImage: {
         width: 41,
         height: 41,
-
     },
     iconImage1: {
         width: 41,
