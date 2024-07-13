@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -47,11 +47,10 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
     }
   };
 
-
   return (
     <Modal
       visible={visible}
-      animationType="none"
+      animationType="fade"
       transparent={true} // 배경을 투명하게 설정
     >
       <TouchableWithoutFeedback onPress={onClose}>

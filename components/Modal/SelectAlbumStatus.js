@@ -6,7 +6,7 @@ const SelectAlbumStatus = ({ visible, onClose, PublicAlbum, PrivateAlbum }) => {
     return (
         <Modal
             visible={visible}
-            animationType="none"
+            animationType="fade"
             transparent={true}
         >
             <TouchableWithoutFeedback onPress={onClose}>

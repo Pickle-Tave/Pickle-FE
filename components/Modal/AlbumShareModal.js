@@ -115,7 +115,7 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="fade"
             transparent={true} // 배경을 투명하게 설정
         >
             <TouchableWithoutFeedback onPress={onClose}>
