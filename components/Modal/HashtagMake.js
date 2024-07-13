@@ -29,7 +29,7 @@ const HashtagMake = ({ visible, onClose }) => {
 
     const handleHashTagDelete = async (hashtag_id) => {
         console.log('삭제할 해시태그 id: ', hashtag_id);
-        await HashTagDelete(hashtag_id);
+        HashTagDelete(hashtag_id);
         dispatch(HashTagListCheck()); // 해시태그 목록 다시 불러오기
     };
 

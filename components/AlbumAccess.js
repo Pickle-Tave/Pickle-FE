@@ -35,6 +35,9 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
 
     // 갤러리 이미지 선택
     const onSelectImage = () => {
+        // 업로드 상태를 true로 설정
+        setIsUploading(true);
+
         launchImageLibrary(
             {
                 mediaType: 'photo',
@@ -53,8 +56,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                     const assets = res.assets; // 선택한 모든 이미지들 
                     console.log("selected assets", assets);
 
-                    // 업로드 상태를 true로 설정
-                    setIsUploading(true);
+                    
 
                     // 필요한 Presigned URL 개수만큼 요청
                     const presignedUrls = await getPresignedUrls(assets.length);
@@ -378,13 +380,13 @@ const styles = StyleSheet.create({
     },
     uploadingContainer: {
         position: 'absolute',
-        top: 0,
+        top: -50,
         left: 0,
         right: 0,
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'white', // 반투명 흰색 배경
+        backgroundColor: 'white', 
         zIndex: 2,
     },
     uploadingText: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,19 @@ import {
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
 import {getPresignedUrls} from '../../api/ImageUpload';
+import {SkypeIndicator} from 'react-native-indicators';
 
 const Filter = () => {
   const navigation = useNavigation();
 
+  // 업로드 상태를 나타내기 위한 변수
+  const [isUploading, setIsUploading] = useState(false);
+
   // 이미지를 선택하는 함수
   const onSelectImage = () => {
+     // 업로드 상태를 true로 설정
+     setIsUploading(true);
+     
     launchImageLibrary(
       {
         mediaType: 'photo',
@@ -34,6 +41,8 @@ const Filter = () => {
           const assets = res.assets; // 선택한 모든 이미지들
           console.log('Selected assets:', assets);
 
+         
+
           // 필요한 Presigned URL 개수만큼 요청
           const presignedUrls = await getPresignedUrls(assets.length);
 
@@ -46,6 +55,7 @@ const Filter = () => {
 
           console.log('Uploaded image URLs:', imageUrls);
           navigation.navigate('Filter1', {imageUrls});
+          setIsUploading(false);
         }
       },
     );
@@ -106,6 +116,11 @@ const Filter = () => {
         />
       </TouchableOpacity>
       <Text style={styles.text_tip}>나만의 추억이 담긴 사진을 정리해요</Text>
+      {isUploading && (
+        <View style={styles.loadingContainer}>
+          <SkypeIndicator color="#606E76" size={145} />
+        </View>
+      )}
     </View>
   );
 };
@@ -142,6 +157,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     top: 28,
     left: 20,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    top: -50,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
