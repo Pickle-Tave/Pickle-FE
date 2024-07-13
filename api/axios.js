@@ -34,7 +34,7 @@ instance.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    console.error('Response interceptor error:', error);
+    // console.error('Response interceptor error:', error);
 
     if (
       error.response &&

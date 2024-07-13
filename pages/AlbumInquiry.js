@@ -4,6 +4,7 @@ import AlbumAccess from "../components/AlbumAccess";
 import { useSelector, useDispatch } from "react-redux";
 import { GetAlbumInquiry } from '../api/GetAlbumInquiry';
 import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
+import { InitializeSearchedHashtag } from '../src/actions/SearchHashtagAction';
 
 const AlbumInquiry = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -31,13 +32,10 @@ const AlbumInquiry = ({ route, navigation }) => {
   //해시태그 검색시
   const handleHashtagSearch = () => {
     if (searchHashtag.trim() && !isSearching) {
-      console.log("해시태그 검색하는 중")
+      dispatch(InitializeSearchedHashtag());
+      setIsSearching(true);
+      navigation.navigate('SearchHashTag', { searchHashtag, isSearching, id });
     }
-    //dispatch로 해시태그 검색 초기화하기
-    setIsSearching(true);
-    navigation.navigate('SearchHashTag', { searchHashtag, isSearching })
-    setSearchHashtag('');
-    setIsSearching(false);
   }
 
   useEffect(() => {

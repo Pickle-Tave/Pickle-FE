@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 
-const ImgDeleteModal = ({ visible, onClose, imageSrc }) => {
+const ImgEnlargeModal = ({ visible, onClose, imageSrc }) => {
     return (
         <Modal
             visible={visible}
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ImgDeleteModal;
+export default ImgEnlargeModal;

@@ -21,6 +21,7 @@ import Filter5 from './pages/filter/Filter5';
 import KakaoLoginRedirect from './components/login/KakaoLoginRedirect';
 import KakaoLoginWebview from './components/login/KakaoLoginWebview';
 import SearchedAlbum from './pages/SearchedAlbum';
+import SearchHashTag from './pages/SearchHashTag';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -266,6 +267,20 @@ function App() {
                   <CustomHeader
                     navigation={navigation}
                     title="앨범 검색"
+                    canGoBack={true}
+                  />
+                ),
+                headerBackVisible: true,
+              })}
+            />
+            <Stack.Screen
+              name="SearchHashTag"
+              component={SearchHashTag}
+              options={({ navigation }) => ({
+                header: () => (
+                  <CustomHeader
+                    navigation={navigation}
+                    title="해시태그 검색"
                     canGoBack={true}
                   />
                 ),
