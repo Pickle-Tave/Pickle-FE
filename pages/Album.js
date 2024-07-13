@@ -79,6 +79,9 @@ const Album = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchAlbumData(value);
+      dispatch(InitializeAlbumList());
+      dispatch(InitializeAlbumStatus());
+      dispatch(InitializeLikeList());
     }, [value])
   );
 

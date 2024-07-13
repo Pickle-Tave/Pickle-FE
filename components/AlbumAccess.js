@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import ImgDeleteModal from './Modal/ImgDeleteModal';
 import ImgEnlargeModal from './Modal/ImgEnlargeModal';
@@ -13,7 +13,7 @@ import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     const dispatch = useDispatch();
-    //현재 조회된 앨범의 이미지 리스트
+    // 현재 조회된 앨범의 이미지 리스트
     const currentImageList = useSelector((state) => state.AlbumImageReducer);
 
     // 모달 visible 상태
@@ -30,7 +30,10 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isReloading, setIsReloading] = useState(false);
 
-    //갤러리 이미지 선택
+    // 업로드 상태를 나타내기 위한 변수
+    const [isUploading, setIsUploading] = useState(false);
+
+    // 갤러리 이미지 선택
     const onSelectImage = () => {
         launchImageLibrary(
             {
@@ -47,10 +50,13 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                 } else if (res.errorCode) {
                     console.log('ImagePicker Error: ', res.errorMessage);
                 } else {
-                    const assets = res.assets; //선택한 모든 이미지들 
+                    const assets = res.assets; // 선택한 모든 이미지들 
                     console.log("selected assets", assets);
 
-                    //필요한 Presigned URL 개수만큼 요청
+                    // 업로드 상태를 true로 설정
+                    setIsUploading(true);
+
+                    // 필요한 Presigned URL 개수만큼 요청
                     const presignedUrls = await getPresignedUrls(assets.length);
                     console.log('presigned배열', presignedUrls);
 
@@ -61,7 +67,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                         ),
                     );
 
-                    //앨범에 이미지 추가하기
+                    // 앨범에 이미지 추가하기
                     ImageAddAlbum(albumId, imageUrls)
                         .then(() => {
                             dispatch(InitializeAlbumImages());
@@ -69,8 +75,9 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                             dispatch(GetAlbumInquiry(null, 50, albumId))
                                 .then(() => {
                                     setIsReloading(false);
+                                    // 업로드 상태를 false로 설정
+                                    setIsUploading(false);
                                 })
-
                         })
                     console.log("이미지추가 앨범 id", albumId)
 
@@ -96,7 +103,7 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
 
             if (uploadResponse.ok) {
                 console.log('Image uploaded successfully!');
-                //Alert.alert('Success', '이미지 업로드에 성공했습니다!');
+                // Alert.alert('Success', '이미지 업로드에 성공했습니다!');
                 return presignedUrl.split('?')[0]; // 업로드된 이미지 URL 반환
             } else {
                 const responseText = await uploadResponse.text();
@@ -114,11 +121,11 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
         }
     };
 
-    //선택된 이미지 삭제하기
+    // 선택된 이미지 삭제하기
     const handleDeleteImages = () => {
         ImageDelete(selectedImages)
             .then(() => {
-                //삭제하고나서 사진 목록 다시 처음부터 조회하기
+                // 삭제하고 나서 사진 목록 다시 처음부터 조회하기
                 dispatch(InitializeAlbumImages());
                 setIsReloading(true);
                 console.log("삭제하고나서 새로운 이미지 리스트 요청 보내는중")
@@ -133,24 +140,24 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
         setDeleteVisible(false);
     };
 
-    //이미지 무한스크롤 구현
+    // 이미지 무한스크롤 구현
     const fetchMoreImages = () => {
         if (isLoadingMore) {
-            return; //이미 로딩 중인 경우 추가 요청 방지
+            return; // 이미 로딩 중인 경우 추가 요청 방지
         }
 
         if (currentImageList.last) {
-            return; //이미 마지막 페이지에 도달한 경우 추가 요청 방지
+            return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
         }
 
-        setIsLoadingMore(true); //로딩 시작
+        setIsLoadingMore(true); // 로딩 시작
 
         if (!isReloading) {
             console.log("사진 추가 요청 들어가는중...")
             dispatch(GetAlbumInquiry(currentImageList.lastImageId, 50, albumId))
-                .then(() => setIsLoadingMore(false)) //로딩완료
+                .then(() => setIsLoadingMore(false)) // 로딩 완료
                 .catch((error) => {
-                    setIsLoadingMore(false); //에러 발생시 로딩 해제
+                    setIsLoadingMore(false); // 에러 발생 시 로딩 해제
                     console.log("사진 목록 추가 요청 에러:", error);
                 })
         }
@@ -165,10 +172,10 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
         setCheck(true);
     }
 
-    //선택된 이미지 갯수
+    // 선택된 이미지 갯수
     const selectedImageNum = selectedImages.length;
 
-    //전체선택 기능
+    // 전체선택 기능
     const handleSelectAll = (isChecked) => {
         if (isChecked) {
             const allImageIds = currentImageList.imageList.map(item => item.imageId);
@@ -256,6 +263,12 @@ const AlbumAccess = ({ check, setCheck, searchedAlbumName, albumId }) => {
                     onEndReached={fetchMoreImages}
                     onEndReachedThreshold={0.1}
                 />
+                {isUploading && (
+                    <View style={styles.uploadingContainer}>
+                        <ActivityIndicator size="large" color="#black" />
+                        <Text style={styles.uploadingText}>이미지 업로드 중입니다...</Text>
+                    </View>
+                )}
                 <View style={styles.iconContainer}>
                     {check && (
                         <TouchableOpacity style={styles.iconButtonLeft} onPress={() => setDeleteVisible(true)}>
@@ -318,7 +331,7 @@ const styles = StyleSheet.create({
     selectAllText: {
         fontSize: 15,
         color: 'black',
-        textDecorationLine: 'none', 
+        textDecorationLine: 'none',
     },
     image_list: {
         paddingLeft: 8,
@@ -363,6 +376,23 @@ const styles = StyleSheet.create({
         width: 41,
         height: 41,
     },
+    uploadingContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white', // 반투명 흰색 배경
+        zIndex: 2,
+    },
+    uploadingText: {
+        fontSize: 18,
+        color: 'black',
+        marginTop: 10,
+    },
 });
+
 
 export default AlbumAccess;

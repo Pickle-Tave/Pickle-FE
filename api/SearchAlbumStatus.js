@@ -1,6 +1,10 @@
-import instance from './axios';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchAlbumStatusRequest, fetchAlbumStatusSuccess, fetchAlbumStatusError } from '../src/actions/AlbumStatusAction';
+
+const instance = axios.create({
+    baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
+  });
 
 export const SearchAlbumStatus = (albumStatus, lastAlbumId, size) => {
     return async (dispatch) => {
@@ -24,7 +28,6 @@ export const SearchAlbumStatus = (albumStatus, lastAlbumId, size) => {
             console.log('상태 검색 응답:', response.data); // 백엔드 응답 로그 출력
             return response.data.data;
         } catch (error) {
-            console.error('상태 검색 에러:', error);
             dispatch(fetchAlbumStatusError());
             
             if (error.response) {
