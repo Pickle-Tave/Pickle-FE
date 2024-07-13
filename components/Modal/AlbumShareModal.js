@@ -15,14 +15,13 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [shareLink, setShareLink] = useState('참여');
+    const [shareLink, setShareLink] = useState('참여코드');
 
     const handleShare = async () => {
         setIsLoading(true);
         try {
             const response = await ShareAlbumChange(checkedAlbumId, password);
-            const link = response.data.link;
-            setShareLink(link);
+            setShareLink(response.data.link);
 
 
             if (searchQuery) {

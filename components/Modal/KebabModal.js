@@ -21,8 +21,10 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, Co
             dispatch(InitializeAlbumList());
             dispatch(GetAlbumList(null, 10));
 
-            dispatch(InitializeSearchedAlbum());
-            dispatch(SearchAlbumName(searchQuery, null, 10))
+            if (searchQuery) {
+                dispatch(InitializeSearchedAlbum());
+                dispatch(SearchAlbumName(searchQuery, null, 10))
+            }
 
             if (dropdownValue === 2) {
                 dispatch(SearchAlbumStatus('PRIVATE', null, 10));
