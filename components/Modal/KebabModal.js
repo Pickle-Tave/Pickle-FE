@@ -44,7 +44,7 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, Co
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="fade"
             transparent={true}
         >
             <TouchableWithoutFeedback onPress={onClose}>
@@ -54,9 +54,6 @@ const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, Co
                             <View style={styles.modal_section1}>
                                 <TouchableOpacity onPress={EditModal}>
                                     <Text style={styles.text1}>수정</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={CopyAlbum}>
-                                    <Text style={styles.text1}>복제</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={ShareModal}>
                                     <Text style={styles.text2}>공유</Text>

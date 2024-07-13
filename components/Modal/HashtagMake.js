@@ -51,7 +51,7 @@ const HashtagMake = ({ visible, onClose }) => {
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="fade"
             transparent={true}
         >
             <TouchableOpacity style={styles.modalBackground} onPress={onClose}>

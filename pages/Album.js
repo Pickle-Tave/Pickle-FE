@@ -28,6 +28,7 @@ import { SearchAlbumLike } from '../api/SearchAlbumLike';
 import { InitializeLikeList } from '../src/actions/AlbumLikeAction';
 import { SearchAlbumStatus } from '../api/SearchAlbumStatus';
 import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
+import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const Album = ({ navigation }) => {
   //API연동부분
@@ -78,8 +79,17 @@ const Album = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       fetchAlbumData(value);
+      dispatch(InitializeAlbumList());
+      dispatch(InitializeAlbumStatus());
+      dispatch(InitializeLikeList());
     }, [value])
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(InitializeAlbumImages());
+    },[])
+  )
 
   const fetchAlbumData = (value) => {
     if (value === 1) {

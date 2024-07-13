@@ -13,7 +13,7 @@ const ImgEnlargeModal = ({visible, onClose, imageSrc}) => {
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       transparent={true} // 배경을 투명하게 설정
     >
       <TouchableWithoutFeedback onPress={onClose}>

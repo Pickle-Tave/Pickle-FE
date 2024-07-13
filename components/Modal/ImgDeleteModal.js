@@ -5,7 +5,7 @@ const ImgDeleteModal = ({ visible, onClose, onDelete, selectedImageNum }) => {
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="fade"
             transparent={true} 
         >
             <TouchableWithoutFeedback onPress={onClose}>

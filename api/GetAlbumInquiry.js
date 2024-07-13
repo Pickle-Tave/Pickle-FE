@@ -1,11 +1,11 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchImagesRequest, fetchImagesSuccess, fetchImagesError } from '../src/actions/AlbumImageAction';
-import { BASE_URL } from '@env';
+import { REACT_APP_BASE_URL } from '@env';
 
 
 const instance = axios.create({
-    baseURL: BASE_URL, // API 서버 주소
+    baseURL: REACT_APP_BASE_URL, // API 서버 주소
 });
 
 export const GetAlbumInquiry = (lastImageId, size, albumId,) => {

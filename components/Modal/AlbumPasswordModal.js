@@ -44,7 +44,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     return (
         <Modal
             visible={visible}
-            animationType="slide"
+            animationType="fade"
             transparent={true}
         >
             <TouchableWithoutFeedback onPress={onClose}>

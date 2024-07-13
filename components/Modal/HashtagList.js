@@ -32,7 +32,7 @@ const HashtagList = ({ visible, onClose }) => {
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       transparent={true} 
     >
       <TouchableWithoutFeedback onPress={onClose}>
