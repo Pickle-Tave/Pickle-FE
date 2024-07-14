@@ -78,10 +78,11 @@ const Album = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       console.log("값변경으로 인한 초기화")
-      fetchAlbumData(value);
       dispatch(InitializeAlbumList());
       dispatch(InitializeAlbumStatus());
       dispatch(InitializeLikeList());
+
+      fetchAlbumData(value);
     }, [value])
   );
 
@@ -309,7 +310,7 @@ const Album = ({ navigation }) => {
           ListFooterComponent={() => ( 
             isLoadingMore && (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color="gray" />
+                <ActivityIndicator size="large" color="gray" style={{height: 60}} />
               </View>
             )
           )}
