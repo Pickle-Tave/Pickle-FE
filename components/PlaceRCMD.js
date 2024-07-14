@@ -47,7 +47,7 @@ const PlaceRCMD = () => {
 const styles = StyleSheet.create({
   
     placeRCMDContainer: {
-        marginHorizontal: 20,
+        marginLeft: 15,
         marginVertical: 12,
     },
     rcmdText: {
@@ -60,8 +60,9 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     place_img: {
+        marginTop: 5,
         height: 165,
-        width: 195,
+        width: 205,
         resizeMode: 'contain'
     },
     placeItem: {

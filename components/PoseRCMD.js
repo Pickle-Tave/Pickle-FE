@@ -46,26 +46,27 @@ const PoseRCMD = () => {
 
 const styles = StyleSheet.create({
     poseRCMDContainer: {
-      marginHorizontal: 20,
+        marginLeft: 15,
     },
     rcmdText: {
-      fontSize: 17,
-      fontWeight: 'bold',
-      color: 'black',
-  
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'black',
+
     },
     pose_text: {
-      textAlign: 'center',
-      fontSize: 13,
+        textAlign: 'center',
+        fontSize: 13,
     },
     pose_img: {
-      height: 120,
-      width: 129,
-      resizeMode: 'contain'
+        marginTop: 5,
+        height: 110,
+        width: 135,
+        resizeMode: 'contain'
     },
     poseItem: {
-      marginRight: 10,
+        marginRight: 10,
     },
-  });
+});
 
 export default PoseRCMD;
