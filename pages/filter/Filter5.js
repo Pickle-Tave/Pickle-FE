@@ -24,7 +24,6 @@ const Filter5 = () => {
   const {groupedImages, imageIds} = route.params;
   const [items, setItems] = useState([]);
   const albumList = useSelector(state => state.AlbumListReducer.albumList);
-  const Albums = useSelector(state => state.AlbumListReducer);
   const dispatch = useDispatch();
 
   const handleNavigation = () => {
@@ -32,10 +31,10 @@ const Filter5 = () => {
   };
 
   useEffect(() => {
-    if (!Albums.last && Albums.first) {
+    if (!albumList.last && albumList.first) {
       dispatch(GetAlbumList(null, 50));
     }
-  }, [Albums, dispatch]);
+  }, [albumList, dispatch]);
 
   useEffect(() => {
     const newItems = albumList.map(album => ({
