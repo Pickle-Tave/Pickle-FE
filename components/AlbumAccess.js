@@ -275,7 +275,14 @@ const AlbumAccess = ({check, setCheck, searchedAlbumName, albumId}) => {
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.image_list}
           onEndReached={fetchMoreImages}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() => ( 
+            isLoadingMore && (
+              <View>
+                <ActivityIndicator size="large" color="gray" style={{height: 60}} />
+              </View>
+            )
+          )}
         />
         {isUploading && (
           <View style={styles.uploadingContainer}>
