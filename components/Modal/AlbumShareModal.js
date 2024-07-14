@@ -52,62 +52,11 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
         Alert.alert("코드 복사", "참여코드가 클립보드에 복사되었습니다.");
     };
 
-    // const handleKakaoShare = async () => {
-    //     if (!shareLink) {
-    //         Alert.alert("링크 오류", "링크가 생성되지 않았습니다.");
-    //         return;
-    //     }
-
-    //     try {
-    //         await KakaoShareLink.sendCommerce({
-    //             content: {
-    //                 title: '앨범 공유',
-    //                 // imageUrl: require('../../assets/icon/pickle_ready.png'),  // 로컬 이미지 URL
-    //                 link: {
-    //                     webUrl: 'https://developers.kakao.com/',
-    //                     mobileWebUrl: 'https://developers.kakao.com/',
-    //                 },
-    //                 description: '앨범을 공유합니다.',
-    //             },
-    //             commerce: {
-    //                 regularPrice: 100000,
-    //                 discountPrice: 80000,
-    //                 discountRate: 20,
-    //             },
-    //             buttons: [
-    //                 {
-    //                     title: '앱에서 보기',
-    //                     link: {
-    //                         androidExecutionParams: [
-    //                             { key: 'screen', value: 'Album' },
-    //                             { key: 'shareLink', value: `${shareLink}` }
-    //                         ],
-    //                         iosExecutionParams: [
-    //                             { key: 'screen', value: 'Album' },
-    //                             { key: 'shareLink', value: `${shareLink}` }
-    //                         ],
-    //                     },
-    //                 },
-    //                 {
-    //                     title: '웹에서 보기',
-    //                     link: {
-    //                         webUrl: shareLink,
-    //                         mobileWebUrl: shareLink,
-    //                     },
-    //                 },
-    //             ],
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //         Alert.alert("공유 실패", "카카오톡 공유에 실패했습니다.");
-    //     }
-    // };
-
 
     const handleClose = () => {
         // 모달을 닫기 전에 상태를 초기화합니다.
         setPassword('');  // 비밀번호 초기화
-        setShareLink('참여코드');  
+        setShareLink('참여코드');
         onClose();  // 모달 닫기
     };
 
@@ -202,6 +151,9 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 35,
         paddingHorizontal: 10,
+        paddingVertical: 5,
+        lineHeight: 20,
+        fontSize: 14,
     },
     done_btn: {
         backgroundColor: 'black',

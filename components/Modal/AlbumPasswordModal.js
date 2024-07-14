@@ -17,9 +17,9 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     //공유앨범 참여 요청 코드
     const handleSubmit = async () => {
         try {
-            console.log("공유코드 비번",sharecode, password);
+            console.log("공유코드 비번", sharecode, password);
             await ShareParticipants(sharecode.trim(), password.trim());
-            
+
             if (dropdownValue === 1) {
                 dispatch(InitializeAlbumList());
                 dispatch(GetAlbumList(null, 10));
@@ -130,6 +130,9 @@ const styles = StyleSheet.create({
         marginTop: 6,
         fontSize: 13,
         marginBottom: 16,
+        paddingVertical: 5, 
+        lineHeight: 20,
+        fontSize: 14, 
     },
     modalButtons: {
         flexDirection: 'row',

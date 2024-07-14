@@ -140,6 +140,9 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginBottom: 20,
         marginRight: 5,
+        paddingVertical: 5,
+        lineHeight: 20,
+        fontSize: 14,
     },
     Modal_plus: {
         backgroundColor: 'black',
