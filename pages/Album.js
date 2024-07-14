@@ -31,8 +31,8 @@ import { InitializeAlbumStatus } from '../src/actions/AlbumStatusAction';
 import { InitializeAlbumImages } from '../src/actions/AlbumImageAction';
 
 const Album = ({ navigation }) => {
-  //API연동부분
   const dispatch = useDispatch();
+
   const AlbumList = useSelector((state) => state.AlbumListReducer); //사용자 앨범 목록
   const LikeList = useSelector((state) => state.AlbumLikeReducer); //즐겨찾기 앨범 목록
   const StatusList = useSelector((state) => state.AlbumStatusReducer); //앨범 상태 목록(개인앨범 혹은 공유앨범)
@@ -48,15 +48,14 @@ const Album = ({ navigation }) => {
 
   // 로딩 상태를 나타내기 위한 변수
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  // 검색 중인지 여부를 나타내는 상태 변수
+  const [isSearching, setIsSearching] = useState(false);
 
   // 현재 선택된 앨범 id
   const [checkedAlbumId, setcheckedAlbumId] = useState(null);
 
   // 검색 입력 값을 관리하는 상태 변수
   const [searchQuery, setSearchQuery] = useState('');
-
-  // 검색 중인지 여부를 나타내는 상태 변수
-  const [isSearching, setIsSearching] = useState(false);
 
   // 드롭다운 열고 닫기
   const [open, setOpen] = useState(false);
@@ -97,27 +96,26 @@ const Album = ({ navigation }) => {
   )
 
   const fetchAlbumData = (value) => {
-    
     if (value === 1) {
-      dispatch(InitializeAlbumList());
+      console.log("전체앨범", AlbumList.first, AlbumList.last)
       if (!AlbumList.last && AlbumList.first) {
         console.log("전체 앨범 요청이 들어가는 중");
         dispatch(GetAlbumList(null, 10));
       }
     } else if (value === 2) {
-      dispatch(InitializeAlbumStatus());
+      console.log("개인앨범", StatusList.first, StatusList.last)
       if (!StatusList.last && StatusList.first) {
         console.log("개인앨범 검색이 들어가는 중");
         dispatch(SearchAlbumStatus('PRIVATE', null, 10));
       }
     } else if (value === 3) {
-      dispatch(InitializeAlbumStatus());
+      console.log("공유앨범", StatusList.first, StatusList.last)
       if (!StatusList.last && StatusList.first) {
         console.log("공유앨범 검색이 들어가는 중");
         dispatch(SearchAlbumStatus('PUBLIC', null, 10));
       }
     } else if (value === 4) {
-      dispatch(InitializeLikeList());
+      console.log("즐겨찾기", LikeList.first, StatusList.last)
       if (!LikeList.last && LikeList.first) {
         console.log("즐겨찾기 요청이 들어가는 중");
         dispatch(SearchAlbumLike(null, 10));
@@ -149,14 +147,14 @@ const Album = ({ navigation }) => {
   // 추가 데이터 요청 함수
   const fetchMoreAlbums = () => {
     if (isLoadingMore) {
-      return; // 이미 로딩 중인 경우 추가 요청 방지
+      return; 
     }
 
     if (currentList().last) {
-      return; // 이미 마지막 페이지에 도달한 경우 추가 요청 방지
+      return;
     }
 
-    setIsLoadingMore(true); // 로딩 시작
+    setIsLoadingMore(true); 
 
     const action = () => {
       if (value === 1) {
@@ -170,9 +168,9 @@ const Album = ({ navigation }) => {
       }
     };
     action()
-      .then(() => setIsLoadingMore(false)) // 로딩 완료
+      .then(() => setIsLoadingMore(false)) 
       .catch((error) => {
-        setIsLoadingMore(false); // 에러 발생 시 로딩 해제
+        setIsLoadingMore(false); 
       });
   };
 
@@ -288,7 +286,7 @@ const Album = ({ navigation }) => {
           setOpen={setOpen}
           setValue={setValue}
           setItems={setItems}
-          onChangeValue={onChange} // 값이 바뀔 때마다 실행
+          onChangeValue={onChange} 
         />
       </View>
       <View style={styles.albumlist}>
@@ -301,14 +299,14 @@ const Album = ({ navigation }) => {
               kebabvisible={kebabvisible}
               setKebabVisible={setKebabVisible}
               AlbumItemAccess={() => AlbumItemAccess(item.albumId)}
-              setAlbumId={setcheckedAlbumId} // AlbumItem에서 id를 설정할 수 있도록 함
+              setAlbumId={setcheckedAlbumId}
               dropdownValue={value}
               albumName={item.searchedAlbumName}
             />
           )}
-          onEndReached={fetchMoreAlbums} // 끝에 도달하면 추가 데이터 요청
-          onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
-          ListFooterComponent={() => ( // 로딩 중임을 나타내는 컴포넌트
+          onEndReached={fetchMoreAlbums} 
+          onEndReachedThreshold={0.1} 
+          ListFooterComponent={() => ( 
             isLoadingMore && (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="small" color="gray" />
@@ -379,7 +377,7 @@ const styles = StyleSheet.create({
     minHeight: 32,
   },
   dropdownContainer: {
-    width: 105, // 필요에 따라 조정
+    width: 105, 
     maxHeight: 40,
   },
 });

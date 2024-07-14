@@ -5,10 +5,8 @@ import { InitializeSearchedHashtag } from '../src/actions/SearchHashtagAction';
 import { SearchHashTagImages } from '../api/SearchHashtagImages';
 import ImgEnlargeModal from '../components/Modal/ImgEnlargeModal';
 
-const SearchHashTag = ({ route, navigation }) => {
+const SearchHashTag = ({ route }) => {
     const { searchHashtag, id } = route.params;
-    console.log("전달받은 해시태그 검색어", searchHashtag);
-
     const dispatch = useDispatch();
 
     //검색한 해시태그 이미지 리스트
@@ -30,12 +28,11 @@ const SearchHashTag = ({ route, navigation }) => {
 
     const handleHashtagSearch = () => {
         if (searchHashtag.trim() && !isLoading) {
-            setIsLoading(true); // 검색 중
+            setIsLoading(true);
             console.log("첫 검색 요청!!");
             dispatch(InitializeSearchedHashtag());
             dispatch(SearchHashTagImages(null, 50, id, searchHashtag))
                 .then(() => {
-                    // 빈 배열로 응답받았을 때 로딩 상태를 해제하고 추가 요청 방지
                     if (searchedHashtagList.searchHashtagList.length === 0) {
                         setIsLoading(false);
                     }
@@ -48,22 +45,20 @@ const SearchHashTag = ({ route, navigation }) => {
 
     //추가 검색 요청
     const fetchMoreSearchedHashtags = () => {
-        // 로딩 중이거나 검색어가 없거나 마지막 페이지에 도달한 경우 추가 요청 방지
         if (isLoading || !searchHashtag.trim() || searchedHashtagList.last || searchedHashtagList.searchHashtagList.length === 0) {
             return;
         }
 
-        setIsLoading(true); // 로딩 시작
+        setIsLoading(true);
         console.log("추가 요청!!");
         dispatch(SearchHashTagImages(searchedHashtagList.lastImageId, 10, id, searchHashtag))
             .then(() => {
-                // 빈 배열로 응답받았을 때 추가 요청 차단
                 if (searchedHashtagList.searchHashtagList.length === 0 || searchedHashtagList.last) {
                     setIsLoading(false);
                 }
             })
             .catch((error) => {
-                setIsLoading(false); // 에러 발생 시 로딩 해제
+                setIsLoading(false);
             });
     };
 
@@ -86,7 +81,7 @@ const SearchHashTag = ({ route, navigation }) => {
             <ImgEnlargeModal
                 visible={imgEnlargeVisible}
                 onClose={() => setImgEnlargeVisible(false)}
-                imageSrc={selectedImageSrc} // imageSrc를 추가했습니다.
+                imageSrc={selectedImageSrc}
             />
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>"{searchHashtag} 에 대한 검색결과..."</Text>
@@ -135,7 +130,8 @@ const styles = StyleSheet.create({
     },
     picture_container: {
         flex: 1,
-        marginBottom: 10,  // 이미지 컨테이너와 다른 이미지 간의 간격을 추가합니다.
+        marginBottom: 10,
+        position: 'relative',
     },
     hash_text: {
         fontSize: 15,
@@ -144,7 +140,7 @@ const styles = StyleSheet.create({
         marginBottom: 3,
     },
     picture: {
-        width: '95%', 
+        width: 193,
         height: 163,
         borderRadius: 3,
     },
