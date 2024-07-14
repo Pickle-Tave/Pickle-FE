@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
   FlatList,
-  KeyboardAvoidingView,  
+  KeyboardAvoidingView,
   Platform,
   ActivityIndicator
 } from 'react-native';
@@ -64,10 +64,10 @@ const Album = ({ navigation }) => {
   // 드롭다운 값
   const [value, setValue] = useState(1);
 
-    // 드롭다운 메뉴를 선택할 때마다 값 변경
-    const onChange = (value) => {
-      setValue(value);
-    };
+  // 드롭다운 메뉴를 선택할 때마다 값 변경
+  const onChange = (value) => {
+    setValue(value);
+  };
 
   const [items, setItems] = useState([
     { label: '전체', value: 1 },
@@ -88,12 +88,16 @@ const Album = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("값초기화2")
       dispatch(InitializeAlbumImages());
       dispatch(InitializeAlbumList());
-    },[])
+      dispatch(InitializeAlbumStatus());
+      dispatch(InitializeLikeList());
+    }, [])
   )
 
   const fetchAlbumData = (value) => {
+    
     if (value === 1) {
       dispatch(InitializeAlbumList());
       if (!AlbumList.last && AlbumList.first) {
@@ -218,11 +222,11 @@ const Album = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <SelectAlbumStatus 
-      visible={selectvisible}
-      onClose={() => setSelectVisible(false)}
-      PrivateAlbum={PrivateAlbum}
-      PublicAlbum={PublicAlbum}
+      <SelectAlbumStatus
+        visible={selectvisible}
+        onClose={() => setSelectVisible(false)}
+        PrivateAlbum={PrivateAlbum}
+        PublicAlbum={PublicAlbum}
       />
       <AlbumPasswordModal
         visible={passwordvisible}
@@ -264,6 +268,7 @@ const Album = ({ navigation }) => {
           placeholder="앨범명을 입력하시오"
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
+          onSubmitEditing={handleAlbumSearch}
         />
         <TouchableOpacity onPress={handleAlbumSearch}>
           <Image

@@ -70,6 +70,7 @@ const AlbumInquiry = ({ route, navigation }) => {
           placeholder='#해시태그'
           value={searchHashtag} 
           onChangeText={(text) => setSearchHashtag(text)}
+          onSubmitEditing={handleHashtagSearch}
         />
         <TouchableOpacity onPress={handleHashtagSearch}>
           <Image

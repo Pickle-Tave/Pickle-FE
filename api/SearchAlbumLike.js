@@ -1,7 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchLikeRequest, fetchLikeSuccess, fetchLikeError } from '../src/actions/AlbumLikeAction';
-import { REACT_APP_BASE_URL } from '@env';
 
 const instance = axios.create({
     baseURL: 'http://pickle-alb-478419970.ap-northeast-2.elb.amazonaws.com', // API 서버 주소
@@ -32,11 +31,9 @@ export const SearchAlbumLike = (lastAlbumId, size) => {
         } catch (error) {
             dispatch(fetchLikeError(error));
             console.log('즐겨찾기 응답에러',error.response.data)
-
             const status = error.response.status;
-            console.log(status);
             const errorMessage = error.response.data.data.message || '알 수 없는 에러가 발생했습니다.';
-            console.log(errorMessage);
+
             if (status === 404) {
                 if (error.response.data.data.errorClassName === 'BOOKMARKED_ALBUM_NOT_FOUND') {
                     alert(errorMessage);
