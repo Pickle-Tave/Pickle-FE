@@ -17,14 +17,7 @@ export const refreshAccessToken = async () => {
     return response.data.data;
   } catch (error) {
     console.error('Error refreshing token:', error);
-    if (error.response && error.response.status === 401) {
-      // Refresh token is invalid or expired
-      await AsyncStorage.removeItem('accessToken');
-      await AsyncStorage.removeItem('refreshToken');
-      throw new Error('Refresh token expired or invalid. Please log in again.');
-    }
+
     throw error;
   }
 };
-
-export default instance;
