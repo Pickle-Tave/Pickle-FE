@@ -18,7 +18,6 @@ import KebabModal from '../components/Modal/KebabModal';
 import AlbumPasswordModal from '../components/Modal/AlbumPasswordModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
-import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
 import SelectAlbumStatus from '../components/Modal/SelectAlbumStatus';
 import { useSelector, useDispatch } from 'react-redux';
 import { GetAlbumList } from '../api/GetAlbumList';
@@ -42,7 +41,6 @@ const Album = ({ navigation }) => {
   const [kebabvisible, setKebabVisible] = useState(false);
   const [editvisible, setEditVisible] = useState(false);
   const [sharevisible, setShareVisible] = useState(false);
-  const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
   const [passwordvisible, setPasswordVisible] = useState(false);
   const [selectvisible, setSelectVisible] = useState(false);
 
@@ -256,10 +254,6 @@ const Album = ({ navigation }) => {
         onClose={() => setShareVisible(false)}
         checkedAlbumId={checkedAlbumId}
         dropdownValue={value}
-      />
-      <DeleteWarnModal
-        visible={deletewarnvisible}
-        onClose={() => setDeleteWarnVisible(false)}
       />
       <View style={styles.search_section}>
         <TextInput

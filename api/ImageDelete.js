@@ -16,7 +16,7 @@ export const ImageDelete = async (imageIds) => {
             }
         );
         
-        console.log('이미지 삭제 응답:', response.data); // 백엔드 응답 로그 출력
+        console.log('이미지 삭제 응답:', response.data); 
         return response.data;
     } catch (error) {
         // 예외 처리하기

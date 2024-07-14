@@ -4,7 +4,6 @@ import {
   View,
   StyleSheet,
   Image,
-  Dimensions,
   TouchableOpacity,
   Text,
 } from 'react-native';
@@ -38,7 +37,6 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0, // 컨테이너 패딩 제거
     backgroundColor: 'white',
   },
   logoContainer: {
@@ -54,8 +52,7 @@ const styles = StyleSheet.create({
     width: 160,
   },
   hashtagContainer: {
-    alignItems: 'center', // 이미지가 가운데 정렬되도록 설정
-    marginTop: 0, // 추천 이미지와 해시태그 이미지 사이의 간격 제거
+    alignItems: 'center',
   },
   hashtagButton: {
     width: '93%',

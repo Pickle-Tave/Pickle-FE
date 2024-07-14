@@ -13,7 +13,7 @@ export const LikeApply = async (albumId) => {
                 }
             }
         );
-        console.log('좋아요 설정 응답:', response.data); // 백엔드 응답 로그 출력
+        console.log('좋아요 설정 응답:', response.data); 
         return response.data;
     } catch (error) {
         console.error('좋아요 설정 에러:', error);

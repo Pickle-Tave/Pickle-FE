@@ -25,7 +25,7 @@ export const SearchAlbumStatus = (albumStatus, lastAlbumId, size) => {
                 }
             );
             dispatch(fetchAlbumStatusSuccess(response.data.data));
-            console.log('상태 검색 응답:', response.data); // 백엔드 응답 로그 출력
+            console.log('상태 검색 응답:', response.data); 
             return response.data.data;
         } catch (error) {
             dispatch(fetchAlbumStatusError());

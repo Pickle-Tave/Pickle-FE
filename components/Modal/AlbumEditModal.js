@@ -19,7 +19,7 @@ import { SearchAlbumName } from '../../api/SearchAlbumName';
 import { InitializeLikeList } from '../../src/actions/AlbumLikeAction';
 import { SearchAlbumLike } from '../../api/SearchAlbumLike';
 
-const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownValue, searchQuery }) => {
+const AlbumEditModal = ({ visible, onClose, checkedAlbumId, dropdownValue, searchQuery }) => {
   const dispatch = useDispatch();
 
   //수정할 앨범 정보
@@ -38,7 +38,6 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
             dispatch(InitializeSearchedAlbum());
             dispatch(SearchAlbumName(searchQuery, null, 10));
           }
-          // onUpdate(); // 앨범 수정 후 `onUpdate` 콜백 호출
           console.log("dropdownValue", dropdownValue)
 
           if (dropdownValue === 1) {
@@ -64,7 +63,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
     <Modal
       visible={visible}
       animationType="fade"
-      transparent={true} // 배경을 투명하게 설정
+      transparent={true}
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackground}>
@@ -148,9 +147,9 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13,
     marginBottom: 16,
-    paddingVertical: 5, // 위아래 패딩 추가
-    lineHeight: 20, // 줄 높이 설정
-    fontSize: 14, // 폰트 크기 설정
+    paddingVertical: 5, 
+    lineHeight: 20, 
+    fontSize: 14,
   },
   modalButtons: {
     flexDirection: 'row',

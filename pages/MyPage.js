@@ -159,14 +159,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 80,
     alignItems: 'center',
-    justifyContent: 'flex-start', // 추가: 왼쪽 정렬
-    width: '90%', // 추가: 전체 섹션의 너비 설정
+    justifyContent: 'flex-start',
+    width: '90%', 
   },
   user_profile: {
     height: 80,
     width: 80,
-    marginLeft: 30, // 수정: 왼쪽 여백 설정
-    borderRadius: 40, // 추가: 이미지를 동그랗게 만듦 (width와 height의 절반)
+    marginLeft: 30, 
+    borderRadius: 40,
   },
   name_profile: {
     justifyContent: 'center',
@@ -181,8 +181,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   buttonContainer: {
-    width: '100%', // 버튼 너비 설정
-    alignItems: 'center', // 가로축을 기준으로 중앙 정렬
+    width: '100%', 
+    alignItems: 'center',
     marginTop: 22,
   },
   hashtag_btn: {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 10,
     height: 65,
-    alignItems: 'center', // 세로축 중앙 정렬 추가
+    alignItems: 'center', 
   },
   setting: {
     width: '100%',
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 7,
     height: 65,
-    alignItems: 'center', // 세로축 중앙 정렬 추가
+    alignItems: 'center',
   },
   gonggi: {
     width: '100%',
@@ -222,12 +222,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 7,
     height: 65,
-    alignItems: 'center', // 세로축 중앙 정렬 추가
+    alignItems: 'center', 
   },
   text3: {
     fontSize: 15,
     fontWeight: 'bold',
-    marginLeft: 13, // 텍스트 왼쪽 간격 추가
+    marginLeft: 13,
   },
   lower_section: {
     width: '100%',
@@ -240,14 +240,14 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     height: 55,
-    alignItems: 'center', // 세로축 중앙 정렬 추가
+    alignItems: 'center',
   },
   member_out: {
     width: '100%',
     flexDirection: 'row',
     marginTop: 5,
     height: 55,
-    alignItems: 'center', // 세로축 중앙 정렬 추가
+    alignItems: 'center',
   },
 });
 

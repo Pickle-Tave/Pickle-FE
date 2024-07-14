@@ -14,10 +14,10 @@ export const AlbumEdit = async (album_id, newAlbumName) => {
                 }
             }
         );
-        console.log('앨범 수정 응답:', response.data); // 백엔드 응답 로그 출력
+        console.log('앨범 수정 응답:', response.data); 
         return response.data;
     } catch (error) {
         console.error('앨범 수정 에러:', error);
-        throw error; // 에러를 다시 던져서 상위 코드에서 처리할 수 있게 함
+        throw error; 
     }
 };

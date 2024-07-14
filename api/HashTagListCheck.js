@@ -15,9 +15,8 @@ export const HashTagListCheck = () => {
           }
         }
       );
-      console.log('해시태그 조회 응답:', response.data); // 백엔드 응답 로그 출력
+      console.log('해시태그 조회 응답:', response.data); 
 
-      // 해시태그 목록 상태관리하기
       if (response.data.success) {
         dispatch(fetchHashtagSucess(response.data.data));
       } else {
