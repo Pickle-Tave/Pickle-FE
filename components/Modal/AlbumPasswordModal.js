@@ -64,6 +64,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={true}
+                                onSubmitEditing={handleSubmit}
                             />
                             <View style={styles.modalButtons}>
                                 <TouchableOpacity

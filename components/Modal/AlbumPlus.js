@@ -66,6 +66,7 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
                 placeholder="제목"
                 value={newAlbumName}
                 onChangeText={setNewAlbumName}
+                onSubmitEditing={handleAddAlbum}
               />
               <View style={styles.modalButtons}>
                 <TouchableOpacity

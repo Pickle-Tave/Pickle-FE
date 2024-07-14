@@ -77,7 +77,8 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
                                     style={styles.textinput}
                                     value={password}
                                     onChangeText={setPassword}
-                                //secureTextEntry={true} // 비밀번호 입력 시 텍스트 가리기
+                                    //secureTextEntry={true} // 비밀번호 입력 시 텍스트 가리기
+                                    onSubmitEditing={handleShare}
                                 />
                                 <TouchableOpacity style={styles.done_btn} onPress={handleShare}>
                                     <Text style={styles.done_text}>완료</Text>

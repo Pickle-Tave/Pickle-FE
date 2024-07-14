@@ -80,6 +80,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
                   value={newAlbumName}
                   onChangeText={setNewAlbumName}
                   placeholder={`${editedAlbum.searchedAlbumName}`}
+                  onSubmitEditing={handleUpdateAlbumName}
                 />
               )}
               <View style={styles.modalButtons}>
