@@ -19,27 +19,24 @@ const Filter5 = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
   const [plusVisible, setPlusVisible] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [selectedGroupIds, setSelectedGroupIds] = useState([]);
   const route = useRoute();
-  const {groupedImages, imageIds} = route.params; // imageIds 추가
+  const {groupedImages, imageIds} = route.params;
   const [items, setItems] = useState([]);
   const albumList = useSelector(state => state.AlbumListReducer.albumList);
   const dispatch = useDispatch();
 
   const handleNavigation = () => {
-    console.log('Navigating back to Filter');
     navigation.navigate('Filter');
   };
 
   useEffect(() => {
-    console.log('Fetching album list');
     if (!albumList.last && albumList.first) {
       dispatch(GetAlbumList(null, 50));
     }
   }, [albumList, dispatch]);
 
   useEffect(() => {
-    console.log('Album list updated:', albumList);
     const newItems = albumList.map(album => ({
       label: album.searchedAlbumName,
       value: album.albumId,
@@ -50,7 +47,6 @@ const Filter5 = () => {
       newItems.push(addNewAlbumItem);
     }
     setItems(newItems);
-    console.log('Picker items set:', newItems);
   }, [albumList]);
 
   const handleValueChange = async value => {
@@ -59,10 +55,12 @@ const Filter5 = () => {
       setPlusVisible(true);
     } else if (value) {
       setSelectedOption(value);
-      console.log('Selected Group ID:', selectedGroupId);
-      if (selectedGroupId !== null) {
-        console.log('Selected Image IDs:', imageIds[selectedGroupId]);
-        await handleAlbumSelection(value, imageIds[selectedGroupId] || []);
+      console.log('Selected Group IDs:', selectedGroupIds);
+      if (selectedGroupIds.length > 0) {
+        const selectedImageIds = selectedGroupIds.flatMap(
+          groupId => imageIds[groupId] || [],
+        );
+        await handleAlbumSelection(value, selectedImageIds);
       } else {
         console.log('No group selected');
         Alert.alert('Error', '그룹을 먼저 선택해주세요.');
@@ -89,28 +87,31 @@ const Filter5 = () => {
 
   const handleImageSelect = id => {
     console.log('Image group selected:', id);
-    if (selectedGroupId === id) {
-      setSelectedGroupId(null);
-    } else {
-      setSelectedGroupId(id);
-    }
+    setSelectedGroupIds(prevSelected => {
+      if (prevSelected.includes(id)) {
+        return prevSelected.filter(groupId => groupId !== id);
+      } else {
+        return [...prevSelected, id];
+      }
+    });
   };
 
   const getImageContainerStyle = id => {
+    const isSelected = selectedGroupIds.includes(id);
     return {
       ...styles.imageContainer,
-      borderColor: id === selectedGroupId ? '#A9BB89' : 'white',
-      borderWidth: id === selectedGroupId ? 5.5 : 0,
-      opacity: id === selectedGroupId ? 0.5 : 1,
+      borderColor: isSelected ? '#A9BB89' : 'white',
+      borderWidth: isSelected ? 5.5 : 0,
+      opacity: isSelected ? 0.5 : 1,
       borderRadius: 10,
-      backgroundColor: id === selectedGroupId ? 'rgba(0, 0, 0, 0.5)' : 'white', // 모서리 채움
+      backgroundColor: isSelected ? 'rgba(0, 0, 0, 0.5)' : 'white',
     };
   };
 
-  const handleAlbumSelection = async (albumId, imageIds) => {
-    console.log('Album selection started:', {albumId, imageIds});
-    if (!albumId || !imageIds || imageIds.length === 0) {
-      Alert.alert('Error', '앨범 ID와 이미지 ID를 확인해주세요.');
+  const handleAlbumSelection = async (albumId, selectedImageIds) => {
+    console.log('Album selection started:', {albumId, selectedImageIds});
+    if (!albumId || selectedImageIds.length === 0) {
+      Alert.alert('Error', '앨범 ID와 선택한 그룹을 확인해주세요.');
       return;
     }
 
@@ -119,14 +120,14 @@ const Filter5 = () => {
         updateAlbumIdRequestList: [
           {
             albumId: albumId,
-            imageIds: imageIds,
+            imageIds: selectedImageIds,
           },
         ],
       };
       console.log('Request body:', JSON.stringify(requestBody, null, 2));
       const data = await AlbumSave(requestBody);
       console.log('Response from AlbumSave:', data);
-      Alert.alert('앨범에 해당 그룹을 저장했습니다');
+      Alert.alert('앨범에 선택한 그룹을 저장했습니다');
     } catch (error) {
       console.error('Failed to save images:', error);
       Alert.alert(
@@ -172,7 +173,7 @@ const Filter5 = () => {
                   style={styles.imageWrapper}
                   onPress={() => handleImageSelect(index)}>
                   <Image source={{uri: group[0]}} style={styles.image} />
-                  {selectedGroupId === index && (
+                  {selectedGroupIds.includes(index) && (
                     <View style={styles.imageOverlay} />
                   )}
                   <Text style={styles.imageCount}>{`${group.length} 장`}</Text>
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '48%',
     marginBottom: 20,
-    marginHorizontal: '1%', // 좌우 간격 추가
+    marginHorizontal: '1%',
   },
   imageWrapper: {
     position: 'relative',
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 어두운 오버레이
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 10,
   },
 });
