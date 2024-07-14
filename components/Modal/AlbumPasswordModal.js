@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         paddingLeft: 15,
         marginTop: 6,
-        fontSize: 14,  // 기본 폰트 사이즈를 14로 설정
+        fontSize: 14,  
         marginBottom: 16,
         paddingVertical: 5,
         lineHeight: 20,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     textInput1: {
         height: 35,
         paddingLeft: 15,
-        fontSize: 14,  // 기본 폰트 사이즈를 14로 설정
+        fontSize: 14, 
         marginBottom: 20,
         paddingVertical: 5,
         lineHeight: 20,

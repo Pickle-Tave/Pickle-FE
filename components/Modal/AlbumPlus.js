@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -30,7 +30,7 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
       setNewAlbumName('');
 
       dispatch(InitializeAlbumList());
-      dispatch(GetAlbumList(null, 10)); // 추가: 앨범 생성 후 앨범 목록 갱신
+      dispatch(GetAlbumList(null, 10)); 
       if (dropdownValue === 2) {
         dispatch(SearchAlbumStatus('PRIVATE', null, 10));
         dispatch(InitializeAlbumStatus());
@@ -51,7 +51,7 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
     <Modal
       visible={visible}
       animationType="fade"
-      transparent={true} // 배경을 투명하게 설정
+      transparent={true} 
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackground}>

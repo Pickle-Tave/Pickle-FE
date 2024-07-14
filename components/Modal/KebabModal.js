@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { InitializeSearchedAlbum } from '../../src/actions/SearchedAlbumAction';
 import { SearchAlbumName } from '../../api/SearchAlbumName';
 
-const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, CopyAlbum, checkedAlbumId, searchQuery }) => {
+const KebabModal = ({ visible, onClose, ShareModal, EditModal, dropdownValue, checkedAlbumId, searchQuery }) => {
     const dispatch = useDispatch();
 
     //앨범 삭제 요청

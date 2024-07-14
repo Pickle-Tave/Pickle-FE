@@ -5,20 +5,17 @@ import { REACT_APP_BASE_URL } from '@env';
 
 
 const instance = axios.create({
-    baseURL: REACT_APP_BASE_URL, // API 서버 주소
+    baseURL: REACT_APP_BASE_URL, 
 });
 
 export const GetAlbumInquiry = (lastImageId, size, albumId,) => {
     return async (dispatch) => {
         try {
-            // Access token을 가져옵니다.
             const accessToken = await AsyncStorage.getItem('accessToken');
 
-            // 요청 시작 액션
             dispatch(fetchImagesRequest());
             console.log('Request Params:', { albumId, lastImageId, size });
 
-            // 앨범 정보를 요청합니다.
             const response = await instance.get(
                 `/albums`, {
                 params: {
@@ -31,20 +28,18 @@ export const GetAlbumInquiry = (lastImageId, size, albumId,) => {
                 }
             });
 
-            // 요청 성공 시 상태 업데이트
             if (response.data.success) {
-                console.log('개별 앨범 조회 응답', response.data.data); // 디버그용 로그
+                console.log('개별 앨범 조회 응답', response.data.data); 
                 dispatch(fetchImagesSuccess(response.data.data));
             } else {
-                throw new Error('Failed to fetch images'); // 성공하지 않은 경우 예외를 던집니다.
+                throw new Error('Failed to fetch images');
             }
 
             console.log('개별 앨범 조회 응답', response.data.data);
 
             return response.data.data;
         } catch (error) {
-            // 요청 실패 시 상태 업데이트
-            //dispatch(fetchImagesError(error));
+            dispatch(fetchImagesError(error));
 
             // 예외 처리
             if (error.response) {

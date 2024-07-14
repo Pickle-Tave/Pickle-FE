@@ -13,7 +13,7 @@ export const LikeUnApply = async (albumId) => {
                 }
             }
         );
-        console.log('좋아요 해제 응답:', response.data); // 백엔드 응답 로그 출력
+        console.log('좋아요 해제 응답:', response.data); 
         return response.data;
     } catch (error) {
         console.error('좋아요 해제 에러:', error);

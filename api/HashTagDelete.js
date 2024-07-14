@@ -17,7 +17,7 @@ export const HashTagDelete = async (member_tag_id) => {
                 }
             }
         );
-        console.log('해시태그 삭제 응답:', response.data); // 백엔드 응답 로그 출력
+        console.log('해시태그 삭제 응답:', response.data);
         return response.data;
     } catch (error) {
         console.error('해시태그 삭제 에러:', error);

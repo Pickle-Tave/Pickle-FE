@@ -5,7 +5,6 @@ import AlbumPlus from '../components/Modal/AlbumPlus';
 import KebabModal from '../components/Modal/KebabModal';
 import AlbumShareModal from '../components/Modal/AlbumShareModal';
 import AlbumEditModal from '../components/Modal/AlbumEditModal';
-import DeleteWarnModal from '../components/Modal/DeleteWarnModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { SearchAlbumName } from '../api/SearchAlbumName';
 import { InitializeSearchedAlbum } from '../src/actions/SearchedAlbumAction';
@@ -25,7 +24,6 @@ const SearchedAlbum = ({ route, navigation }) => {
     const [kebabvisible, setKebabVisible] = useState(false);
     const [editvisible, setEditVisible] = useState(false);
     const [sharevisible, setShareVisible] = useState(false);
-    const [deletewarnvisible, setDeleteWarnVisible] = useState(false);
 
     // 로딩 상태를 나타내기 위한 변수
     const [isLoading, setIsLoading] = useState(false);
@@ -36,39 +34,36 @@ const SearchedAlbum = ({ route, navigation }) => {
 
     const handleAlbumSearch = () => {
         if (searchQuery.trim() && !isLoading) {
-            setIsLoading(true); // 검색 중
+            setIsLoading(true); 
             console.log("첫 검색 요청!!");
             dispatch(InitializeSearchedAlbum());
             dispatch(SearchAlbumName(searchQuery, null, 10))
                 .then(() => {
-                    // 빈 배열로 응답받았을 때 로딩 상태를 해제하고 추가 요청 방지
                     if (searchedAlbumList.searchedAlbumList.length === 0) {
                         setIsLoading(false);
                     }
                 })
                 .catch((error) => {
-                    setIsLoading(false); // 에러 발생 시 로딩 해제
+                    setIsLoading(false); 
                 });
         }
     };
 
     const fetchMoreSearchedAlbums = () => {
-        // 로딩 중이거나 검색어가 없거나 마지막 페이지에 도달한 경우 추가 요청 방지
         if (isLoading || !searchQuery.trim() || searchedAlbumList.last || searchedAlbumList.searchedAlbumList.length === 0) {
             return;
         }
 
-        setIsLoading(true); // 로딩 시작
+        setIsLoading(true);
         console.log("추가 요청!!");
         dispatch(SearchAlbumName(searchQuery, searchedAlbumList.lastAlbumId, 10))
             .then(() => {
-                // 빈 배열로 응답받았을 때 추가 요청 차단
                 if (searchedAlbumList.searchedAlbumList.length === 0 || searchedAlbumList.last) {
                     setIsLoading(false);
                 }
             })
             .catch((error) => {
-                setIsLoading(false); // 에러 발생 시 로딩 해제
+                setIsLoading(false); 
             });
     };
 
@@ -113,7 +108,6 @@ const SearchedAlbum = ({ route, navigation }) => {
                 EditModal={() => EditModal(checkedAlbumId)}
                 ShareModal={ShareModal}
                 DeleteWarn={DeleteWarn}
-                CopyAlbum={() => handleCopyAlbum(checkedAlbumId)} // 복제 기능 추가
                 searchQuery={searchQuery}
                 checkedAlbumId={checkedAlbumId}
             />
@@ -130,10 +124,6 @@ const SearchedAlbum = ({ route, navigation }) => {
                 searchQuery={searchQuery}
                 checkedAlbumId={checkedAlbumId}           
                 />
-            <DeleteWarnModal
-                visible={deletewarnvisible}
-                onClose={() => setDeleteWarnVisible(false)}
-            />
             <View style={styles.content}>
                 {isLoading && !searchedAlbumList.searchedAlbumList.length ? (
                     <ActivityIndicator size="large" color="gray" />
@@ -155,10 +145,9 @@ const SearchedAlbum = ({ route, navigation }) => {
                                 />
                             )}
                             ListEmptyComponent={<Text>앨범을 찾을 수 없습니다!!</Text>}
-                            onEndReached={fetchMoreSearchedAlbums} // 끝에 도달하면 추가 데이터 요청
-                            onEndReachedThreshold={0.1} // 끝에서 얼마나 멀리 있을 때 호출할 지 비율로 설정
+                            onEndReached={fetchMoreSearchedAlbums}
+                            onEndReachedThreshold={0.1} 
                             ListFooterComponent={() => (
-                                // 로딩 중임을 나타내는 컴포넌트
                                 searchedAlbumList.last ? null : (
                                     isLoading && (
                                         <View style={styles.loadingContainer}>

@@ -29,7 +29,7 @@ const AlbumItem = (props) => {
 
             if (props.dropdownValue === 1) {
                 dispatch(InitializeAlbumList());
-                dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+                dispatch(GetAlbumList(null, 10)); 
 
             } else if (props.dropdownValue === 2) {
                 dispatch(InitializeAlbumStatus());
@@ -51,9 +51,8 @@ const AlbumItem = (props) => {
         try {
             await LikeUnApply(props.albumId);
 
-            //여기 주석
             dispatch(InitializeAlbumList());
-            dispatch(GetAlbumList(null, 10)); // 앨범 목록 갱신
+            dispatch(GetAlbumList(null, 10)); 
 
             if (props.searchQuery) {
                 dispatch(InitializeSearchedAlbum());

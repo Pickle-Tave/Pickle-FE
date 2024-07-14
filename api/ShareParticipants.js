@@ -4,7 +4,7 @@ import { REACT_APP_BASE_URL } from '@env';
 
 
 const instance = axios.create({
-    baseURL: REACT_APP_BASE_URL, // API 서버 주소
+    baseURL: REACT_APP_BASE_URL, 
   });
 
 export const ShareParticipants = async (albumLink, albumPassword) => {

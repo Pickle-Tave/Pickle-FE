@@ -11,7 +11,6 @@ const AlbumInquiry = ({ route, navigation }) => {
   const { id } = route.params; // 현재 앨범의 id값
   const albumImages = useSelector((state) => state.AlbumImageReducer)
 
-  // useSelector를 사용하여 AlbumListReducer에서 상태 가져오기
   const albumList = useSelector((state) => state.AlbumListReducer.albumList);
 
   // 현재 조회하고 있는 앨범 정보(id, 이름, type 등..)
@@ -46,16 +45,16 @@ const AlbumInquiry = ({ route, navigation }) => {
     console.log('값확인',albumImages.last, albumImages.first)
     if (!albumImages.last && albumImages.first) {
       console.log("이미지 첫 요청이 들어가는 중")
-      dispatch(GetAlbumInquiry(null, 50, id)) // 액션 크리에이터로 호출
+      dispatch(GetAlbumInquiry(null, 50, id)) 
         .then(() => {
-          setLoading(false); // 액션 완료 후 로딩 상태 변경
+          setLoading(false); 
           if (albumImages.imageList.length === 0) {
-            setLoading(false); // 이미지 리스트가 빈 배열인 경우 로딩 멈춤
+            setLoading(false); 
           }
         })
-        .catch(() => setLoading(false)); // 에러 발생 시도 로딩 상태 변경
+        .catch(() => setLoading(false)); 
     } else {
-      setLoading(false); // 이미지 리스트가 이미 로딩된 경우 로딩 멈춤
+      setLoading(false);
     }
   }, [id]);
 
@@ -79,7 +78,6 @@ const AlbumInquiry = ({ route, navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      {/* 로딩 중일 때 표시될 컴포넌트 */}
       {loading ? (
         <ActivityIndicator style={styles.loadingContainer} size="large" color="#769370" />
       ) : (
