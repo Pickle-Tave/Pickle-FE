@@ -55,27 +55,28 @@ const PlaceRCMD = () => {
 };
 
 const styles = StyleSheet.create({
-  placeRCMDContainer: {
-    marginHorizontal: 20,
-    marginVertical: 12,
-  },
-  rcmdText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  place_text: {
-    textAlign: 'center',
-    fontSize: 13,
-  },
-  place_img: {
-    height: 165,
-    width: 195,
-    resizeMode: 'contain',
-  },
-  placeItem: {
-    marginRight: 10,
-  },
+    placeRCMDContainer: {
+        marginLeft: 15,
+        marginVertical: 12,
+    },
+    rcmdText: {
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'black',
+    },
+    place_text: {
+        textAlign: 'center',
+        fontSize: 13,
+    },
+    place_img: {
+        marginTop: 5,
+        height: 165,
+        width: 205,
+        resizeMode: 'contain'
+    },
+    placeItem: {
+        marginRight: 10,
+    },
 });
 
 export default PlaceRCMD;

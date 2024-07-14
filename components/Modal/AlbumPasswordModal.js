@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, TouchableWithoutFeedback, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { ShareParticipants } from '../../api/ShareParticipants';
 import { InitializeAlbumList } from '../../src/actions/AlbumListAction';
@@ -13,13 +13,14 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
     const dispatch = useDispatch();
     const [password, setPassword] = useState('');
     const [sharecode, setShareCode] = useState('');
+    const [secure, setSecure] = useState(true);
 
-    //공유앨범 참여 요청 코드
+    // 공유앨범 참여 요청 코드
     const handleSubmit = async () => {
         try {
-            console.log("공유코드 비번",sharecode, password);
+            console.log("공유코드 비번", sharecode, password);
             await ShareParticipants(sharecode.trim(), password.trim());
-            
+
             if (dropdownValue === 1) {
                 dispatch(InitializeAlbumList());
                 dispatch(GetAlbumList(null, 10));
@@ -37,7 +38,7 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
             setPassword('');
             setShareCode('');
         } catch (error) {
-            console.log("공유앨범 참여 에러", error)
+            console.log("공유앨범 참여 에러", error);
         }
     };
 
@@ -59,12 +60,20 @@ const AlbumPasswordModal = ({ visible, onClose, dropdownValue }) => {
                                 onChangeText={setShareCode}
                             />
                             <Text style={styles.modalSubTitle}>Password를 입력하세요</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry={true}
-                            />
+                            <View style={styles.passwordContainer}>
+                                <TextInput
+                                    style={styles.textInput1}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry={secure}
+                                    onSubmitEditing={handleSubmit}
+                                />
+                                <TouchableOpacity
+                                    style={styles.toggleButton}
+                                    onPress={() => setSecure(!secure)}>
+                                    <Image style={styles.eyeIcon} source={require('../../assets/icon/eye.png')} />
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.modalButtons}>
                                 <TouchableOpacity
                                     onPress={onClose}
@@ -128,8 +137,37 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         paddingLeft: 15,
         marginTop: 6,
-        fontSize: 13,
+        fontSize: 14,  // 기본 폰트 사이즈를 14로 설정
         marginBottom: 16,
+        paddingVertical: 5,
+        lineHeight: 20,
+    },
+    textInput1: {
+        height: 35,
+        paddingLeft: 15,
+        fontSize: 14,  // 기본 폰트 사이즈를 14로 설정
+        marginBottom: 20,
+        paddingVertical: 5,
+        lineHeight: 20,
+    },
+    passwordContainer: {
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 20,
+        width: '85%',
+        height: 35,
+        marginBottom: 16,
+        marginTop: 6,
+    },
+    toggleButton: {
+        position: 'absolute',
+        right: 10,
+        justifyContent: 'center',
+        top: 10,
+    },
+    eyeIcon: {
+        width: 18,
+        height: 12,
     },
     modalButtons: {
         flexDirection: 'row',

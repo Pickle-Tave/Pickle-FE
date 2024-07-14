@@ -66,6 +66,7 @@ const AlbumPlus = ({ visible, onClose, dropdownValue }) => {
                 placeholder="제목"
                 value={newAlbumName}
                 onChangeText={setNewAlbumName}
+                onSubmitEditing={handleAddAlbum}
               />
               <View style={styles.modalButtons}>
                 <TouchableOpacity
@@ -131,6 +132,9 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13,
     marginBottom: 16,
+    paddingVertical: 5, 
+    lineHeight: 20,
+    fontSize: 14, 
   },
   modalButtons: {
     flexDirection: 'row',

@@ -80,6 +80,7 @@ const AlbumEditModal = ({ visible, onClose, checkedAlbumId, onUpdate, dropdownVa
                   value={newAlbumName}
                   onChangeText={setNewAlbumName}
                   placeholder={`${editedAlbum.searchedAlbumName}`}
+                  onSubmitEditing={handleUpdateAlbumName}
                 />
               )}
               <View style={styles.modalButtons}>
@@ -147,6 +148,9 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 13,
     marginBottom: 16,
+    paddingVertical: 5, // 위아래 패딩 추가
+    lineHeight: 20, // 줄 높이 설정
+    fontSize: 14, // 폰트 크기 설정
   },
   modalButtons: {
     flexDirection: 'row',

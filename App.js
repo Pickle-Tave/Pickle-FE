@@ -33,17 +33,8 @@ import SearchHashTag from './pages/SearchHashTag';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// //딥링크 설정
-// const linking = {
-//   prefixes: ['kakaokakaof2fb8dc2987896193205c5a07c24c75e://'], // 딥링크의 URL 스킴
-//   config: { //URL경로와 화면간의 매핑 설정
-//     screens: {
-//       Album: 'kakaolink/:link',
-//     },
-//   },
-// }
 
-const CustomHeader = ({navigation, title, canGoBack}) => {
+const CustomHeader = ({ navigation, title, canGoBack }) => {
   const [alram, setAlram] = useState(false);
 
   return (
