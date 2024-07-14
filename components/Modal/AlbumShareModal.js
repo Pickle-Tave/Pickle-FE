@@ -16,8 +16,15 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [shareLink, setShareLink] = useState('참여코드');
+    const [secure, setSecure] = useState(true);
 
     const handleShare = async () => {
+        if (password.length < 4) {
+            Alert.alert('비밀번호 오류', '비밀번호는 4글자 이상이어야 합니다.');
+           setPassword('');
+            return; 
+        }
+
         setIsLoading(true);
         try {
             const response = await ShareAlbumChange(checkedAlbumId, password);
@@ -54,17 +61,16 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
 
 
     const handleClose = () => {
-        // 모달을 닫기 전에 상태를 초기화합니다.
-        setPassword('');  // 비밀번호 초기화
+        setPassword('');  
         setShareLink('참여코드');
-        onClose();  // 모달 닫기
+        onClose(); 
     };
 
     return (
         <Modal
             visible={visible}
             animationType="fade"
-            transparent={true} // 배경을 투명하게 설정
+            transparent={true} 
         >
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.modalBackground}>
@@ -73,13 +79,25 @@ const AlbumShareModal = ({ visible, onClose, checkedAlbumId, dropdownValue, sear
                             <Text style={styles.modalTitle}>앨범 공유하기</Text>
                             <Text style={styles.textLeftAlign}>Password를 입력하세요.</Text>
                             <View style={styles.password_section}>
-                                <TextInput
-                                    style={styles.textinput}
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    //secureTextEntry={true} // 비밀번호 입력 시 텍스트 가리기
-                                    onSubmitEditing={handleShare}
-                                />
+                                <View style={{
+                                    flexDirection: 'row', borderWidth: 1,
+                                    borderRadius: 20,
+                                    width: '90%',
+                                    height: 35,
+                                }}>
+                                    <TextInput
+                                        style={styles.textinput}
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry={secure} // 비밀번호 입력 시 텍스트 가리기
+                                        onSubmitEditing={handleShare}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.toggleButton}
+                                        onPress={() => setSecure(!secure)}>
+                                        <Image style={{ width: 18, height: 12, justifyContent: 'center' }} source={require('../../assets/icon/eye.png')} />
+                                    </TouchableOpacity>
+                                </View>
                                 <TouchableOpacity style={styles.done_btn} onPress={handleShare}>
                                     <Text style={styles.done_text}>완료</Text>
                                 </TouchableOpacity>
@@ -147,10 +165,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     textinput: {
-        borderWidth: 1,
-        borderRadius: 20,
-        width: '90%',
-        height: 35,
         paddingHorizontal: 10,
         paddingVertical: 5,
         lineHeight: 20,
@@ -190,6 +204,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: 'black',
     },
+    toggleButton: {
+        position: 'absolute',
+        right: 10, 
+        justifyContent: 'center', 
+        top: 10
+    }
 });
 
 export default AlbumShareModal;
