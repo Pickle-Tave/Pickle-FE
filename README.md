@@ -79,7 +79,7 @@ yarn ios
 ![9](https://github.com/user-attachments/assets/e7ef7f40-453b-4205-a856-d9f68fd4d505)
 
 
-##🌊 Commit Message Convention
+## 🌊 Commit Message Convention
 | command | mean |
 | --- | --- |
 | feat | 새로운 기능 추가 |
