@@ -1,4 +1,4 @@
- # Pickle-FE
+표 # Pickle-FE
 
 Tave 13기
 <br>
@@ -25,7 +25,7 @@ Tave 13기
 
 | JavaScript                                           | React Native                                           | Redux                                                | Android Studio |
 |:----------------------------------------------------:|:-----------------------------------------------------:|:----------------------------------------------------:|:----------------------------------------------------:|
-| <img src="https://cdn.worldvectorlogo.com/logos/javascript-1.svg" width="90" height="90"/> | <img src="https://cdn.worldvectorlogo.com/logos/react-native-1.svg" width="90" height="90"/> | <img src="https://cdn.worldvectorlogo.com/logos/redux.svg" width="90" height="90"/> | <img src="https://cdn.worldvectorlogo.com/logos/android-studio-1.svg" width="130" height="130"/> |
+| <img src="https://cdn.worldvectorlogo.com/logos/javascript-1.svg" width="70" height="70"/> | <img src="https://cdn.worldvectorlogo.com/logos/react-native-1.svg" width="90" height="90"/> | <img src="https://cdn.worldvectorlogo.com/logos/redux.svg" width="90" height="90"/> | <img src="https://cdn.worldvectorlogo.com/logos/android-studio-1.svg" width="130" height="130"/> |
 
 
 <br>
