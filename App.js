@@ -154,7 +154,7 @@ const MainScreen = () => {
 };
 
 function App() {
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
   const handleLoginSuccess = () => {
     setIsLogged(true);
   };
