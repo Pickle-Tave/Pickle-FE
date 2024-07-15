@@ -67,7 +67,7 @@ yarn ios
 ```
 
 
-## Frontend 기능 설명
+## 🖥️ Frontend 기능 설명
 ![1](https://github.com/user-attachments/assets/55e76c16-28e5-42f8-a8ff-7ad648976ea1)
 ![3](https://github.com/user-attachments/assets/33ebced1-46cc-41e2-bbad-daacb4995523)
 ![4](https://github.com/user-attachments/assets/ec7d98d2-f591-49be-b520-ddc50b6ce6a3)
@@ -79,7 +79,7 @@ yarn ios
 ![9](https://github.com/user-attachments/assets/e7ef7f40-453b-4205-a856-d9f68fd4d505)
 
 
-## Commit Message Convention
+##🌊 Commit Message Convention
 | command | mean |
 | --- | --- |
 | feat | 새로운 기능 추가 |
